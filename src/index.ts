@@ -4,14 +4,14 @@ import express from "express";
 import http from "http";
 import Logging from "./utils/Logging";
 
-const router = express();
+const app = express();
 
 const StartServer = () => {
-  router.use(express.urlencoded({ extended: true }));
-  router.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
 
   // Log the request and response
-  router.use((req, res, next) => {
+  app.use((req, res, next) => {
     Logging.info(
       `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
     );
@@ -24,7 +24,7 @@ const StartServer = () => {
   });
 
   // Rules for calling API
-  router.use((req, res, next) => {
+  app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
       "Access-Control-Allow-Headers",
@@ -43,14 +43,14 @@ const StartServer = () => {
   });
 
   // Healthcheck
-  router.get("/ping", (req, res, next) =>
+  app.get("/ping", (req, res, next) =>
     res.status(200).json({ hello: "world" })
   );
 
   //Routes
 
   // Server Error
-  router.use((req, res, next) => {
+  app.use((req, res, next) => {
     const error = new Error("Not found");
     Logging.error(error);
     res.status(500).json({
@@ -59,7 +59,7 @@ const StartServer = () => {
   });
 
   http
-    .createServer(router)
+    .createServer(app)
     .listen(config.port, () =>
       Logging.info(`Server is running on port ${config.port}`)
     );
