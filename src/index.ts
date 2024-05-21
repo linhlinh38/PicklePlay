@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import { config } from "./config/envConfig";
 import express from "express";
 import http from "http";
-import Logging from "./utils/Logging";
+import Logging from "./utils/logging";
+import router from "./routes/account.route";
 
 const app = express();
 
@@ -48,6 +49,7 @@ const StartServer = () => {
   );
 
   //Routes
+  app.use("/account", router);
 
   // Server Error
   app.use((req, res, next) => {
