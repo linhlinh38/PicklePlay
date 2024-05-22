@@ -6,13 +6,23 @@ async function createUser(
   username: string,
   email: string,
   role: string,
-  password: string
+  password: string,
+  gender: string,
+  firstname: string,
+  lastname: string,
+  phone: string
 ) {
   try {
     const user = new userModel({
       username: username,
       email: email,
       role: role,
+      gender: gender,
+      firstname: firstname,
+      lastname: lastname,
+      phone: phone,
+      expried_date: "",
+      max_court: "",
     });
     //encrypted password
     user.password = user.encryptedPassword(password);
@@ -32,7 +42,7 @@ async function getAllUsers(): Promise<createUserType[]> {
   try {
     const users: createUserType[] = await userModel
       .find()
-      .select("id username email role");
+      .select("id username email role gender first_name last_name phone");
     return users as createUserType[];
   } catch (error: any) {
     throw new DatabaseError("Database error: " + error.message);
