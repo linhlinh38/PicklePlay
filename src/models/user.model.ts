@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const accountSchema = mongoose.Schema(
+const userSchema = mongoose.Schema(
   {
     username: {
       type: String,
@@ -21,6 +21,25 @@ const accountSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    gender: {
+      type: String,
+      required: true,
+    },
+    first_name: {
+      type: String,
+    },
+    last_name: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    expried_date: {
+      type: String,
+    },
+    max_court: {
+      type: String,
+    },
   },
   {
     timestamps: true,
@@ -28,9 +47,9 @@ const accountSchema = mongoose.Schema(
 );
 
 // hash the password
-accountSchema.methods.encryptedPassword = function (password: string) {
+userSchema.methods.encryptedPassword = function (password: string) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
-const accountModel = mongoose.model("Account", accountSchema);
-export default accountModel;
+const userModel = mongoose.model("User", userSchema);
+export default userModel;

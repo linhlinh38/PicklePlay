@@ -1,15 +1,11 @@
 import express from "express";
 
-import accountController from "../controllers/account.controller";
+import userController from "../controllers/user.controller";
 import validate from "../utils/validate";
-import { createAccountSchema } from "../models/validateSchema/createAccount.validate.schema";
+import { createUserSchema } from "../models/validateSchema/createUser.validate.schema";
 
 const router = express.Router();
-router.get("/", accountController.getAllAccount);
-router.post(
-  "/create",
-  validate(createAccountSchema),
-  accountController.createAccount
-);
+router.get("/", userController.getAllUsers);
+router.post("/create", validate(createUserSchema), userController.createUser);
 
 export default router;

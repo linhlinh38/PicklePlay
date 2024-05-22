@@ -1,24 +1,24 @@
-import accountModel from "../models/account.model";
-import { createAccountType } from "../models/validateSchema/createAccount.validate.schema";
+import userModel from "../models/user.model";
+import { createUserType } from "../models/validateSchema/createUser.validate.schema";
 import { DatabaseError, ServerError } from "../utils/error";
 
-async function createAccount(
+async function createUser(
   username: string,
   email: string,
   role: string,
   password: string
 ) {
   try {
-    const account = new accountModel({
+    const user = new userModel({
       username: username,
       email: email,
       role: role,
     });
     //encrypted password
-    account.password = account.encryptedPassword(password);
+    user.password = user.encryptedPassword(password);
 
-    await account.save();
-    return account as createAccountType;
+    await user.save();
+    return user as createUserType;
   } catch (error: any) {
     if (error.name === "ValidationError") {
       throw new ServerError("Validation error: " + error.message);
@@ -28,12 +28,12 @@ async function createAccount(
   }
 }
 
-async function getAllAccount(): Promise<createAccountType[]> {
+async function getAllUsers(): Promise<createUserType[]> {
   try {
-    const accounts: createAccountType[] = await accountModel
+    const users: createUserType[] = await userModel
       .find()
       .select("id username email role");
-    return accounts as createAccountType[];
+    return users as createUserType[];
   } catch (error: any) {
     throw new DatabaseError("Database error: " + error.message);
   }
@@ -42,21 +42,21 @@ async function getAllAccount(): Promise<createAccountType[]> {
 async function findUserByUsernameOrEmail(
   username: string,
   email: string
-): Promise<createAccountType[]> {
+): Promise<createUserType[]> {
   try {
-    const accounts: createAccountType[] = await accountModel
+    const users: createUserType[] = await userModel
       .find({
         $or: [{ username: username }, { email: email }],
       })
       .select("id username email role");
-    return accounts as createAccountType[];
+    return users as createUserType[];
   } catch (error: any) {
     throw new DatabaseError("Database error: " + error.message);
   }
 }
 
 export default {
-  createAccount,
-  getAllAccount,
+  createUser,
+  getAllUsers,
   findUserByUsernameOrEmail,
 };

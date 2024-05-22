@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createAccountSchema = z.object({
+export const createUserSchema = z.object({
   body: z.object({
     username: z
       .string()
@@ -24,4 +24,4 @@ export const createAccountSchema = z.object({
   }),
 });
 
-export type createAccountType = z.infer<typeof createAccountSchema>;
+export type createUserType = z.infer<typeof createUserSchema>;
