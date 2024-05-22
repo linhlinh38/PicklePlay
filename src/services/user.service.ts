@@ -59,7 +59,9 @@ async function findUserByUsernameOrEmail(
 
 export const getUserById = async (id: string): Promise<createUserType> => {
   try {
-    const user = await userModel.findById(id);
+    const user = await userModel
+      .findById(id)
+      .select("id username email role gender");
 
     return user;
   } catch (error) {
