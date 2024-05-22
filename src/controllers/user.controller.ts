@@ -3,7 +3,16 @@ import userService from "../services/user.service";
 import { DatabaseError, ServerError } from "../utils/error";
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
-  const { username, email, role, password, gender } = req.body;
+  const {
+    username,
+    email,
+    role,
+    password,
+    gender,
+    firstname,
+    lastname,
+    phone,
+  } = req.body;
   try {
     const user = await userService.findUserByUsernameOrEmail(username, email);
     if (user.length > 0) {
@@ -11,7 +20,16 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
         .status(400)
         .json({ message: "Username or Email already exists!" });
     }
-    await userService.createUser(username, email, role, password, gender);
+    await userService.createUser(
+      username,
+      email,
+      role,
+      password,
+      gender,
+      firstname,
+      lastname,
+      phone
+    );
     return res.status(201).json({ message: "Created User Successfully" });
   } catch (error: any) {
     if (error instanceof ServerError) {
