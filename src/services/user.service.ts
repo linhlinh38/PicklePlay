@@ -6,20 +6,22 @@ async function createUser(
   username: string,
   email: string,
   role: string,
-  password: string
+  password: string,
+  gender: string
 ) {
   try {
     const user = new userModel({
       username: username,
       email: email,
       role: role,
+      gender: gender,
     });
     //encrypted password
     user.password = user.encryptedPassword(password);
 
     await user.save();
     return user as createUserType;
-  } catch (error: any) {
+  } catch (error) {
     if (error.name === "ValidationError") {
       throw new ServerError("Validation error: " + error.message);
     } else {
@@ -55,8 +57,19 @@ async function findUserByUsernameOrEmail(
   }
 }
 
+export const getUserById = async (id: string): Promise<createUserType> => {
+  try {
+    const user = await userModel.findById(id);
+
+    return user;
+  } catch (error) {
+    throw new DatabaseError("Database error: " + error.message);
+  }
+};
+
 export default {
   createUser,
   getAllUsers,
+  getUserById,
   findUserByUsernameOrEmail,
 };
