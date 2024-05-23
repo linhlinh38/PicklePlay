@@ -13,19 +13,14 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     phone: req.body.phone,
-    expried_date: "",
-    max_court: 0,
   };
   try {
-    const user = await userService.findUserByUsernameOrEmail(
-      newUser.username,
-      newUser.email
-    );
-    if (user.length > 0) {
-      return res
-        .status(400)
-        .json({ message: "Username or Email already exists!" });
+    const key: Partial<IUser> = { email: req.body.email };
+    const user = await userService.search(key);
+    if (user.length !== 0) {
+      return res.status(400).json({ message: "Email already exists!" });
     }
+    newUser.password = userService.encryptedPassword(req.body.password);
     await userService.create(newUser);
     return res.status(201).json({ message: "Created User Successfully" });
   } catch (error: any) {
