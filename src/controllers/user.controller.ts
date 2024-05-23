@@ -1,35 +1,32 @@
 import { NextFunction, Request, Response } from "express";
-import userService from "../services/user.service";
 import { DatabaseError, ServerError } from "../utils/error";
+import { userService } from "../services/user.service";
+import { IUser } from "../interfaces/user.interface";
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
-  const {
-    username,
-    email,
-    role,
-    password,
-    gender,
-    firstname,
-    lastname,
-    phone,
-  } = req.body;
+  const newUser: IUser = {
+    username: req.body.username,
+    email: req.body.email,
+    password: req.body.password,
+    role: req.body.role,
+    gender: req.body.gender,
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    phone: req.body.phone,
+    expried_date: "",
+    max_court: 0,
+  };
   try {
-    const user = await userService.findUserByUsernameOrEmail(username, email);
+    const user = await userService.findUserByUsernameOrEmail(
+      newUser.username,
+      newUser.email
+    );
     if (user.length > 0) {
       return res
         .status(400)
         .json({ message: "Username or Email already exists!" });
     }
-    await userService.createUser(
-      username,
-      email,
-      role,
-      password,
-      gender,
-      firstname,
-      lastname,
-      phone
-    );
+    await userService.create(newUser);
     return res.status(201).json({ message: "Created User Successfully" });
   } catch (error: any) {
     if (error instanceof ServerError) {
@@ -45,7 +42,7 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 
 async function getAllUsers(req: Request, res: Response, next: NextFunction) {
   try {
-    const user = await userService.getAllUsers();
+    const user = await userService.getAll();
     return res.status(200).json({ userList: user });
   } catch (error: any) {
     if (error instanceof DatabaseError) {
@@ -62,7 +59,7 @@ const getUserByIdHandler = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userService.getUserById(req.params.id);
+    const user = await userService.getById(req.params.id);
     return res.status(200).json({ user: user });
   } catch (error) {
     if (error instanceof DatabaseError) {

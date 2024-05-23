@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import userModel from "../models/user.model";
 import { config } from "../config/envConfig";
 import { verifyToken } from "../utils/jwt";
-import userService from "../services/user.service";
+import { userService } from "../services/user.service";
 import { DatabaseError } from "../utils/error";
 import jwt from "jsonwebtoken";
 
@@ -37,10 +37,9 @@ async function login(req: Request, res: Response, next: NextFunction) {
 const getProfile = async (req: Request, res: Response) => {
   try {
     const authorization = req.headers.authorization;
-    console.log(authorization);
     const accessToken = authorization.split(" ")[1];
     const { payload } = verifyToken(accessToken);
-    const user = await userService.getUserById(payload.userId);
+    const user = await userService.getById(payload.userId);
     return res.status(200).json({ user: user });
   } catch (error) {
     if (error instanceof DatabaseError) {
