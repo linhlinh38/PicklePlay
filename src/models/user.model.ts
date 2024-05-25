@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-
 const userSchema = mongoose.Schema(
   {
     username: {
@@ -33,22 +31,11 @@ const userSchema = mongoose.Schema(
     phone: {
       type: String,
     },
-    expried_date: {
-      type: String,
-    },
-    max_court: {
-      type: String,
-    },
   },
   {
     timestamps: true,
   }
 );
-
-// hash the password
-userSchema.methods.encryptedPassword = function (password: string) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
 
 const userModel = mongoose.model("User", userSchema);
 export default userModel;

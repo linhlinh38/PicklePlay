@@ -7,6 +7,4 @@ export interface IUser {
   firstname: string;
   lastname: string;
   phone: string;
-  expried_date: string;
-  max_court: number;
 }
