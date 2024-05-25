@@ -5,8 +5,8 @@ import { verifyToken } from "../utils/jwt";
 import { userService } from "../services/user.service";
 import { DatabaseError } from "../utils/error";
 import jwt from "jsonwebtoken";
-
-var bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
+//var bcrypt = require("bcrypt");
 // var jwt = require("jsonwebtoken");
 const { secretKey } = config;
 async function login(req: Request, res: Response, next: NextFunction) {
