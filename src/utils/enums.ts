@@ -20,7 +20,8 @@ export enum UserStatusEnum {
 export enum TransactionTypeEnum {
   REFUND = 'Refund',
   BOOKING = 'Booking',
-  PACKAGE = 'Package'
+  PACKAGE = 'Package',
+  ADD_COURT = 'Add Court'
 }
 
 export enum CourtReportStatus {
