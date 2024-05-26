@@ -31,7 +31,7 @@ export const createUserSchema = z.object({
       .string()
       .min(1, { message: "Gender must be greater than 1 characters!" })
       .refine(
-        (value) => value === "Other" || value === "Male" || value === "Female",
+        (value) => value === "other" || value === "male" || value === "female",
         {
           message: "Gender must be Male/Female/Other!",
         }
