@@ -1,30 +1,30 @@
 export enum RoleEnum {
-  CUSTOMER = 'customer',
-  ADMIN = 'admin',
-  OPERATOR = 'operator',
-  MANAGER = 'manager',
-  STAFF = 'staff'
+  CUSTOMER = 'Customer',
+  ADMIN = 'Admin',
+  OPERATOR = 'Operator',
+  MANAGER = 'Manager',
+  STAFF = 'Staff'
 }
 
 export enum GenderEnum {
-  MALE = 'male',
-  FEMALE = 'female',
-  OTHER = 'other'
+  MALE = 'Male',
+  FEMALE = 'Female',
+  OTHER = 'Other'
 }
 
 export enum UserStatusEnum {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive'
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive'
 }
 
 export enum TransactionTypeEnum {
-  REFUND = 'refund',
-  BOOKING = 'booking',
-  PACKAGE = 'package'
+  REFUND = 'Refund',
+  BOOKING = 'Booking',
+  PACKAGE = 'Package'
 }
 
 export enum CourtReportStatus {
-  AVAILABLE = 'available',
-  WARN = 'warn',
-  MAINTENANCE_NEEDED = 'maintenance needed',
+  AVAILABLE = 'Available',
+  WARN = 'Warn',
+  MAINTENANCE_NEEDED = 'Maintenance needed',
 }

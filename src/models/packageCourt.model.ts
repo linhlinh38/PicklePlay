@@ -5,7 +5,7 @@ const packageCourtSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  price: {
+  totalPrice: {
     type: Number,
     required: true,
   },
@@ -14,6 +14,10 @@ const packageCourtSchema = mongoose.Schema({
     required: true,
   },
   maxCourt: {
+    type: Number,
+    required: true,
+  },
+  duration: {
     type: Number,
     required: true,
   },

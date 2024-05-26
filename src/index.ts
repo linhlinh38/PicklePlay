@@ -5,7 +5,6 @@ import http from "http";
 import Logging from "./utils/logging";
 import router from "./routes/user.route";
 import authRoute from "./routes/auth.route";
-import customerRouter from './routes/customer.route';
 const app = express();
 
 const StartServer = () => {
@@ -51,7 +50,6 @@ const StartServer = () => {
 
   //Routes
   app.use("/user", router);
-  app.use('/customer', customerRouter);
   app.use("/auth", authRoute);
 
   // Server Error
