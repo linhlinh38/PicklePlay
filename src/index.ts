@@ -5,7 +5,6 @@ import http from "http";
 import Logging from "./utils/logging";
 import router from "./routes/user.route";
 import authRoute from "./routes/auth.route";
-
 const app = express();
 
 const StartServer = () => {
