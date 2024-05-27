@@ -1,4 +1,5 @@
 import { Schema } from "zod";
+import { BookingStatusEnum } from "../utils/enums";
 
 const mongoose = require("mongoose");
 const bookingSchema = mongoose.Schema(
@@ -7,37 +8,38 @@ const bookingSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    payment_type: {
+    paymentType: {
       type: String,
       required: true,
     },
-    payment_method: {
+    paymentMethod: {
       type: String,
       required: true,
     },
-    total_price: {
-      type: String,
+    totalPrice: {
+      type: Number,
       required: true,
     },
-    total_hour: {
-      type: String,
+    totalHour: {
+      type: Number,
       required: true,
     },
-    start_date: {
-      type: String,
+    startDate: {
+      type: Date,
       required: true,
     },
-    end_date: {
-      type: String,
+    endDate: {
+      type: Date,
       required: true,
     },
     status: {
       type: String,
       required: true,
+      enum: Object.values(BookingStatusEnum),
     },
-    user_id: {
+    customer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Customer",
       required: true,
     },
   },

@@ -1,4 +1,5 @@
 import { Schema } from "zod";
+import { BranchStatusEnum } from "../utils/enums";
 
 const mongoose = require("mongoose");
 const courtSchema = mongoose.Schema(
@@ -12,13 +13,12 @@ const courtSchema = mongoose.Schema(
       required: true,
     },
     price: {
-      type: String,
+      type: Number,
       required: true,
     },
     images: [
       {
         type: String,
-        required: true,
       },
     ],
     description: {
@@ -27,8 +27,9 @@ const courtSchema = mongoose.Schema(
     status: {
       type: String,
       required: true,
+      enum: Object.values(BranchStatusEnum),
     },
-    branch_id: {
+    branch: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Branch",
       required: true,

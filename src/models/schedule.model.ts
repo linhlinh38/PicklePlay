@@ -1,4 +1,5 @@
 import { Schema } from "zod";
+import { ScheduleStatusEnum } from "../utils/enums";
 
 const mongoose = require("mongoose");
 const scheduleSchema = mongoose.Schema(
@@ -7,24 +8,25 @@ const scheduleSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    start_date: {
-      type: String,
+    startDate: {
+      type: Date,
       required: true,
     },
-    end_date: {
-      type: String,
+    endDate: {
+      type: Date,
       required: true,
     },
     status: {
       type: String,
       required: true,
+      enum: Object.values(ScheduleStatusEnum),
     },
-    booking_id: {
+    booking: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Booking",
       required: true,
     },
-    court_id: {
+    court: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Court",
       required: true,
