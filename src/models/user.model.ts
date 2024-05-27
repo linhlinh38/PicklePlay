@@ -1,3 +1,5 @@
+import { GenderEnum, RoleEnum, UserStatusEnum } from "../utils/enums";
+
 const mongoose = require("mongoose");
 const userSchema = mongoose.Schema(
   {
@@ -17,19 +19,33 @@ const userSchema = mongoose.Schema(
     role: {
       type: String,
       required: true,
+      enum: Object.values(RoleEnum),
     },
     gender: {
       type: String,
       required: true,
+      enum: Object.values(GenderEnum),
     },
-    first_name: {
+    firstName: {
       type: String,
+      require: true,
     },
-    last_name: {
+    lastName: {
       type: String,
+      require: true,
     },
     phone: {
       type: String,
+      require: true,
+    },
+    status: {
+      type: String,
+      enum: Object.values(UserStatusEnum),
+      require: true,
+    },
+    dob: {
+      type: Date,
+      require: true,
     },
   },
   {
