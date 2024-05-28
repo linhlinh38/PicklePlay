@@ -1,10 +1,11 @@
-import mongoose from "mongoose";
-import { config } from "./config/envConfig";
-import express from "express";
-import http from "http";
-import Logging from "./utils/logging";
-import router from "./routes/user.route";
-import authRoute from "./routes/auth.route";
+import mongoose from 'mongoose';
+import { config } from './config/envConfig';
+import express from 'express';
+import http from 'http';
+import Logging from './utils/logging';
+import router from './routes/user.route';
+import authRoute from './routes/auth.route';
+import { errorHandler } from './errors/globalErrorHandler';
 const app = express();
 
 const StartServer = () => {
@@ -17,7 +18,7 @@ const StartServer = () => {
       `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
     );
 
-    res.on("finish", () => {
+    res.on('finish', () => {
       Logging.info(`STATUS: [${res.statusCode}]`);
     });
 
@@ -26,16 +27,16 @@ const StartServer = () => {
 
   // Rules for calling API
   app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Origin', '*');
     res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     );
 
-    if (req.method == "OPTIONS") {
+    if (req.method == 'OPTIONS') {
       res.header(
-        "Access-Control-Allow-Methods",
-        "PUT, POST, PATCH, DELETE, GET"
+        'Access-Control-Allow-Methods',
+        'PUT, POST, PATCH, DELETE, GET'
       );
       return res.status(200).json({});
     }
@@ -44,22 +45,15 @@ const StartServer = () => {
   });
 
   // Healthcheck
-  app.get("/ping", (req, res, next) =>
-    res.status(200).json({ hello: "world" })
+  app.get('/ping', (req, res, next) =>
+    res.status(200).json({ hello: 'world' })
   );
 
   //Routes
-  app.use("/user", router);
-  app.use("/auth", authRoute);
+  app.use('/user', router);
+  app.use('/auth', authRoute);
 
-  // Server Error
-  app.use((req, res, next) => {
-    const error = new Error("Not found");
-    Logging.error(error);
-    res.status(500).json({
-      message: error.message,
-    });
-  });
+  app.use(errorHandler);
 
   http
     .createServer(app)
@@ -69,7 +63,7 @@ const StartServer = () => {
 };
 
 /** Connect to Mongo */
-mongoose.set("strictQuery", false);
+mongoose.set('strictQuery', false);
 
 // for debug mongodb
 
@@ -77,9 +71,9 @@ mongoose.set("strictQuery", false);
 //   console.log('Mongoose:', col, method, query, doc);
 // });
 mongoose
-  .connect(config.mongo_uri, { retryWrites: true, w: "majority" })
+  .connect(config.mongo_uri, { retryWrites: true, w: 'majority' })
   .then(() => {
-    Logging.info("Connected to Mongo");
+    Logging.info('Connected to Mongo');
     StartServer();
   })
   .catch((error) => Logging.error(error));
