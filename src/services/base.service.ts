@@ -1,6 +1,5 @@
-import { Model } from "mongoose";
-import { ICRUDService } from "../utils/ICRUDService";
-import { DatabaseError, ServerError } from "../utils/error";
+import { Model } from 'mongoose';
+import { ICRUDService } from '../utils/ICRUDService';
 
 export abstract class BaseService<T> implements ICRUDService<T> {
   public readonly model: Model<T>;
@@ -11,67 +10,35 @@ export abstract class BaseService<T> implements ICRUDService<T> {
 
   async create(data: T): Promise<T> {
     const newDocument = new this.model(data);
-    try {
-      await newDocument.save();
-      return newDocument;
-    } catch (error: any) {
-      if (error.name === "ValidationError") {
-        throw new ServerError("Validation error: " + error.message);
-      } else {
-        throw new DatabaseError("Database error: " + error.message);
-      }
-    }
+    await newDocument.save();
+    return newDocument;
   }
 
   async search(key?: Partial<T>): Promise<T[] | null> {
-    try {
-      return await this.model.find(key);
-    } catch (error: any) {
-      throw new DatabaseError("Database error: " + error.message);
-    }
+    return await this.model.find(key);
   }
 
   async getById(id: string): Promise<T | null> {
-    try {
-      return await this.model.findById(id);
-    } catch (error: any) {
-      throw new DatabaseError("Database error: " + error.message);
-    }
+    return await this.model.findById(id);
   }
 
   async getAll(): Promise<T[] | null> {
-    try {
-      return await this.model.find();
-    } catch (error: any) {
-      throw new DatabaseError("Database error: " + error.message);
-    }
+    return await this.model.find();
   }
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
-    try {
-      const document = await this.model.findById(id);
+    const document = await this.model.findById(id);
 
-      if (!document) {
-        throw new Error(`Record not found`);
-      }
-
-      Object.assign(document, data);
-      await document.save();
-      return document;
-    } catch (error: any) {
-      if (error.name === "ValidationError") {
-        throw new ServerError("Validation error: " + error.message);
-      } else {
-        throw new DatabaseError("Database error: " + error.message);
-      }
+    if (!document) {
+      throw new Error(`Record not found`);
     }
+
+    Object.assign(document, data);
+    await document.save();
+    return document;
   }
 
   async delete(id: string): Promise<void> {
-    try {
-      await this.model.findByIdAndDelete(id);
-    } catch (error: any) {
-      throw new DatabaseError("Database error: " + error.message);
-    }
+    await this.model.findByIdAndDelete(id);
   }
 }

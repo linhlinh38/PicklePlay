@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { DatabaseError } from '../utils/error';
 import { userService } from '../services/user.service';
 import { IUser } from '../interfaces/user.interface';
 import { NotFoundError } from '../errors/notFound';
@@ -21,15 +20,15 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
     if (user.length !== 0) {
       throw new NotFoundError('Email already exists!');
     }
-    newUser.password = userService.encryptedPassword(req.body.password);
+    newUser.password = await userService.encryptedPassword(req.body.password);
     await userService.create(newUser);
     return res.status(201).json({ message: 'Created User Successfully' });
-  } catch (error: any) {
+  } catch (error) {
     next(error);
   }
 }
 
-async function getAllUsers(req: Request, res: Response, next: NextFunction) {
+async function getAllUsers(req: Request, res: Response) {
   const user = await userService.getAll();
   return res.status(200).json({ userList: user });
 }
