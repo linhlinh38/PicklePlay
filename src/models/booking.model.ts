@@ -1,4 +1,3 @@
-import { Schema } from "zod";
 import { BookingStatusEnum } from "../utils/enums";
 
 const mongoose = require("mongoose");

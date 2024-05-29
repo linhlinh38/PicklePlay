@@ -1,18 +1,17 @@
-import { IUser } from "../interfaces/user.interface";
-import userModel from "../models/user.model";
-import { createUserType } from "../models/validateSchema/createUser.validate.schema";
-import { ICRUDService } from "../utils/ICRUDService";
-import { DatabaseError, ServerError } from "../utils/error";
-import { BaseService } from "./base.service";
-const bcrypt = require("bcrypt");
+import { IUser } from '../interfaces/user.interface';
+import userModel from '../models/user.model';
+import { BaseService } from './base.service';
+import bcrypt from 'bcrypt';
 
 class UserService extends BaseService<IUser> {
   constructor() {
     super(userModel);
   }
 
-  encryptedPassword = function (password: string) {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+  encryptedPassword = async function (password: string) {
+    const salt = await bcrypt.genSalt(8);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
   };
 
   // async getById(id: string): Promise<IUser> {
