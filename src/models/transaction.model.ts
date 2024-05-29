@@ -1,6 +1,6 @@
 import { TransactionTypeEnum } from '../utils/enums';
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const transactionSchema = mongoose.Schema(
   {
     amount: {
@@ -32,5 +32,5 @@ const transactionSchema = mongoose.Schema(
   }
 );
 
-const transactionModel = mongoose.model('Transaction', transactionSchema)
-export default transactionModel
+const transactionModel = mongoose.model('Transaction', transactionSchema);
+export default transactionModel;
