@@ -63,9 +63,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --outDir build",
     "start": "node build/index.js",
-    "dev": "nodemon",
-    "postinstall": "husky install",
-    "prepare": "husky install"
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",
