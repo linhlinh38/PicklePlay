@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Model } from 'mongoose';
 
 export interface ICRUDService<T> {
   model: Model<T>;

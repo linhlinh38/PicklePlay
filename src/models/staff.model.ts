@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const staffSchema = mongoose.Schema({
   manager: { type: mongoose.Schema.Types.ObjectId, ref: 'Manager' },
   branch: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch' },
-  reports: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CourtReport' }],
+  reports: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CourtReport' }]
 });
 staffSchema.add(userModel.schema);
 

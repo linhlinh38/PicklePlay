@@ -1,29 +1,28 @@
-
 const mongoose = require('mongoose');
 const packageCourtSchema = mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: true
   },
   totalPrice: {
     type: Number,
-    required: true,
+    required: true
   },
   priceEachCourt: {
     type: Number,
-    required: true,
+    required: true
   },
   maxCourt: {
     type: Number,
-    required: true,
+    required: true
   },
   duration: {
     type: Number,
-    required: true,
+    required: true
   },
   description: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 const packageCourtModel = mongoose.model('PackageCourt', packageCourtSchema);

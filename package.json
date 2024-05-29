@@ -49,6 +49,9 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.5",
+    "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
@@ -72,5 +75,15 @@
   "bugs": {
     "url": "https://github.com/linhlinh38/Bookminton/issues"
   },
-  "homepage": "https://github.com/linhlinh38/Bookminton#readme"
+  "homepage": "https://github.com/linhlinh38/Bookminton#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write"
+    ]
+  }
 }

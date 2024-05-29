@@ -5,30 +5,30 @@ const transactionSchema = mongoose.Schema(
   {
     amount: {
       type: Number,
-      required: true,
+      required: true
     },
     from: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: true
     },
     to: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: true
     },
     content: {
       type: String,
-      require: true,
+      require: true
     },
     type: {
       type: String,
       require: true,
-      enum: Object.values(TransactionTypeEnum),
-    },
+      enum: Object.values(TransactionTypeEnum)
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
