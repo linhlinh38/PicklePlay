@@ -63,7 +63,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --outDir build",
     "start": "node build/index.js",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "postinstall": "husky install"
   },
   "repository": {
     "type": "git",
@@ -82,7 +83,7 @@
     }
   },
   "lint-staged": {
-    "*.js": [
+    "*.ts": [
       "prettier --write"
     ]
   }
