@@ -78,11 +78,6 @@
     "url": "https://github.com/linhlinh38/Bookminton/issues"
   },
   "homepage": "https://github.com/linhlinh38/Bookminton#readme",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.ts": [
       "prettier --write"
