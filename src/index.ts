@@ -3,57 +3,14 @@ import { config } from './config/envConfig';
 import express from 'express';
 import http from 'http';
 import Logging from './utils/logging';
-import router from './routes/user.route';
-import authRoute from './routes/auth.route';
-import { errorHandler } from './errors/globalErrorHandler';
+import indexRoute from './routes/index.route';
 const app = express();
 
 const StartServer = () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
-  // Log the request and response
-  app.use((req, res, next) => {
-    Logging.info(
-      `METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
-    );
-
-    res.on('finish', () => {
-      Logging.info(`STATUS: [${res.statusCode}]`);
-    });
-
-    next();
-  });
-
-  // Rules for calling API
-  app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-    );
-
-    if (req.method == 'OPTIONS') {
-      res.header(
-        'Access-Control-Allow-Methods',
-        'PUT, POST, PATCH, DELETE, GET'
-      );
-      return res.status(200).json({});
-    }
-
-    next();
-  });
-
-  // Healthcheck
-  app.get('/ping', (req, res, next) =>
-    res.status(200).json({ hello: 'world' })
-  );
-
-  //Routes
-  app.use('/user', router);
-  app.use('/auth', authRoute);
-
-  app.use(errorHandler);
+  app.use('/', indexRoute);
 
   http
     .createServer(app)
