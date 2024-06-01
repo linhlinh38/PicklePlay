@@ -8,7 +8,11 @@ export abstract class BaseService<T> implements ICRUDService<T> {
     this.model = model;
   }
 
+  async beforeCreate(data: T): Promise<void> {}
+  async beforeUpdate(id: string, data: Partial<T>): Promise<void> {}
+
   async create(data: T): Promise<T> {
+    await this.beforeCreate(data);
     const newDocument = new this.model(data);
     await newDocument.save();
     return newDocument;
@@ -27,6 +31,7 @@ export abstract class BaseService<T> implements ICRUDService<T> {
   }
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
+    this.beforeUpdate(id, data);
     const document = await this.model.findById(id);
 
     if (!document) {

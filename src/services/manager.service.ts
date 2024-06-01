@@ -16,7 +16,6 @@ class ManagerService extends BaseService<IManager> {
     if (emailUserExist) throw new EmailAlreadyExistError();
 
     const payments: [IPayment] = [...managerDTO.payments];
-    Logging.info(payments);
     delete managerDTO.payments;
     const savedManager = await this.model.create(managerDTO);
 
@@ -25,7 +24,6 @@ class ManagerService extends BaseService<IManager> {
         return { ...payment, owner: savedManager._id };
       });
       const savedPayments = await paymentModel.insertMany(paymentDatas);
-      Logging.info(paymentDatas);
       savedManager.payments = savedPayments.map((payment) => payment._id);
       await savedManager.save();
     }
