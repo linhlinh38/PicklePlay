@@ -5,17 +5,17 @@ const mongoose = require('mongoose');
 const managerSchema = mongoose.Schema({
   expiredDate: {
     type: Date,
-    required: true,
+    required: true
   },
   maxCourt: {
     type: Number,
-    require: true,
+    require: true
   },
   packagePurchases: [
-    { type: mongoose.Schema.Types.ObjectId, ref: 'PackagePurchase' },
+    { type: mongoose.Schema.Types.ObjectId, ref: 'PackagePurchase' }
   ],
   branchs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Branch' }],
-  payments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Payment' }],
+  payments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Payment' }]
 });
 managerSchema.add(userModel.schema);
 

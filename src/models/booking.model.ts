@@ -1,51 +1,51 @@
-import { BookingStatusEnum } from "../utils/enums";
+import { BookingStatusEnum } from '../utils/enums';
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const bookingSchema = mongoose.Schema(
   {
     type: {
       type: String,
-      required: true,
+      required: true
     },
     paymentType: {
       type: String,
-      required: true,
+      required: true
     },
     paymentMethod: {
       type: String,
-      required: true,
+      required: true
     },
     totalPrice: {
       type: Number,
-      required: true,
+      required: true
     },
     totalHour: {
       type: Number,
-      required: true,
+      required: true
     },
     startDate: {
       type: Date,
-      required: true,
+      required: true
     },
     endDate: {
       type: Date,
-      required: true,
+      required: true
     },
     status: {
       type: String,
       required: true,
-      enum: Object.values(BookingStatusEnum),
+      enum: Object.values(BookingStatusEnum)
     },
     customer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
-      required: true,
-    },
+      ref: 'Customer',
+      required: true
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
-const bookingModel = mongoose.model("Booking", bookingSchema);
+const bookingModel = mongoose.model('Booking', bookingSchema);
 export default bookingModel;

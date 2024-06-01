@@ -12,7 +12,7 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
     gender: req.body.gender,
     firstname: req.body.firstname,
     lastname: req.body.lastname,
-    phone: req.body.phone,
+    phone: req.body.phone
   };
   try {
     const key: Partial<IUser> = { email: req.body.email };
@@ -48,5 +48,5 @@ const getUserByIdHandler = async (
 export default {
   createUser,
   getUserByIdHandler,
-  getAllUsers,
+  getAllUsers
 };

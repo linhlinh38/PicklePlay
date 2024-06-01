@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -10,5 +10,5 @@ export const config = {
   mongo_uri: MONGO_DB_URI,
   port: PORT,
   SECRET_KEY_FOR_ACCESS_TOKEN: SECRET_KEY_FOR_ACCESS_TOKEN,
-  SECRET_KEY_FOR_REFRESH_TOKEN: SECRET_KEY_FOR_REFRESH_TOKEN,
+  SECRET_KEY_FOR_REFRESH_TOKEN: SECRET_KEY_FOR_REFRESH_TOKEN
 };

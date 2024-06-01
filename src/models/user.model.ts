@@ -1,57 +1,57 @@
-import { GenderEnum, RoleEnum, UserStatusEnum } from "../utils/enums";
+import { GenderEnum, RoleEnum, UserStatusEnum } from '../utils/enums';
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const userSchema = mongoose.Schema(
   {
     username: {
       type: String,
-      required: true,
+      required: true
     },
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true
     },
     password: {
       type: String,
-      required: true,
+      required: true
     },
     role: {
       type: String,
       required: true,
-      enum: Object.values(RoleEnum),
+      enum: Object.values(RoleEnum)
     },
     gender: {
       type: String,
       required: true,
-      enum: Object.values(GenderEnum),
+      enum: Object.values(GenderEnum)
     },
     firstName: {
       type: String,
-      require: true,
+      require: true
     },
     lastName: {
       type: String,
-      require: true,
+      require: true
     },
     phone: {
       type: String,
-      require: true,
+      require: true
     },
     status: {
       type: String,
       enum: Object.values(UserStatusEnum),
-      require: true,
+      require: true
     },
     dob: {
       type: Date,
-      require: true,
-    },
+      require: true
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
-const userModel = mongoose.model("User", userSchema);
+const userModel = mongoose.model('User', userSchema)
 export default userModel;

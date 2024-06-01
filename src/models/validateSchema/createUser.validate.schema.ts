@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
 
@@ -23,9 +23,10 @@ export const createUserSchema = z.object({
           value === 'Customer' ||
           value === 'Manager' ||
           value === 'Operator' ||
-          value === 'Staff', {
-            message: 'Role must be a valid role!',
-          }
+          value === 'Staff',
+        {
+          message: 'Role must be a valid role!'
+        }
       ),
     gender: z
       .string()
@@ -33,7 +34,7 @@ export const createUserSchema = z.object({
       .refine(
         (value) => value === 'Other' || value === 'Male' || value === 'Female',
         {
-          message: 'Gender must be Male/Female/Other!',
+          message: 'Gender must be Male/Female/Other!'
         }
       ),
     firstname: z
@@ -46,8 +47,8 @@ export const createUserSchema = z.object({
       .string()
       .min(1, { message: 'Phone must be greater than 1 number!' })
       .max(10, { message: 'Phone must be less than 10 number!' })
-      .regex(regexPhoneNumber, { message: 'Phone must be a valid phone' }),
-  }),
+      .regex(regexPhoneNumber, { message: 'Phone must be a valid phone' })
+  })
 });
 
 export type createUserType = z.infer<typeof createUserSchema>;

@@ -23,7 +23,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
     const payload = { userId: user.id.toString() };
 
     const token = jwt.sign(payload, SECRET_KEY_FOR_ACCESS_TOKEN, {
-      expiresIn: '1h',
+      expiresIn: '1h'
     });
     const refreshToken = generateRefreshToken(user.id.toString());
 
@@ -31,7 +31,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
     res.status(200).json({
       message: 'Login successful',
       accessToken: token,
-      refreshToken: refreshToken,
+      refreshToken: refreshToken
     });
   } catch (error) {
     next(error);
@@ -58,7 +58,7 @@ async function refreshToken(req: Request, res: Response) {
     }
 
     const newAccessToken = jwt.sign({ userId }, SECRET_KEY_FOR_ACCESS_TOKEN, {
-      expiresIn: '1h',
+      expiresIn: '1h'
     });
     res.status(200).json({ accessToken: newAccessToken });
   } catch (error) {
