@@ -24,5 +24,5 @@ const courtReportSchema = mongoose.Schema(
   }
 );
 
-const paymentModel = mongoose.model('CourtReport', courtReportSchema);
-export default paymentModel;
+const courtReportModel = mongoose.model('CourtReport', courtReportSchema);
+export default courtReportModel;

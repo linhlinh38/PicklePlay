@@ -14,7 +14,8 @@ const paymentSchema = mongoose.Schema({
   },
   expDate: {
     type: Date
-  }
+  },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 const paymentModel = mongoose.model('Payment', paymentSchema);

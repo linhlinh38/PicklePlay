@@ -1,7 +1,14 @@
 import { z } from 'zod';
 import { regexPhoneNumber } from '../../utils/regex';
 
-export const createUserSchema = z.object({
+const paymentSchema = z.object({
+  accountNumber: z.string().min(1, 'Account number is required'),
+  accountName: z.string().min(1, 'Account name is required'),
+  accountBank: z.string(),
+  expDate: z.date().optional()
+});
+
+export const createManagerSchema = z.object({
   body: z.object({
     username: z
       .string()
@@ -13,20 +20,6 @@ export const createUserSchema = z.object({
     password: z
       .string({ description: 'Password is required' })
       .min(8, { message: 'Password must be greater than 8 characters!' }),
-    role: z
-      .string()
-      .min(1, { message: 'Role must be greater than 1 characters!' })
-      .refine(
-        (value) =>
-          value === 'Admin' ||
-          value === 'Customer' ||
-          value === 'Manager' ||
-          value === 'Operator' ||
-          value === 'Staff',
-        {
-          message: 'Role must be a valid role!'
-        }
-      ),
     gender: z
       .string()
       .min(1, { message: 'Gender must be greater than 1 characters!' })
@@ -46,8 +39,13 @@ export const createUserSchema = z.object({
       .string()
       .min(1, { message: 'Phone must be greater than 1 number!' })
       .max(10, { message: 'Phone must be less than 10 number!' })
-      .regex(regexPhoneNumber, { message: 'Phone must be a valid phone' })
+      .regex(regexPhoneNumber, { message: 'Phone must be a valid phone' }),
+    dob: z
+      .string()
+      .transform((str) => new Date(str))
+      .refine((dob) => dob < new Date(), {
+        message: 'Date of birth must be in the past'
+      }),
+    payments: z.array(paymentSchema)
   })
 });
-
-export type createUserType = z.infer<typeof createUserSchema>;
