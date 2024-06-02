@@ -1,5 +1,6 @@
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { ICRUDService } from '../utils/ICRUDService';
+import { BadRequestError } from '../errors/badRequestError';
 
 export abstract class BaseService<T> implements ICRUDService<T> {
   public readonly model: Model<T>;
@@ -22,7 +23,10 @@ export abstract class BaseService<T> implements ICRUDService<T> {
     return await this.model.find(key);
   }
 
-  async getById(id: string): Promise<T | null> {
+  async getById(id: string): Promise<any | null> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestError('Invalid ID format');
+    }
     return await this.model.findById(id);
   }
 
@@ -31,6 +35,9 @@ export abstract class BaseService<T> implements ICRUDService<T> {
   }
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestError('Invalid ID format');
+    }
     this.beforeUpdate(id, data);
     const document = await this.model.findById(id);
 
@@ -44,6 +51,9 @@ export abstract class BaseService<T> implements ICRUDService<T> {
   }
 
   async delete(id: string): Promise<void> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestError('Invalid ID format');
+    }
     await this.model.findByIdAndDelete(id);
   }
 }

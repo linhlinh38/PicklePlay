@@ -3,9 +3,7 @@ import { config } from './config/envConfig';
 import express from 'express';
 import http from 'http';
 import Logging from './utils/logging';
-import router from './routes/user.route';
-import authRoute from './routes/auth.route';
-import managerRoute from './routes/manager.route';
+import indexRoute from './routes/index.route';
 import { errorHandler } from './errors/globalErrorHandler';
 const app = express();
 
@@ -51,9 +49,7 @@ const StartServer = () => {
   );
 
   //Routes
-  app.use('/user', router);
-  app.use('/auth', authRoute);
-  app.use('/manager', managerRoute);
+  app.use('/', indexRoute);
 
   app.use(errorHandler);
 

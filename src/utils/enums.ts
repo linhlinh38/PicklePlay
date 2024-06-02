@@ -47,3 +47,8 @@ export enum ScheduleStatusEnum {
   AVAILABLE = 'Available',
   UNAVAILABLE = 'Unavailable'
 }
+
+export enum PackageCourtTypeEnum {
+  CUSTOM = 'Custom',
+  STANDARD = 'Standard'
+}

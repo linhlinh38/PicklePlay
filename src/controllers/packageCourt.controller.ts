@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
-import { IManager } from '../interfaces/manager.interface';
-import { RoleEnum, UserStatusEnum } from '../utils/enums';
 import { managerService } from '../services/manager.service';
+import { IPackageCourt } from '../interfaces/packageCourt.interface';
+import { packageCourtService } from '../services/packageCourt.service';
 
-export default class ManagerController {
+export default class PackageCourtController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       return res.status(200).json({
-        message: 'Get all managers success',
-        data: await managerService.getAll()
+        message: 'Get all court packages success',
+        data: await packageCourtService.getAll()
       });
     } catch (error) {
       next(error);
@@ -19,8 +19,8 @@ export default class ManagerController {
     const id: string = req.params.id;
     try {
       return res.status(200).json({
-        message: 'Get manager by id success',
-        data: await managerService.getById(id)
+        message: 'Get court package success',
+        data: await packageCourtService.getById(id)
       });
     } catch (error) {
       next(error);
@@ -29,34 +29,28 @@ export default class ManagerController {
 
   static async create(req: Request, res: Response, next: NextFunction) {
     const {
-      username,
-      email,
-      password,
-      gender,
-      firstName,
-      lastName,
-      phone,
-      dob,
-      payments
+      name,
+      totalPrice,
+      priceEachCourt,
+      maxCourt,
+      duration,
+      description,
+      type
     } = req.body;
-    const managerDTO: IManager = {
-      username,
-      email,
-      password,
-      gender,
-      firstName,
-      lastName,
-      phone,
-      dob,
-      payments,
-      role: RoleEnum.MANAGER,
-      status: UserStatusEnum.PENDING
+    const packageCourtDTO: IPackageCourt = {
+      name,
+      totalPrice,
+      priceEachCourt,
+      maxCourt,
+      duration,
+      description,
+      type
     };
 
     try {
-      await managerService.createManager(managerDTO);
+      await packageCourtService.create(packageCourtDTO);
       return res.status(201).json({
-        message: 'Created Manager Successfully'
+        message: 'Create package Successfully'
       });
     } catch (error) {
       next(error);
@@ -65,18 +59,26 @@ export default class ManagerController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     const id: string = req.params.id;
-    const { gender, firstName, lastName, phone, dob } = req.body;
-    const managerDTO: Partial<IManager> = {
-      gender,
-      firstName,
-      lastName,
-      phone,
-      dob
+    const {
+      name,
+      totalPrice,
+      priceEachCourt,
+      maxCourt,
+      duration,
+      description
+    } = req.body;
+    const packageCourtDTO: Partial<IPackageCourt> = {
+      name,
+      totalPrice,
+      priceEachCourt,
+      maxCourt,
+      duration,
+      description
     };
     try {
-      await managerService.update(id, managerDTO);
+      await packageCourtService.update(id, packageCourtDTO);
       return res.status(200).json({
-        message: 'Update manager success'
+        message: 'Update package success'
       });
     } catch (error) {
       next(error);
@@ -88,12 +90,10 @@ export default class ManagerController {
     try {
       await managerService.delete(id);
       return res.status(200).json({
-        message: 'Delete manager success'
+        message: 'Delete package success'
       });
     } catch (error) {
       next(error);
     }
   }
-
-  static async buyPackage(req: Request, res: Response, next: NextFunction) {}
 }

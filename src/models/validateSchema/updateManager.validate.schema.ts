@@ -1,25 +1,8 @@
 import { z } from 'zod';
 import { regexPhoneNumber } from '../../utils/regex';
 
-const paymentSchema = z.object({
-  accountNumber: z.string().min(1, 'Account number is required'),
-  accountName: z.string().min(1, 'Account name is required'),
-  accountBank: z.string(),
-  expDate: z.date().optional()
-});
-
-export const createManagerSchema = z.object({
+export const updateManagerSchema = z.object({
   body: z.object({
-    username: z
-      .string()
-      .min(1, { message: 'Username must be greater than 1 characters!' }),
-    email: z
-      .string()
-      .min(1, { message: 'Email must be greater than 1 characters!' })
-      .email('This is not a valid email.'),
-    password: z
-      .string({ description: 'Password is required' })
-      .min(8, { message: 'Password must be greater than 8 characters!' }),
     gender: z
       .string()
       .min(1, { message: 'Gender must be greater than 1 characters!' })
@@ -45,7 +28,6 @@ export const createManagerSchema = z.object({
       .transform((str) => new Date(str))
       .refine((dob) => dob < new Date(), {
         message: 'Date of birth must be in the past'
-      }),
-    payments: z.array(paymentSchema)
+      })
   })
 });

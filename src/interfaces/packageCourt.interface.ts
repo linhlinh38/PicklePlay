@@ -5,4 +5,5 @@ export interface IPackageCourt {
   maxCourt: number;
   duration: number;
   description: string;
+  type: string;
 }
