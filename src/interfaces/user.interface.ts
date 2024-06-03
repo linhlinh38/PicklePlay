@@ -4,7 +4,9 @@ export interface IUser {
   role: string;
   password: string;
   gender: string;
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   phone: string;
+  status: string;
+  dob: Date;
 }
