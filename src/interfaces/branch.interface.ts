@@ -1,3 +1,5 @@
+import { IManager } from './manager.interface';
+
 export interface IBranch {
   _id?: string;
   name: string;
@@ -10,5 +12,5 @@ export interface IBranch {
   description: string;
   availableTimes: string[];
   status?: string;
-  manager?: string;
+  manager?: string | IManager;
 }
