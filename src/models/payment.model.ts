@@ -3,18 +3,18 @@ const mongoose = require('mongoose');
 const paymentSchema = mongoose.Schema({
   accountNumber: {
     type: String,
-    required: true,
+    required: true
   },
   accountName: {
     type: String,
-    required: true,
+    required: true
   },
   accountBank: {
-    type: String,
+    type: String
   },
   expDate: {
-    type: Date,
-  },
+    type: Date
+  }
 });
 
 const paymentModel = mongoose.model('Payment', paymentSchema);

@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from "express";
-import { userService } from "../services/user.service";
-import { IUser } from "../interfaces/user.interface";
-import { NotFoundError } from "../errors/notFound";
-import { encryptedPassword } from "../utils/jwt";
-import { UserStatusEnum } from "../utils/enums";
+import { NextFunction, Request, Response } from 'express';
+import { userService } from '../services/user.service';
+import { IUser } from '../interfaces/user.interface';
+import { NotFoundError } from '../errors/notFound';
+import { encryptedPassword } from '../utils/jwt';
+import { UserStatusEnum } from '../utils/enums';
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
   const newUser: IUser = {
@@ -19,12 +19,6 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
     status: UserStatusEnum.ACTIVE,
   };
   try {
-    const key: Partial<IUser> = { email: req.body.email };
-    const user = await userService.search(key);
-    if (user.length !== 0) {
-      throw new NotFoundError("Email already exists!");
-    }
-    newUser.password = await encryptedPassword(req.body.password);
     await userService.create(newUser);
     return res.status(201).json({ message: "Created User Successfully" });
   } catch (error) {
@@ -52,5 +46,5 @@ const getUserByIdHandler = async (
 export default {
   createUser,
   getUserByIdHandler,
-  getAllUsers,
+  getAllUsers
 };

@@ -3,27 +3,30 @@ const packagePurchaseSchema = mongoose.Schema(
   {
     totalPrice: {
       type: Number,
-      required: true,
+      required: true
     },
     totalCourt: {
       type: Number,
-      required: true,
+      required: true
     },
     startDate: {
       type: Date,
-      required: true,
+      required: true
     },
     endDate: {
       type: Date,
-      required: true,
+      required: true
     },
     manager: { type: mongoose.Schema.Types.ObjectId, ref: 'Manager' },
-    packageCourt: { type: mongoose.Schema.Types.ObjectId, ref: 'PackageCourt' },
+    packageCourt: { type: mongoose.Schema.Types.ObjectId, ref: 'PackageCourt' }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
-const packagePurchaseModel = mongoose.model('PackagePurchase', packagePurchaseSchema);
+const packagePurchaseModel = mongoose.model(
+  'PackagePurchase',
+  packagePurchaseSchema
+);
 export default packagePurchaseModel;

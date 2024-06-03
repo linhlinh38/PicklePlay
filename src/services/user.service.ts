@@ -1,24 +1,36 @@
-import { IUser } from "../interfaces/user.interface";
-import userModel from "../models/user.model";
-import { BaseService } from "./base.service";
-import bcrypt from "bcrypt";
+import { EmailAlreadyExistError } from '../errors/emailAlreadyExistError';
+import { IUser } from '../interfaces/user.interface';
+import userModel from '../models/user.model';
+import { BaseService } from './base.service';
+import bcrypt from 'bcrypt';
 
 class UserService extends BaseService<IUser> {
   constructor() {
     super(userModel);
   }
 
-  // async getById(id: string): Promise<IUser> {
-  //   try {
-  //     const user = await userModel
-  //       .findById(id)
-  //       .select("id username first_name last_name email role gender phone");
+  encryptedPassword = async function (password: string) {
+    const salt = await bcrypt.genSalt(8);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
+  };
 
-  //     return user;
-  //   } catch (error) {
-  //     throw new DatabaseError("Database error: " + error.message);
-  //   }
-  // }
+  async beforeCreate(data: IUser): Promise<void> {
+    const key: Partial<IUser> = { email: data.email };
+    const user = await this.search(key);
+    if (user.length !== 0) {
+      throw new EmailAlreadyExistError();
+    }
+    data.password = await userService.encryptedPassword(data.password);
+  }
+
+  async beforeUpdate(id: string, data: IUser): Promise<void> {
+    const key: Partial<IUser> = { email: data.email };
+    const user = await this.search(key);
+    if (user.length == 0) {
+      throw new EmailAlreadyExistError();
+    }
+  }
 }
 
 export const userService = new UserService();

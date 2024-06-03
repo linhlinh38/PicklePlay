@@ -1,11 +1,12 @@
-import { NextFunction, Request, Response } from "express";
-import { userService } from "../services/user.service";
-import { IUser } from "../interfaces/user.interface";
-import { NotFoundError } from "../errors/notFound";
-import { encryptedPassword } from "../utils/jwt";
-import { RoleEnum, UserStatusEnum } from "../utils/enums";
-import { customerService } from "../services/customer.service";
-import { AuthRequest } from "../middlewares/authentication";
+import { NextFunction, Request, Response } from 'express';
+import { userService } from '../services/user.service';
+import { IUser } from '../interfaces/user.interface';
+import { NotFoundError } from '../errors/notFound';
+import { encryptedPassword } from '../utils/jwt';
+import { RoleEnum, UserStatusEnum } from '../utils/enums';
+import { customerService } from '../services/customer.service';
+import { AuthRequest } from '../middlewares/authentication';
+import { EmailAlreadyExistError } from '../errors/emailAlreadyExistError';
 
 async function createCustomer(req: Request, res: Response, next: NextFunction) {
   const newCustomer: IUser = {
@@ -18,21 +19,21 @@ async function createCustomer(req: Request, res: Response, next: NextFunction) {
     lastName: req.body.lastName,
     phone: req.body.phone,
     dob: req.body.dob,
-    status: UserStatusEnum.ACTIVE,
+    status: UserStatusEnum.ACTIVE
   };
   try {
     const key: Partial<IUser> = {
       email: req.body.email,
-      role: RoleEnum.CUSTOMER,
+      role: RoleEnum.CUSTOMER
     };
     const customer = await userService.search(key);
 
     if (customer.length !== 0) {
-      throw new NotFoundError("Email already exists!");
+      throw new EmailAlreadyExistError('Email already exists!');
     }
     newCustomer.password = await encryptedPassword(req.body.password);
     await customerService.create(newCustomer);
-    return res.status(201).json({ message: "Created Customer Successfully" });
+    return res.status(201).json({ message: 'Created Customer Successfully' });
   } catch (error) {
     next(error);
   }
@@ -78,7 +79,7 @@ async function updateCustomer(
     const id = req.loginUser as string;
     const updateData = req.body as Partial<IUser>;
     const customer = await customerService.update(id, updateData);
-    if (!customer) throw new NotFoundError("Customer not found");
+    if (!customer) throw new NotFoundError('Customer not found');
     return res.status(200).json({ customer: customer });
   } catch (error) {
     next(error);
@@ -89,5 +90,5 @@ export default {
   getAllCustomers,
   getCustomerById,
   getCustomerInfo,
-  updateCustomer,
+  updateCustomer
 };

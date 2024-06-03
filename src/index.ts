@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { config } from "./config/envConfig";
 import express from "express";
 import http from "http";
-import Logging from "./utils/logging";
+import Logging from "./utils/Logging";
 import { errorHandler } from "./errors/globalErrorHandler";
 import router from "./routes/index.route";
 const app = express();

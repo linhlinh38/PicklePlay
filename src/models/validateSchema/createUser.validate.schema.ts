@@ -1,5 +1,5 @@
-import moment from "moment";
-import { z } from "zod";
+import { z } from 'zod';
+import moment from 'moment';
 
 const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
 
@@ -22,7 +22,7 @@ export const createUserSchema = z.object({
       .refine(
         (value) => value === "Other" || value === "Male" || value === "Female",
         {
-          message: "Gender must be Male/Female/Other!",
+          message: 'Gender must be Male/Female/Other!'
         }
       )
       .optional(),

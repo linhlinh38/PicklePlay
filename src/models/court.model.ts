@@ -1,43 +1,43 @@
-import { BranchStatusEnum } from "../utils/enums";
+import { BranchStatusEnum } from '../utils/enums';
 
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const courtSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: true
     },
     type: {
       type: String,
-      required: true,
+      required: true
     },
     price: {
       type: Number,
-      required: true,
+      required: true
     },
     images: [
       {
-        type: String,
-      },
+        type: String
+      }
     ],
     description: {
-      type: String,
+      type: String
     },
     status: {
       type: String,
       required: true,
-      enum: Object.values(BranchStatusEnum),
+      enum: Object.values(BranchStatusEnum)
     },
     branch: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Branch",
-      required: true,
-    },
+      ref: 'Branch',
+      required: true
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
-const courtModel = mongoose.model("Court", courtSchema);
+const courtModel = mongoose.model('Court', courtSchema);
 export default courtModel;
