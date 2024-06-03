@@ -1,12 +1,16 @@
 import express from "express";
-import auth from "../middlewares/auth";
+import authentication from "../middlewares/authentication";
 import userController from "../controllers/user.controller";
 import validate from "../utils/validate";
 import { createUserSchema } from "../models/validateSchema/createUser.validate.schema";
 
-const router = express.Router();
-router.use(auth);
-router.get("/", userController.getAllUsers);
-router.post("/create", validate(createUserSchema), userController.createUser);
+const userRoute = express.Router();
+userRoute.use(authentication);
+userRoute.get("/", userController.getAllUsers);
+userRoute.post(
+  "/create",
+  validate(createUserSchema),
+  userController.createUser
+);
 
-export default router;
+export default userRoute;
