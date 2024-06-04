@@ -12,7 +12,7 @@ export default class BranchController {
     try {
       return res.status(200).json({
         message: 'Get pending branches success',
-        data: await branchService.getPendingBranches()
+        data: await branchService.search({ status: BranchStatusEnum.PENDING })
       });
     } catch (error) {
       next(error);

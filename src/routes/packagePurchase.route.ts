@@ -1,5 +1,4 @@
 import express from 'express';
-import auth from '../middlewares/auth';
 import PackagePurchaseController from '../controllers/packagePurchase.controller';
 
 const router = express.Router();

@@ -23,7 +23,7 @@ export abstract class BaseService<T> implements ICRUDService<T> {
     return await this.model.find(key);
   }
 
-  async getById(id: string): Promise<any | null> {
+  async getById(id: string): Promise<T | null> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestError('Invalid ID format');
     }

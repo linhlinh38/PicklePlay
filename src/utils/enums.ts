@@ -37,6 +37,12 @@ export enum BranchStatusEnum {
   INACTIVE = 'Inactive'
 }
 
+export enum CourtStatusEnum {
+  PENDING = 'Pending',
+  INUSE = 'Inuse',
+  TERMINATION = 'Termination'
+}
+
 export enum BookingStatusEnum {
   PENDING = 'Pending',
   BOOKED = 'Booked',

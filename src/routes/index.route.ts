@@ -8,33 +8,35 @@ import branchRoute from './branch.route';
 import { NextFunction, Request, Response } from 'express';
 import upload from '../config/multerConfig';
 import { filesUploadProcessing } from '../utils/fileUploadProcessing';
+import customerRoute from './customer.route';
+import courtRoute from './court.route';
 
-const indexRoute = express.Router();
+const router = express.Router();
 
-indexRoute.use('/user', userRoute);
-indexRoute.use('/auth', authRoute);
-indexRoute.use('/manager', managerRoute);
-indexRoute.use('/package-court', packageCourtRoute);
-indexRoute.use('/package-purchase', packagePurchaseRoute);
-indexRoute.use('/branch', branchRoute);
-indexRoute.post(
+router.use('/user', userRoute);
+router.use('/auth', authRoute);
+router.use('/customer', customerRoute);
+router.use('/court', courtRoute);
+router.use('/manager', managerRoute);
+router.use('/package-court', packageCourtRoute);
+router.use('/package-purchase', packagePurchaseRoute);
+router.use('/branch', branchRoute);
+router.post(
   '/upload',
-  upload.array('f', 10),
+  upload.array('images', 10),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.files || !Array.isArray(req.files)) {
         return res.status(400).json({ message: 'No files uploaded' });
       }
 
-      res
-        .status(200)
-        .json({
-          message: 'Files uploaded successfully',
-          fileUrls: await filesUploadProcessing(req.files)
-        });
+      res.status(200).json({
+        message: 'Files uploaded successfully',
+        fileUrls: await filesUploadProcessing(req.files)
+      });
     } catch (error) {
       next(error);
     }
   }
 );
-export default indexRoute;
+export default router;

@@ -43,8 +43,9 @@ class PackageCourtService extends BaseService<IPackageCourt> {
     };
     await packagePurchaseModel.create(createdPackagePurchase);
 
-    manager.expiredDate = endDateOfPackagePurchase;
-    await manager.save();
+    managerService.update(manager._id, {
+      expiredDate: endDateOfPackagePurchase
+    });
   }
 }
 

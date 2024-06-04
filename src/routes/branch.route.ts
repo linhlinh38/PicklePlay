@@ -1,5 +1,4 @@
 import express from 'express';
-import auth from '../middlewares/auth';
 import validate from '../utils/validate';
 import BranchController from '../controllers/branch.controller';
 import upload from '../config/multerConfig';

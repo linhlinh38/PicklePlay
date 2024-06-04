@@ -9,12 +9,10 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
-      unique: true
+      required: true
     },
     password: {
-      type: String,
-      required: true
+      type: String
     },
     role: {
       type: String,
@@ -23,20 +21,16 @@ const userSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      required: true,
       enum: Object.values(GenderEnum)
     },
     firstName: {
-      type: String,
-      require: true
+      type: String
     },
     lastName: {
-      type: String,
-      require: true
+      type: String
     },
     phone: {
-      type: String,
-      require: true
+      type: String
     },
     status: {
       type: String,
@@ -44,8 +38,7 @@ const userSchema = mongoose.Schema(
       require: true
     },
     dob: {
-      type: Date,
-      require: true
+      type: Date
     }
   },
   {
@@ -53,5 +46,5 @@ const userSchema = mongoose.Schema(
   }
 );
 
-const userModel = mongoose.model('User', userSchema)
+const userModel = mongoose.model('User', userSchema);
 export default userModel;

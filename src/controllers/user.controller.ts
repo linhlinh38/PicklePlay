@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { userService } from '../services/user.service';
 import { IUser } from '../interfaces/user.interface';
+import { NotFoundError } from '../errors/notFound';
+import { encryptedPassword } from '../utils/jwt';
+import { UserStatusEnum } from '../utils/enums';
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
   const newUser: IUser = {
@@ -9,9 +12,11 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
     password: req.body.password,
     role: req.body.role,
     gender: req.body.gender,
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    phone: req.body.phone
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    phone: req.body.phone,
+    dob: req.body.date,
+    status: UserStatusEnum.ACTIVE
   };
   try {
     await userService.create(newUser);
