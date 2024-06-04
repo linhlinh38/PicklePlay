@@ -14,7 +14,8 @@ export enum GenderEnum {
 
 export enum UserStatusEnum {
   ACTIVE = 'Active',
-  INACTIVE = 'Inactive'
+  INACTIVE = 'Inactive',
+  PENDING = 'Pending'
 }
 
 export enum TransactionTypeEnum {
@@ -51,4 +52,9 @@ export enum BookingStatusEnum {
 export enum ScheduleStatusEnum {
   AVAILABLE = 'Available',
   UNAVAILABLE = 'Unavailable'
+}
+
+export enum PackageCourtTypeEnum {
+  CUSTOM = 'Custom',
+  STANDARD = 'Standard'
 }

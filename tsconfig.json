@@ -6,7 +6,8 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "./build",
-    "allowJs": true
+    "allowJs": true,
+    "resolveJsonModule": true
   },
   "lib": ["es2015"]
 }

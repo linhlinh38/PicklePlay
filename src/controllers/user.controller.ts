@@ -16,11 +16,11 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
     lastName: req.body.lastName,
     phone: req.body.phone,
     dob: req.body.date,
-    status: UserStatusEnum.ACTIVE,
+    status: UserStatusEnum.ACTIVE
   };
   try {
     await userService.create(newUser);
-    return res.status(201).json({ message: "Created User Successfully" });
+    return res.status(201).json({ message: 'Created User Successfully' });
   } catch (error) {
     next(error);
   }

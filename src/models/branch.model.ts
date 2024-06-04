@@ -17,8 +17,7 @@ const branchSchema = mongoose.Schema(
     },
     images: [
       {
-        type: String,
-        required: true
+        type: String
       }
     ],
     license: [
@@ -38,7 +37,7 @@ const branchSchema = mongoose.Schema(
     description: {
       type: String
     },
-    availableTime: [
+    availableTimes: [
       {
         type: String,
         required: true

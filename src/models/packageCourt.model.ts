@@ -1,24 +1,27 @@
+import { PackageCourtTypeEnum } from '../utils/enums';
+
 const mongoose = require('mongoose');
 const packageCourtSchema = mongoose.Schema({
   name: {
     type: String,
     required: true
   },
+  type: {
+    type: String,
+    required: true,
+    enum: Object.values(PackageCourtTypeEnum)
+  },
   totalPrice: {
-    type: Number,
-    required: true
+    type: Number
   },
   priceEachCourt: {
-    type: Number,
-    required: true
+    type: Number
   },
   maxCourt: {
-    type: Number,
-    required: true
+    type: Number
   },
   duration: {
-    type: Number,
-    required: true
+    type: Number
   },
   description: {
     type: String

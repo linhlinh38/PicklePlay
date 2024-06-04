@@ -1,4 +1,3 @@
-import { Schema } from 'zod';
 import { ScheduleStatusEnum } from '../utils/enums';
 
 const mongoose = require('mongoose');

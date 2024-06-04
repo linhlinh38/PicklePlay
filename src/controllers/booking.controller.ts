@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ICourt } from '../interfaces/court.interface';
 import { BranchStatusEnum } from '../utils/enums';
-import { courtService } from '../services/court.service';
 import { IBooking } from '../interfaces/booking.interface';
 import { bookingService } from '../services/booking.service';
 

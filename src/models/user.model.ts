@@ -9,10 +9,10 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: true
     },
     password: {
-      type: String,
+      type: String
     },
     role: {
       type: String,
@@ -21,16 +21,16 @@ const userSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: Object.values(GenderEnum),
+      enum: Object.values(GenderEnum)
     },
     firstName: {
-      type: String,
+      type: String
     },
     lastName: {
-      type: String,
+      type: String
     },
     phone: {
-      type: String,
+      type: String
     },
     status: {
       type: String,
@@ -38,13 +38,13 @@ const userSchema = mongoose.Schema(
       require: true
     },
     dob: {
-      type: Date,
-    },
+      type: Date
+    }
   },
   {
     timestamps: true
   }
 );
 
-const userModel = mongoose.model('User', userSchema)
+const userModel = mongoose.model('User', userSchema);
 export default userModel;

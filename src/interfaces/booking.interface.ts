@@ -7,5 +7,6 @@ export interface IBooking {
   startDate: string;
   endDate: string;
   status: string;
-  customer: string;
+  customer?: string;
+  manager?: string;
 }

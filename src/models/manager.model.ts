@@ -5,11 +5,11 @@ const mongoose = require('mongoose');
 const managerSchema = mongoose.Schema({
   expiredDate: {
     type: Date,
-    required: true
+    default: null
   },
   maxCourt: {
     type: Number,
-    require: true
+    default: 0
   },
   packagePurchases: [
     { type: mongoose.Schema.Types.ObjectId, ref: 'PackagePurchase' }
