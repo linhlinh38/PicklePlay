@@ -10,11 +10,9 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true
     },
     password: {
       type: String,
-      required: true
     },
     role: {
       type: String,
@@ -23,20 +21,16 @@ const userSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      required: true,
-      enum: Object.values(GenderEnum)
+      enum: Object.values(GenderEnum),
     },
     firstName: {
       type: String,
-      require: true
     },
     lastName: {
       type: String,
-      require: true
     },
     phone: {
       type: String,
-      require: true
     },
     status: {
       type: String,
@@ -45,8 +39,7 @@ const userSchema = mongoose.Schema(
     },
     dob: {
       type: Date,
-      require: true
-    }
+    },
   },
   {
     timestamps: true

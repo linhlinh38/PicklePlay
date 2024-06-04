@@ -5,6 +5,7 @@ import { generateRefreshToken, verifyToken } from '../utils/jwt';
 import { userService } from '../services/user.service';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { UserStatusEnum } from '../utils/enums';
 const { SECRET_KEY_FOR_ACCESS_TOKEN, SECRET_KEY_FOR_REFRESH_TOKEN } = config;
 
 async function login(req: Request, res: Response, next: NextFunction) {
@@ -18,6 +19,11 @@ async function login(req: Request, res: Response, next: NextFunction) {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid password' });
+    }
+    console.log(isMatch);
+
+    if (user.status === UserStatusEnum.INACTIVE) {
+      return res.status(401).json({ message: 'Account is INACTIVE' });
     }
 
     const payload = { userId: user.id.toString() };

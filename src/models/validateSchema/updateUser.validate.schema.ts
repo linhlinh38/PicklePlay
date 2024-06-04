@@ -1,17 +1,19 @@
-import { z } from 'zod';
-import moment from 'moment';
+import moment from "moment";
+import { z } from "zod";
 
 const regexPhoneNumber = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
 
-export const createUserSchema = z.object({
+export const updateUserSchema = z.object({
   body: z.object({
     username: z
       .string()
-      .min(1, { message: "Username must be greater than 1 characters!" }),
+      .min(1, { message: "Username must be greater than 1 characters!" })
+      .optional(),
     email: z
       .string()
       .min(1, { message: "Email must be greater than 1 characters!" })
-      .email("This is not a valid email."),
+      .email("This is not a valid email.")
+      .optional(),
     password: z
       .string({ description: "Password is required" })
       .min(8, { message: "Password must be greater than 8 characters!" })
@@ -22,7 +24,7 @@ export const createUserSchema = z.object({
       .refine(
         (value) => value === "Other" || value === "Male" || value === "Female",
         {
-          message: 'Gender must be Male/Female/Other!'
+          message: "Gender must be Male/Female/Other!",
         }
       )
       .optional(),
@@ -56,4 +58,4 @@ export const createUserSchema = z.object({
   }),
 });
 
-export type createUserType = z.infer<typeof createUserSchema>;
+export type updateUserType = z.infer<typeof updateUserSchema>;

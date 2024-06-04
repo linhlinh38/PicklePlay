@@ -1,4 +1,5 @@
 import jwt, { VerifyOptions, SignOptions } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 // import Roles from "../constant/roles";
 
 import { config } from '../config/envConfig';
@@ -12,6 +13,12 @@ export function generateRefreshToken(userId: string) {
     expiresIn: '7d'
   });
   return refreshToken;
+}
+
+export async function encryptedPassword(password: string) {
+  const salt = await bcrypt.genSalt(8);
+  const hash = await bcrypt.hash(password, salt);
+  return hash;
 }
 
 export type AccessToken = {

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpError } from '../errors/httpError'; // Import your custom HttpError class
-import Logging from '../utils/logging';
 import { DatabaseError } from './databaseError';
+import Logging from '../utils/Logging';
 
 export function errorHandler(
   err: Error,

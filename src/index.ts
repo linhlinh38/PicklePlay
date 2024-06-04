@@ -2,10 +2,9 @@ import mongoose from 'mongoose';
 import { config } from './config/envConfig';
 import express from 'express';
 import http from 'http';
-import Logging from './utils/logging';
-import router from './routes/user.route';
-import authRoute from './routes/auth.route';
 import { errorHandler } from './errors/globalErrorHandler';
+import router from './routes/index.route';
+import Logging from './utils/Logging';
 const app = express();
 
 const StartServer = () => {
@@ -50,8 +49,7 @@ const StartServer = () => {
   );
 
   //Routes
-  app.use('/user', router);
-  app.use('/auth', authRoute);
+  app.use('/bookminton', router);
 
   app.use(errorHandler);
 
