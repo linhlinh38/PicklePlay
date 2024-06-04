@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import userModel from "../models/user.model";
-import { config } from "../config/envConfig";
-import { generateRefreshToken, verifyToken } from "../utils/jwt";
-import { userService } from "../services/user.service";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import { UserStatusEnum } from "../utils/enums";
+import { NextFunction, Request, Response } from 'express';
+import userModel from '../models/user.model';
+import { config } from '../config/envConfig';
+import { generateRefreshToken, verifyToken } from '../utils/jwt';
+import { userService } from '../services/user.service';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import { UserStatusEnum } from '../utils/enums';
 const { SECRET_KEY_FOR_ACCESS_TOKEN, SECRET_KEY_FOR_REFRESH_TOKEN } = config;
 
 async function login(req: Request, res: Response, next: NextFunction) {
@@ -13,16 +13,17 @@ async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: "Invalid email" });
+      return res.status(401).json({ message: 'Invalid email' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid password" });
+      return res.status(401).json({ message: 'Invalid password' });
     }
+    console.log(isMatch);
 
     if (user.status === UserStatusEnum.INACTIVE) {
-      return res.status(401).json({ message: "Account is INACTIVE" });
+      return res.status(401).json({ message: 'Account is INACTIVE' });
     }
 
     const payload = { userId: user.id.toString() };
@@ -32,9 +33,9 @@ async function login(req: Request, res: Response, next: NextFunction) {
     });
     const refreshToken = generateRefreshToken(user.id.toString());
 
-    res.setHeader("Authorization", `Bearer ${token}`);
+    res.setHeader('Authorization', `Bearer ${token}`);
     res.status(200).json({
-      message: "Login successful",
+      message: 'Login successful',
       accessToken: token,
       refreshToken: refreshToken
     });
@@ -47,7 +48,7 @@ async function refreshToken(req: Request, res: Response) {
   const refreshToken = req.body.refreshToken;
 
   if (!refreshToken) {
-    return res.status(400).json({ message: "Missing refresh token" });
+    return res.status(400).json({ message: 'Missing refresh token' });
   }
 
   try {
@@ -59,7 +60,7 @@ async function refreshToken(req: Request, res: Response) {
 
     const user = await userModel.findById(userId);
     if (!user) {
-      return res.status(401).json({ message: "Invalid refresh token" });
+      return res.status(401).json({ message: 'Invalid refresh token' });
     }
 
     const newAccessToken = jwt.sign({ userId }, SECRET_KEY_FOR_ACCESS_TOKEN, {
@@ -68,14 +69,14 @@ async function refreshToken(req: Request, res: Response) {
     res.status(200).json({ accessToken: newAccessToken });
   } catch (error) {
     console.error(error);
-    res.status(401).json({ message: "Invalid refresh token" });
+    res.status(401).json({ message: 'Invalid refresh token' });
   }
 }
 
 const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authorization = req.headers.authorization;
-    const accessToken = authorization.split(" ")[1];
+    const accessToken = authorization.split(' ')[1];
     const { payload } = verifyToken(accessToken);
     const user = await userService.getById(payload.userId);
     return res.status(200).json({ user: user });
