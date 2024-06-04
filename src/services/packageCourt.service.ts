@@ -2,13 +2,9 @@ import { BaseService } from './base.service';
 import packageCourtModel from '../models/packageCourt.model';
 import { IPackageCourt } from '../interfaces/packageCourt.interface';
 import { IBuyPackage } from '../interfaces/buyPackage.interface';
-import { IPackagePurchase } from '../interfaces/packagePurchase.interface';
-import { IManager } from '../interfaces/manager.interface';
 import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
-import { duration } from 'moment';
 import packagePurchaseModel from '../models/packagePurchase.model';
-import managerModel from '../models/manager.model';
 
 class PackageCourtService extends BaseService<IPackageCourt> {
   constructor() {

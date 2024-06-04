@@ -1,9 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
-import { packagePurchaseService } from '../services/packagePurchase.service';
-import { packageCourtService } from '../services/packageCourt.service';
-import { IBuyPackage } from '../interfaces/buyPackage.interface';
+import { IBranch } from '../interfaces/branch.interface';
+import { branchService } from '../services/branch.service';
+import { BranchStatusEnum } from '../utils/enums';
 
 export default class BranchController {
+  static async getPendingBranches(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      return res.status(200).json({
+        message: 'Get pending branches success',
+        data: await branchService.getPendingBranches()
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   static async requestCreateBranch(
     req: Request,
     res: Response,
@@ -20,10 +34,25 @@ export default class BranchController {
       availableTimes,
       managerId
     } = req.body;
+    const branchDTO: IBranch = {
+      name,
+      phone,
+      address,
+      license,
+      totalCourt,
+      slotDuration,
+      description,
+      availableTimes,
+      manager: managerId,
+      status: BranchStatusEnum.PENDING
+    };
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      branchDTO.images = req.files;
+    }
     try {
+      await branchService.requestCreateBranch(branchDTO);
       return res.status(200).json({
-        message: 'Get all purchase packages success',
-        data: await packagePurchaseService.getPurchasesOfManager(managerId)
+        message: 'Send create branch request success'
       });
     } catch (error) {
       next(error);
@@ -32,8 +61,24 @@ export default class BranchController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       return res.status(200).json({
-        message: 'Get all purchase packages success',
-        data: await packagePurchaseService.getAll()
+        message: 'Get all branches success',
+        data: await branchService.getAll()
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getAllBranchesOfManager(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const managerId = req.params.id;
+    try {
+      return res.status(200).json({
+        message: 'Get branches success',
+        data: await branchService.getAllBranchesOfManager(managerId)
       });
     } catch (error) {
       next(error);
@@ -44,31 +89,52 @@ export default class BranchController {
     const id: string = req.params.id;
     try {
       return res.status(200).json({
-        message: 'Get court package success',
-        data: await packagePurchaseService.getById(id)
+        message: 'Get branch success',
+        data: await branchService.getById(id)
       });
     } catch (error) {
       next(error);
     }
   }
 
-  static async buyPackageCourt(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    const { packageId, managerId, duration, totalCourt } = req.body;
-    const buyPackageDTO: IBuyPackage = {
-      packageId,
-      managerId,
-      duration,
-      totalCourt
+  static async update(req: Request, res: Response, next: NextFunction) {
+    const id: string = req.params.id;
+    const {
+      name,
+      phone,
+      address,
+      license,
+      totalCourt,
+      slotDuration,
+      description,
+      availableTimes
+    } = req.body;
+    const branchDTO: Partial<IBranch> = {
+      name,
+      phone,
+      address,
+      license,
+      totalCourt,
+      slotDuration,
+      description,
+      availableTimes
     };
-
     try {
-      await packageCourtService.buyPackageCourt(buyPackageDTO);
+      await branchService.update(id, branchDTO);
       return res.status(200).json({
-        message: 'Buy package Successfully'
+        message: 'Update branch success'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req: Request, res: Response, next: NextFunction) {
+    const id: string = req.params.id;
+    try {
+      await branchService.update(id, { status: BranchStatusEnum.INACTIVE });
+      return res.status(200).json({
+        message: 'Delete branch success'
       });
     } catch (error) {
       next(error);

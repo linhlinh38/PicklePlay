@@ -1,19 +1,21 @@
 import express from 'express';
 import auth from '../middlewares/auth';
 import validate from '../utils/validate';
-import PackageCourtController from '../controllers/packageCourt.controller';
-import { createPackageCourtSchema } from '../models/validateSchema/createPackageCourt.validate.schema';
+import BranchController from '../controllers/branch.controller';
+import upload from '../config/multerConfig';
+import { createBranchSchema } from '../models/validateSchema/createBranch.validate.schema';
 
 const router = express.Router();
 // router.use(auth);
-router.get('/', PackageCourtController.getAll);
-router.get('/:id', PackageCourtController.getById);
+router.get('/', BranchController.getAll);
+router.get('/get-pending', BranchController.getPendingBranches);
 router.post(
   '/',
-  validate(createPackageCourtSchema),
-  PackageCourtController.create
+  validate(createBranchSchema),
+  upload.array('images', 10),
+  BranchController.requestCreateBranch
 );
-router.put('/:id', PackageCourtController.update);
-router.delete('/:id', PackageCourtController.delete);
-
+router.put('/:id', BranchController.update);
+router.delete('/:id', BranchController.delete);
+router.get('/:id', BranchController.getById);
 export default router;

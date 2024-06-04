@@ -56,7 +56,7 @@ export default class ManagerController {
     try {
       await managerService.createManager(managerDTO);
       return res.status(201).json({
-        message: 'Created Manager Successfully'
+        message: 'Create manager Successfully'
       });
     } catch (error) {
       next(error);
@@ -94,6 +94,4 @@ export default class ManagerController {
       next(error);
     }
   }
-
-  static async buyPackage(req: Request, res: Response, next: NextFunction) {}
 }

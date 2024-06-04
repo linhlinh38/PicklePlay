@@ -5,8 +5,8 @@ export interface IBranch {
   name: string;
   phone: string;
   address: string;
-  images?: string[];
-  license: string;
+  images?: Express.Multer.File[] | string[];
+  license: string[];
   totalCourt: number;
   slotDuration: number;
   description: string;
