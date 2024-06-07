@@ -12,7 +12,6 @@ export const createCourtSchema = z.object({
       .number()
       .gte(1000, 'price must be more than 1.000')
       .lte(100000000, 'price must be less than 100.000.000'),
-    images: z.array(z.string()),
     description: z
       .string()
       .min(1, { message: 'Description must be greater than 1 characters!' })
