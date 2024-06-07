@@ -1,4 +1,5 @@
 export interface IBooking {
+  _id?: string;
   type: string;
   paymentType: string;
   paymentMethod: string;
@@ -8,5 +9,4 @@ export interface IBooking {
   endDate: string;
   status: string;
   customer?: string;
-  manager?: string;
 }
