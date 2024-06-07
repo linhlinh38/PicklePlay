@@ -49,9 +49,17 @@ export enum BookingStatusEnum {
   CANCELLED = 'Cancelled',
   DONE = 'Done'
 }
+
+export enum BookingTypeEnum {
+  SINGLE_SCHEDULE = 'single_schedule',
+  PERMANENT_SCHEDULE = 'permanent_schedule',
+  FLEXIBLE_SCHEDULE = 'flexible_schedule'
+}
+
 export enum ScheduleStatusEnum {
   AVAILABLE = 'Available',
-  UNAVAILABLE = 'Unavailable'
+  DONE = 'Done',
+  CANCELLED = 'Cancelled'
 }
 
 export enum PackageCourtTypeEnum {
