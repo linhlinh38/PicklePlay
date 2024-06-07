@@ -10,8 +10,21 @@ router.get('/', BranchController.getAll);
 router.get('/get-pending', BranchController.getPendingBranches);
 router.post(
   '/',
-  validate(createBranchSchema),
-  upload.array('images', 10),
+  // validate(createBranchSchema),
+  // upload.fields([
+  //   {
+  //     name: 'images',
+  //     maxCount: 10
+  //   },
+  //   {
+  //     name: 'courts',
+  //     maxCount: 10
+  //   },
+  //   {
+  //     name: 'license',
+  //     maxCount: 10
+  //   }
+  // ]),
   BranchController.requestCreateBranch
 );
 router.put('/:id', BranchController.update);

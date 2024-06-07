@@ -5,11 +5,16 @@ import http from 'http';
 import { errorHandler } from './errors/globalErrorHandler';
 import router from './routes/index.route';
 import Logging from './utils/Logging';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 const app = express();
 
 const StartServer = () => {
   app.use(express.urlencoded({ extended: true }));
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
   app.use(express.json());
+  app.use(cors());
 
   // Log the request and response
   app.use((req, res, next) => {
