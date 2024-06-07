@@ -1,22 +1,24 @@
 import { NextFunction, Request, Response } from 'express';
-import { BranchStatusEnum } from '../utils/enums';
+import { BookingStatusEnum, BranchStatusEnum } from '../utils/enums';
 import { IBooking } from '../interfaces/booking.interface';
 import { bookingService } from '../services/booking.service';
 
 async function createBooking(req: Request, res: Response, next: NextFunction) {
-  const newBooking: IBooking = {
-    type: req.body.type,
-    paymentType: req.body.paymentType,
-    paymentMethod: req.body.paymentMethod,
-    totalPrice: req.body.totalPrice,
-    totalHour: req.body.totalHour,
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
-    status: BranchStatusEnum.PENDING,
-    manager: req.body.manager
+  const newBooking = {
+    // type: req.body.type,
+    // paymentType: req.body.paymentType,
+    // paymentMethod: req.body.paymentMethod,
+    // totalPrice: req.body.totalPrice,
+    // totalHour: req.body.totalHour,
+    // startDate: req.body.startDate,
+    // endDate: req.body.endDate,
+    // status: BookingStatusEnum.PENDING,
+    // manager: req.body.manager
   };
+
+  const { booking, schedule } = req.body;
   try {
-    await bookingService.create(newBooking);
+    await bookingService.createBooking(booking, schedule);
     return res.status(201).json({ message: 'Created Booking Successfully' });
   } catch (error) {
     next(error);
