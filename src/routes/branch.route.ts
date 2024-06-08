@@ -1,7 +1,6 @@
 import express from 'express';
 import validate from '../utils/validate';
 import BranchController from '../controllers/branch.controller';
-import upload from '../config/multerConfig';
 import { createBranchSchema } from '../models/validateSchema/createBranch.validate.schema';
 
 const router = express.Router();
@@ -10,21 +9,7 @@ router.get('/', BranchController.getAll);
 router.get('/get-pending', BranchController.getPendingBranches);
 router.post(
   '/',
-  // validate(createBranchSchema),
-  // upload.fields([
-  //   {
-  //     name: 'images',
-  //     maxCount: 10
-  //   },
-  //   {
-  //     name: 'courts',
-  //     maxCount: 10
-  //   },
-  //   {
-  //     name: 'license',
-  //     maxCount: 10
-  //   }
-  // ]),
+  validate(createBranchSchema),
   BranchController.requestCreateBranch
 );
 router.put('/:id', BranchController.update);

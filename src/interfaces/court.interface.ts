@@ -7,5 +7,5 @@ export interface ICourt {
   images?: Express.Multer.File[] | string[];
   description: string;
   status: string;
-  branch: string | IManager;
+  branch?: string | IManager;
 }

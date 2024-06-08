@@ -1,5 +1,5 @@
-import path from 'path';
-import bucket from '../config/firebaseConfig';
+// import path from 'path';
+// import bucket from '../config/firebaseConfig';
 
 // export const filesUploadProcessing = async (files: Express.Multer.File[]) => {
 //   const uploadPromises = files.map((file: Express.Multer.File) => {
@@ -23,33 +23,33 @@ import bucket from '../config/firebaseConfig';
 //   return await Promise.all(uploadPromises);
 // };
 
-export const filesUploadProcessing = async (files: Express.Multer.File[]) => {
-  const fileUrls = {};
+// export const filesUploadProcessing = async (files: Express.Multer.File[]) => {
+//   const fileUrls = {};
 
-  for (const file of files) {
-    const blob = bucket.file(Date.now() + path.extname(file.originalname));
-    const blobStream = blob.createWriteStream({
-      metadata: {
-        contentType: file.mimetype
-      }
-    });
+//   for (const file of files) {
+//     const blob = bucket.file(Date.now() + path.extname(file.originalname));
+//     const blobStream = blob.createWriteStream({
+//       metadata: {
+//         contentType: file.mimetype
+//       }
+//     });
 
-    const uploadPromise = new Promise<string>((resolve, reject) => {
-      blobStream.on('error', (err) => reject(err));
-      blobStream.on('finish', () => {
-        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+//     const uploadPromise = new Promise<string>((resolve, reject) => {
+//       blobStream.on('error', (err) => reject(err));
+//       blobStream.on('finish', () => {
+//         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
 
-        if (!fileUrls[file.fieldname]) {
-          fileUrls[file.fieldname] = [];
-        }
-        fileUrls[file.fieldname].push(publicUrl);
-        resolve(publicUrl);
-      });
-      blobStream.end(file.buffer);
-    });
+//         if (!fileUrls[file.fieldname]) {
+//           fileUrls[file.fieldname] = [];
+//         }
+//         fileUrls[file.fieldname].push(publicUrl);
+//         resolve(publicUrl);
+//       });
+//       blobStream.end(file.buffer);
+//     });
 
-    await uploadPromise;
-  }
+//     await uploadPromise;
+//   }
 
-  return fileUrls;
-};
+//   return fileUrls;
+// };

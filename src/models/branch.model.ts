@@ -26,33 +26,30 @@ const branchSchema = mongoose.Schema(
         required: true
       }
     ],
-    totalCourt: {
-      type: Number,
-      required: true
-    },
-    slotDuration: {
-      type: Number,
-      required: true
-    },
     description: {
       type: String
     },
-    availableTimes: [
-      {
-        type: String,
-        required: true
-      }
-    ],
+    availableTime: {
+      type: String,
+      required: true
+    },
     status: {
       type: String,
-      required: true,
-      enum: Object.values(BranchStatusEnum)
+      enum: Object.values(BranchStatusEnum),
+      default: BranchStatusEnum.PENDING
     },
     manager: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Manager',
       required: true
-    }
+    },
+    courts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Court',
+        required: true
+      }
+    ]
   },
   {
     timestamps: true

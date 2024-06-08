@@ -3,10 +3,10 @@ import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
 import branchModel from '../models/branch.model';
 import { IBranch } from '../interfaces/branch.interface';
-import { filesUploadProcessing } from '../utils/fileUploadProcessing';
 import { BadRequestError } from '../errors/badRequestError';
 import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
 import { ICourt } from '../interfaces/court.interface';
+import courtModel from '../models/court.model';
 import { courtService } from './court.service';
 
 class BranchService extends BaseService<IBranch> {
@@ -30,44 +30,27 @@ class BranchService extends BaseService<IBranch> {
     });
   }
 
-  async requestCreateBranch(BranchRequest: IBranch, CourtRequest: ICourt[]) {
-    const branchDTO: IBranch = {
-      name: BranchRequest.name,
-      phone: BranchRequest.phone,
-      address: BranchRequest.address,
-      license: BranchRequest.license,
-      images: BranchRequest.images,
-      totalCourt: BranchRequest.totalCourt,
-      slotDuration: BranchRequest.slotDuration,
-      description: BranchRequest.description,
-      availableTimes: BranchRequest.availableTimes,
-      manager: BranchRequest.manager,
-      status: BranchStatusEnum.PENDING
-    };
-
+  async requestCreateBranch(branchDTO: IBranch) {
     const manager = await managerService.getById(branchDTO.manager as string);
     if (!manager) throw new NotFoundError('Manager not found');
 
-    const branchesOfManager = await this.getAllBranchesOfManager(manager._id);
-    const currentNumOfBranches = branchesOfManager.reduce(
-      (accumulator, currentValue) => accumulator + currentValue.totalCourt,
-      0
-    );
-    if (currentNumOfBranches + branchDTO.totalCourt > manager.maxCourt) {
+    const getCountAvailableCourtsOfManager =
+      await courtService.getCountAvailableCourtsOfManager(manager._id);
+
+    if (
+      getCountAvailableCourtsOfManager + branchDTO.courts.length >
+      manager.maxCourt
+    ) {
       throw new BadRequestError(
         `Exceed current total court registered (${manager.maxCourt})`
       );
     }
 
-    const newBranch = await branchModel.create(branchDTO);
+    const courts = branchDTO.courts;
+    delete branchDTO.courts;
 
-    // if (branchDTO.images && branchDTO.images.length > 0) {
-    //   branchDTO.images = await filesUploadProcessing(
-    //     branchDTO.images as Express.Multer.File[]
-    //   );
-    // }
-
-    const newCourt: ICourt[] = CourtRequest.map((court) => {
+    const savedBranch = await branchModel.create(branchDTO);
+    const formatCourts: ICourt[] = courts.map((court) => {
       return {
         name: court.name,
         type: court.type,
@@ -75,10 +58,12 @@ class BranchService extends BaseService<IBranch> {
         images: court.images,
         description: court.description,
         status: CourtStatusEnum.PENDING,
-        branch: newBranch._id
+        branch: savedBranch._id
       };
     });
-    await courtService.createManyCourts(newCourt);
+    const savedCourts = await courtModel.insertMany(formatCourts);
+    savedBranch.courts = savedCourts.map((court) => court._id);
+    await savedBranch.save();
   }
 }
 

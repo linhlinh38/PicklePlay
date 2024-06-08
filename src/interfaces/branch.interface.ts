@@ -1,3 +1,4 @@
+import { ICourt } from './court.interface';
 import { IManager } from './manager.interface';
 
 export interface IBranch {
@@ -7,10 +8,9 @@ export interface IBranch {
   address: string;
   images?: Express.Multer.File[] | string[];
   license: string[];
-  totalCourt: number;
-  slotDuration: number;
   description: string;
-  availableTimes: string[];
+  availableTime: string;
   status?: string;
   manager?: string | IManager;
+  courts: ICourt[];
 }

@@ -25,38 +25,34 @@ export default class BranchController {
     next: NextFunction
   ) {
     const {
-      // name,
-      // phone,
-      // address,
-      // license,
-      // images,
-      // totalCourt,
-      // slotDuration,
-      // description,
-      // availableTimes,
-      // managerId
-      BranchRequest,
-      CourtRequest
+      name,
+      phone,
+      address,
+      license,
+      images,
+      description,
+      managerId,
+      courts,
+      availableTime
     } = req.body;
-    // const branchDTO: IBranch = {
-    //   name,
-    //   phone,
-    //   address,
-    //   license,
-    //   images,
-    //   total,
-    //   slotDuration,
-    //   description,
-    //   availableTimes,
-    //   manager,
-    //   status: BranchStatusEnum.PENDING
-    // };
+    const branchDTO: IBranch = {
+      name,
+      phone,
+      address,
+      license,
+      images,
+      availableTime,
+      description,
+      manager: managerId,
+      status: BranchStatusEnum.PENDING,
+      courts
+    };
 
     // if (req.files && Array.isArray(req.files) && req.files.length > 0) {
     //   branchDTO.images = req.files;
     // }
     try {
-      await branchService.requestCreateBranch(BranchRequest, CourtRequest);
+      await branchService.requestCreateBranch(branchDTO);
       return res.status(200).json({
         message: 'Send create branch request success'
       });
@@ -105,25 +101,15 @@ export default class BranchController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     const id: string = req.params.id;
-    const {
-      name,
-      phone,
-      address,
-      license,
-      totalCourt,
-      slotDuration,
-      description,
-      availableTimes
-    } = req.body;
+    const { name, phone, address, license, description, availableTime } =
+      req.body;
     const branchDTO: Partial<IBranch> = {
       name,
       phone,
       address,
       license,
-      totalCourt,
-      slotDuration,
       description,
-      availableTimes
+      availableTime
     };
     try {
       await branchService.update(id, branchDTO);

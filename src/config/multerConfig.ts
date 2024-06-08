@@ -3,13 +3,13 @@ import { BadRequestError } from '../errors/badRequestError';
 
 const storage = multer.memoryStorage();
 
-const upload = multer({
+const uploadImage = multer({
   storage: storage,
   limits: {
     fileSize: 5 * 1024 * 1024 // Limit file size to 5MB
   },
   fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif/;
+    const filetypes = /jpeg|jpg|png/;
     const mimetype = filetypes.test(file.mimetype);
     const extname = filetypes.test(file.originalname.toLowerCase());
 
@@ -26,4 +26,4 @@ const upload = multer({
   }
 });
 
-export default upload;
+export default uploadImage;
