@@ -28,4 +28,34 @@ export default class FileService {
 
     return await Promise.all(uploadPromises);
   }
+
+  static async delete(urls: string[]) {
+    if (!urls || !Array.isArray(urls)) {
+      throw new BadRequestError('No URLs provided');
+    }
+
+    const deletePromises = urls.map((url) => {
+      return new Promise((resolve, reject) => {
+        try {
+          const urlPath = new URL(url).pathname;
+          const fileName = path.basename(urlPath);
+          const file = bucket.file(fileName);
+
+          file.delete((err) => {
+            if (err) {
+              if (err.message.includes('No such object:')) {
+                return reject(new BadRequestError(`File not found: ${url}`));
+              }
+              return reject(err);
+            }
+            resolve(`Deleted: ${url}`);
+          });
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+
+    await Promise.all(deletePromises);
+  }
 }

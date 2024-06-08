@@ -5,8 +5,6 @@ import managerRoute from './manager.route';
 import packageCourtRoute from './packageCourt.route';
 import packagePurchaseRoute from './packagePurchase.route';
 import branchRoute from './branch.route';
-import { NextFunction, Request, Response } from 'express';
-import uploadImage from '../config/multerConfig';
 import customerRoute from './customer.route';
 import courtRoute from './court.route';
 import bookingRouter from './booking.route';

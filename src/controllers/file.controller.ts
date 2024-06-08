@@ -13,4 +13,15 @@ export default class FileController {
       next(err);
     }
   }
+  static async delete(req: Request, res: Response, next: NextFunction) {
+    const { urls } = req.body;
+    try {
+      await FileService.delete(urls);
+      res.status(200).json({
+        message: 'Delete success'
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
