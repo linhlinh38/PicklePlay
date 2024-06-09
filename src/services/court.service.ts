@@ -1,9 +1,8 @@
-import { InsertManyResult } from 'mongoose';
 import { NotFoundError } from '../errors/notFound';
 import { ICourt } from '../interfaces/court.interface';
+import branchModel from '../models/branch.model';
 import courtModel from '../models/court.model';
 import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
-import { filesUploadProcessing } from '../utils/fileUploadProcessing';
 import { BaseService } from './base.service';
 import { branchService } from './branch.service';
 
@@ -35,6 +34,23 @@ class CourtService extends BaseService<ICourt> {
       console.error('Error creating courts:', error);
       throw error; // Re-throw the error for handling in your route or calling code
     }
+  }
+
+  async getCountAvailableCourtsOfManager(managerId: string): Promise<number> {
+    const availableBranchIdsOfManager = await branchModel.find(
+      {
+        manager: managerId,
+        status: { $in: [BranchStatusEnum.PENDING, BranchStatusEnum.ACTIVE] }
+      },
+      { _id: 1 }
+    );
+
+    const availableCourtsOfManager = await courtModel.find({
+      branch: { $in: availableBranchIdsOfManager },
+      status: { $in: [CourtStatusEnum.PENDING, CourtStatusEnum.INUSE] }
+    });
+
+    return availableCourtsOfManager.length;
   }
 }
 

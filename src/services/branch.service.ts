@@ -3,15 +3,51 @@ import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
 import branchModel from '../models/branch.model';
 import { IBranch } from '../interfaces/branch.interface';
-import { filesUploadProcessing } from '../utils/fileUploadProcessing';
 import { BadRequestError } from '../errors/badRequestError';
 import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
 import { ICourt } from '../interfaces/court.interface';
+import courtModel from '../models/court.model';
 import { courtService } from './court.service';
+import slotModel from '../models/slot.model';
+import { ISlot } from '../interfaces/slot.interface';
 
 class BranchService extends BaseService<IBranch> {
   constructor() {
     super(branchModel);
+  }
+
+  async updateStatus(branchId: string, status: string) {
+    const branch = await branchService.getById(branchId);
+    if (!branch) throw new NotFoundError('Branch not found');
+    branch.status = status;
+    await branchService.update(branchId, branch);
+  }
+
+  async handleRequest(branchId: string, approve: string) {
+    const branch = await branchService.getById(branchId);
+    if (!branch) throw new NotFoundError('Branch not found');
+    if (branch.status != BranchStatusEnum.PENDING)
+      throw new BadRequestError('Branch is not pending');
+    if (approve) {
+      // update branch status
+      branch.status = BranchStatusEnum.ACTIVE;
+      await Promise.all([
+        branchService.update(branchId, branch),
+        courtModel.updateMany(
+          { branch: branchId },
+          { status: CourtStatusEnum.INUSE }
+        )
+      ]);
+    } else {
+      branch.status = BranchStatusEnum.DENIED;
+      await Promise.all([
+        branchService.update(branchId, branch),
+        courtModel.updateMany(
+          { branch: branchId },
+          { status: CourtStatusEnum.TERMINATION }
+        )
+      ]);
+    }
   }
 
   async getPendingBranches() {
@@ -30,44 +66,31 @@ class BranchService extends BaseService<IBranch> {
     });
   }
 
-  async requestCreateBranch(BranchRequest: IBranch, CourtRequest: ICourt[]) {
-    const branchDTO: IBranch = {
-      name: BranchRequest.name,
-      phone: BranchRequest.phone,
-      address: BranchRequest.address,
-      license: BranchRequest.license,
-      images: BranchRequest.images,
-      totalCourt: BranchRequest.totalCourt,
-      slotDuration: BranchRequest.slotDuration,
-      description: BranchRequest.description,
-      availableTimes: BranchRequest.availableTimes,
-      manager: BranchRequest.manager,
-      status: BranchStatusEnum.PENDING
-    };
-
+  async requestCreateBranch(branchDTO: IBranch) {
     const manager = await managerService.getById(branchDTO.manager as string);
     if (!manager) throw new NotFoundError('Manager not found');
 
-    const branchesOfManager = await this.getAllBranchesOfManager(manager._id);
-    const currentNumOfBranches = branchesOfManager.reduce(
-      (accumulator, currentValue) => accumulator + currentValue.totalCourt,
-      0
-    );
-    if (currentNumOfBranches + branchDTO.totalCourt > manager.maxCourt) {
+    const getCountAvailableCourtsOfManager =
+      await courtService.getCountAvailableCourtsOfManager(manager._id);
+
+    if (
+      getCountAvailableCourtsOfManager + branchDTO.courts.length >
+      manager.maxCourt
+    ) {
       throw new BadRequestError(
         `Exceed current total court registered (${manager.maxCourt})`
       );
     }
 
-    const newBranch = await branchModel.create(branchDTO);
+    const courts = branchDTO.courts;
+    delete branchDTO.courts;
+    const slots = branchDTO.slots;
+    delete branchDTO.slots;
 
-    // if (branchDTO.images && branchDTO.images.length > 0) {
-    //   branchDTO.images = await filesUploadProcessing(
-    //     branchDTO.images as Express.Multer.File[]
-    //   );
-    // }
+    const savedBranch = await branchModel.create(branchDTO);
 
-    const newCourt: ICourt[] = CourtRequest.map((court) => {
+    // save courts
+    const formatCourts: ICourt[] = courts.map((court) => {
       return {
         name: court.name,
         type: court.type,
@@ -75,10 +98,21 @@ class BranchService extends BaseService<IBranch> {
         images: court.images,
         description: court.description,
         status: CourtStatusEnum.PENDING,
-        branch: newBranch._id
+        branch: savedBranch._id
       };
     });
-    await courtService.createManyCourts(newCourt);
+    const savedCourts = await courtModel.insertMany(formatCourts);
+
+    //save slots
+    const formatSlots: ISlot[] = slots.map((slot) => {
+      return { ...slot, branch: savedBranch._id };
+    });
+    const savedSlots = await slotModel.insertMany(formatSlots);
+
+    savedBranch.courts = savedCourts.map((court) => court._id);
+    savedBranch.slots = savedSlots.map((slot) => slot._id);
+
+    await savedBranch.save();
   }
 }
 

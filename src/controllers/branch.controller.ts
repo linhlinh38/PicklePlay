@@ -1,10 +1,28 @@
 import { NextFunction, Request, Response } from 'express';
 import { IBranch } from '../interfaces/branch.interface';
 import { branchService } from '../services/branch.service';
-import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
-import { ICourt } from '../interfaces/court.interface';
+import { BranchStatusEnum } from '../utils/enums';
 
 export default class BranchController {
+  static async updateStatus(req: Request, res: Response, next: NextFunction) {
+    const { branchId, status } = req.body;
+    try {
+      await branchService.updateStatus(branchId, status);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async handleRequest(req: Request, res: Response, next: NextFunction) {
+    const { approve, branchId } = req.body;
+    try {
+      await branchService.handleRequest(branchId, approve);
+      return res.status(200).json({
+        message: approve ? 'Approve request success' : 'Deny request success'
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
   static async getPendingBranches(
     req: Request,
     res: Response,
@@ -25,38 +43,32 @@ export default class BranchController {
     next: NextFunction
   ) {
     const {
-      // name,
-      // phone,
-      // address,
-      // license,
-      // images,
-      // totalCourt,
-      // slotDuration,
-      // description,
-      // availableTimes,
-      // managerId
-      BranchRequest,
-      CourtRequest
+      name,
+      phone,
+      address,
+      license,
+      images,
+      description,
+      managerId,
+      courts,
+      availableTime,
+      slots
     } = req.body;
-    // const branchDTO: IBranch = {
-    //   name,
-    //   phone,
-    //   address,
-    //   license,
-    //   images,
-    //   total,
-    //   slotDuration,
-    //   description,
-    //   availableTimes,
-    //   manager,
-    //   status: BranchStatusEnum.PENDING
-    // };
-
-    // if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-    //   branchDTO.images = req.files;
-    // }
+    const branchDTO: IBranch = {
+      name,
+      phone,
+      address,
+      license,
+      images,
+      availableTime,
+      description,
+      manager: managerId,
+      status: BranchStatusEnum.PENDING,
+      courts,
+      slots
+    };
     try {
-      await branchService.requestCreateBranch(BranchRequest, CourtRequest);
+      await branchService.requestCreateBranch(branchDTO);
       return res.status(200).json({
         message: 'Send create branch request success'
       });
@@ -105,25 +117,15 @@ export default class BranchController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     const id: string = req.params.id;
-    const {
-      name,
-      phone,
-      address,
-      license,
-      totalCourt,
-      slotDuration,
-      description,
-      availableTimes
-    } = req.body;
+    const { name, phone, address, license, description, availableTime } =
+      req.body;
     const branchDTO: Partial<IBranch> = {
       name,
       phone,
       address,
       license,
-      totalCourt,
-      slotDuration,
       description,
-      availableTimes
+      availableTime
     };
     try {
       await branchService.update(id, branchDTO);

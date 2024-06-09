@@ -5,12 +5,10 @@ import managerRoute from './manager.route';
 import packageCourtRoute from './packageCourt.route';
 import packagePurchaseRoute from './packagePurchase.route';
 import branchRoute from './branch.route';
-import { NextFunction, Request, Response } from 'express';
-import upload from '../config/multerConfig';
-import { filesUploadProcessing } from '../utils/fileUploadProcessing';
 import customerRoute from './customer.route';
 import courtRoute from './court.route';
 import bookingRouter from './booking.route';
+import fileRoute from './file.route';
 
 const router = express.Router();
 
@@ -23,46 +21,47 @@ router.use('/package-court', packageCourtRoute);
 router.use('/package-purchase', packagePurchaseRoute);
 router.use('/branch', branchRoute);
 router.use('/booking', bookingRouter);
-router.post(
-  '/upload',
-  upload.fields([
-    {
-      name: 'branchs',
-      maxCount: 10
-    },
-    {
-      name: 'courts',
-      maxCount: 10
-    },
-    {
-      name: 'license',
-      maxCount: 10
-    }
-  ]),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const files = req.files as any;
+router.use('/file', fileRoute);
+// router.post(
+//   '/upload',
+//   uploadImage.fields([
+//     {
+//       name: 'branchs',
+//       maxCount: 10
+//     },
+//     {
+//       name: 'courts',
+//       maxCount: 10
+//     },
+//     {
+//       name: 'license',
+//       maxCount: 10
+//     }
+//   ]),
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//       const files = req.files as any;
 
-      // if (!req.files || !Array.isArray(req.files)) {
-      //   return res.status(400).json({ message: 'No files uploaded' });
-      // }
-      const branchsUrls = await filesUploadProcessing(files.branchs);
-      const courtsUrls = await filesUploadProcessing(files.courts);
-      const licenseUrls = await filesUploadProcessing(files.license);
+// if (!req.files || !Array.isArray(req.files)) {
+//   return res.status(400).json({ message: 'No files uploaded' });
+// }
+//       const branchsUrls = await filesUploadProcessing(files.branchs);
+//       const courtsUrls = await filesUploadProcessing(files.courts);
+//       const licenseUrls = await filesUploadProcessing(files.license);
 
-      const fileUrls = {
-        branchs: branchsUrls,
-        courts: courtsUrls,
-        license: licenseUrls
-      };
+//       const fileUrls = {
+//         branchs: branchsUrls,
+//         courts: courtsUrls,
+//         license: licenseUrls
+//       };
 
-      res.status(200).json({
-        message: 'Files uploaded successfully',
-        fileUrls: fileUrls
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+//       res.status(200).json({
+//         message: 'Files uploaded successfully',
+//         fileUrls: fileUrls
+//       });
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
 export default router;

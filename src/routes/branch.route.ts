@@ -1,33 +1,46 @@
 import express from 'express';
 import validate from '../utils/validate';
 import BranchController from '../controllers/branch.controller';
-import upload from '../config/multerConfig';
 import { createBranchSchema } from '../models/validateSchema/createBranch.validate.schema';
+import { updateBranchStatusSchema } from '../models/validateSchema/updateBranchStatus.validate.schema';
+import authentication from '../middlewares/authentication';
+import { RoleEnum } from '../utils/enums';
+import { Author } from '../middlewares/authorization';
 
 const router = express.Router();
-// router.use(auth);
 router.get('/', BranchController.getAll);
-router.get('/get-pending', BranchController.getPendingBranches);
+router.get('/:id', BranchController.getById);
+router.use(authentication);
+router.get(
+  '/get-pending',
+  Author([RoleEnum.ADMIN, RoleEnum.OPERATOR]),
+  BranchController.getPendingBranches
+);
 router.post(
   '/',
-  // validate(createBranchSchema),
-  // upload.fields([
-  //   {
-  //     name: 'images',
-  //     maxCount: 10
-  //   },
-  //   {
-  //     name: 'courts',
-  //     maxCount: 10
-  //   },
-  //   {
-  //     name: 'license',
-  //     maxCount: 10
-  //   }
-  // ]),
+  Author([RoleEnum.MANAGER]),
+  validate(createBranchSchema),
   BranchController.requestCreateBranch
 );
-router.put('/:id', BranchController.update);
-router.delete('/:id', BranchController.delete);
-router.get('/:id', BranchController.getById);
+router.put(
+  '/:id',
+  Author([RoleEnum.MANAGER, RoleEnum.ADMIN]),
+  BranchController.update
+);
+router.delete(
+  '/:id',
+  Author([RoleEnum.MANAGER, RoleEnum.ADMIN]),
+  BranchController.delete
+);
+router.post(
+  '/handle-request',
+  Author([RoleEnum.OPERATOR, RoleEnum.ADMIN]),
+  BranchController.handleRequest
+);
+router.put(
+  '/update-status',
+  Author([RoleEnum.MANAGER, RoleEnum.ADMIN]),
+  validate(updateBranchStatusSchema),
+  BranchController.updateStatus
+);
 export default router;
