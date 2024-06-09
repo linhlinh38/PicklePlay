@@ -11,6 +11,7 @@ import { filesUploadProcessing } from '../utils/fileUploadProcessing';
 import customerRoute from './customer.route';
 import courtRoute from './court.route';
 import bookingRouter from './booking.route';
+import scheduleRouter from './schedule.route';
 
 const router = express.Router();
 
@@ -23,6 +24,7 @@ router.use('/package-court', packageCourtRoute);
 router.use('/package-purchase', packagePurchaseRoute);
 router.use('/branch', branchRoute);
 router.use('/booking', bookingRouter);
+router.use('/schedule', scheduleRouter);
 router.post(
   '/upload',
   upload.fields([
