@@ -10,5 +10,4 @@ router.get('/:id', ManagerController.getById);
 router.post('/', validate(createManagerSchema), ManagerController.create);
 router.put('/:id', validate(updateManagerSchema), ManagerController.update);
 router.delete('/:id', ManagerController.delete);
-
 export default router;

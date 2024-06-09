@@ -28,13 +28,16 @@ export enum TransactionTypeEnum {
 export enum CourtReportStatus {
   AVAILABLE = 'Available',
   WARN = 'Warn',
-  MAINTENANCE_NEEDED = 'Maintenance needed'
+  MAINTENANCE_NEEDED = 'Maintenance needed',
+  PENDING = 'Pending',
+  DENIED = 'Denied'
 }
 
 export enum BranchStatusEnum {
   PENDING = 'Pending',
   ACTIVE = 'Active',
-  INACTIVE = 'Inactive'
+  INACTIVE = 'Inactive',
+  DENIED = 'Denied'
 }
 
 export enum CourtStatusEnum {
@@ -69,4 +72,14 @@ export enum ScheduleTypeEnum {
 export enum PackageCourtTypeEnum {
   CUSTOM = 'Custom',
   STANDARD = 'Standard'
+}
+
+export enum WeekDayEnum {
+  MONDAY = 'Monday',
+  TUESDAY = 'Tuesday',
+  WEDNESDAY = 'Wednesday',
+  THURSDAY = 'Thursday',
+  FRIDAY = 'Friday',
+  SATURDAY = 'Saturday',
+  SUNDAY = 'Sunday'
 }

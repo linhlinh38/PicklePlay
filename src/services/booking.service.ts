@@ -2,7 +2,6 @@ import moment from 'moment';
 import { BadRequestError } from '../errors/badRequestError';
 import { NotFoundError } from '../errors/notFound';
 import { IBooking } from '../interfaces/booking.interface';
-import { ICourt } from '../interfaces/court.interface';
 import { ISchedule } from '../interfaces/schedule.interface';
 import bookingModel from '../models/booking.model';
 import {
