@@ -49,6 +49,13 @@ const branchSchema = mongoose.Schema(
         ref: 'Court',
         required: true
       }
+    ],
+    slots: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Slot',
+        required: true
+      }
     ]
   },
   {

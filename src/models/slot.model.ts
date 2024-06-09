@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 const slotSchema = mongoose.Schema(
   {
     name: {
-      type: String,
-      required: true
+      type: String
     },
     weekDay: {
       type: String,
@@ -13,11 +12,11 @@ const slotSchema = mongoose.Schema(
       enum: Object.values(WeekDayEnum)
     },
     startTime: {
-      type: Date,
+      type: String,
       required: true
     },
     endTime: {
-      type: Date,
+      type: String,
       required: true
     },
     surcharge: {

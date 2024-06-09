@@ -1,10 +1,28 @@
 import { NextFunction, Request, Response } from 'express';
 import { IBranch } from '../interfaces/branch.interface';
 import { branchService } from '../services/branch.service';
-import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
-import { ICourt } from '../interfaces/court.interface';
+import { BranchStatusEnum } from '../utils/enums';
 
 export default class BranchController {
+  static async updateStatus(req: Request, res: Response, next: NextFunction) {
+    const { branchId, status } = req.body;
+    try {
+      await branchService.updateStatus(branchId, status);
+    } catch (err) {
+      next(err);
+    }
+  }
+  static async handleRequest(req: Request, res: Response, next: NextFunction) {
+    const { approve, branchId } = req.body;
+    try {
+      await branchService.handleRequest(branchId, approve);
+      return res.status(200).json({
+        message: approve ? 'Approve request success' : 'Deny request success'
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
   static async getPendingBranches(
     req: Request,
     res: Response,
@@ -33,7 +51,8 @@ export default class BranchController {
       description,
       managerId,
       courts,
-      availableTime
+      availableTime,
+      slots
     } = req.body;
     const branchDTO: IBranch = {
       name,
@@ -45,12 +64,9 @@ export default class BranchController {
       description,
       manager: managerId,
       status: BranchStatusEnum.PENDING,
-      courts
+      courts,
+      slots
     };
-
-    // if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-    //   branchDTO.images = req.files;
-    // }
     try {
       await branchService.requestCreateBranch(branchDTO);
       return res.status(200).json({

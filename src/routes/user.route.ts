@@ -3,7 +3,6 @@ import authentication from '../middlewares/authentication';
 import userController from '../controllers/user.controller';
 import validate from '../utils/validate';
 import { createUserSchema } from '../models/validateSchema/createUser.validate.schema';
-import { log } from 'console';
 
 const userRoute = express.Router();
 userRoute.use(authentication);
