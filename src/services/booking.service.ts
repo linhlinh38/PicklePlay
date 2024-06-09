@@ -8,7 +8,8 @@ import bookingModel from '../models/booking.model';
 import {
   BookingStatusEnum,
   BookingTypeEnum,
-  ScheduleStatusEnum
+  ScheduleStatusEnum,
+  ScheduleTypeEnum
 } from '../utils/enums';
 import { BaseService } from './base.service';
 import { courtService } from './court.service';
@@ -30,20 +31,20 @@ class BookingService extends BaseService<IBooking> {
       throw new Error('Start date must be before or equal to end date');
     }
 
-    const court = await courtService.getById(schedule.court as string);
+    const court = await courtService.getById(booking.court as string);
     if (!court) throw new NotFoundError('Court not found');
 
-    const checkSchedule = await scheduleService.search({
-      court: schedule.court,
-      slot: schedule.slot,
-      date: schedule.date
-    });
+    if (booking.type !== BookingTypeEnum.FLEXIBLE_SCHEDULE) {
+      const checkSchedule = await scheduleService.search({
+        court: schedule.court,
+        slot: schedule.slot,
+        date: schedule.date,
+        status: ScheduleStatusEnum.AVAILABLE
+      });
 
-    const checkResult = checkSchedule.filter(
-      (schedule) => schedule.status === ScheduleStatusEnum.AVAILABLE
-    );
-    if (checkResult.length !== 0) {
-      throw new BadRequestError('Schedule is already booking');
+      if (checkSchedule.length !== 0) {
+        throw new BadRequestError('Schedule is already booking');
+      }
     }
 
     const newBooking = {
@@ -54,6 +55,7 @@ class BookingService extends BaseService<IBooking> {
       totalHour: booking.totalHour,
       startDate: booking.startDate,
       endDate: booking.endDate,
+      court: booking.court,
       status: BookingStatusEnum.PENDING,
       customer: booking.customer
     };
@@ -77,8 +79,10 @@ class BookingService extends BaseService<IBooking> {
 
       const promises = allDates.map(async (date) => {
         const newSchedule = {
-          type: ScheduleStatusEnum.AVAILABLE,
+          type: ScheduleTypeEnum.BOOKING,
           slot: schedule.slot,
+          startTime: schedule.startTime,
+          endTime: schedule.endTime,
           date,
           booking: booking._id,
           court: schedule.court,
@@ -93,6 +97,8 @@ class BookingService extends BaseService<IBooking> {
       const newSchedule = {
         type: schedule.type,
         slot: schedule.slot,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime,
         date: schedule.date,
         booking: booking._id,
         court: schedule.court,
@@ -101,6 +107,13 @@ class BookingService extends BaseService<IBooking> {
 
       await scheduleService.create(newSchedule);
     }
+  }
+  async updateTotalHours(bookingId: string, duration: number) {
+    const booking = await this.getById(bookingId);
+    const updateData: Partial<IBooking> = {
+      totalHour: booking.totalHour - duration
+    };
+    await this.update(bookingId, updateData);
   }
 }
 

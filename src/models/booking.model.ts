@@ -40,6 +40,11 @@ const bookingSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Customer',
       required: true
+    },
+    court: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Court',
+      required: true
     }
   },
   {
