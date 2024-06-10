@@ -40,7 +40,7 @@ class ScheduleService extends BaseService<ISchedule> {
 
     if (booking.type === BookingTypeEnum.FLEXIBLE_SCHEDULE) {
       if (
-        moment(booking.startDate, 'YYYY-MM-DD').isAfter(
+        moment(booking.startDate, 'YYYY-MM-DD').isBefore(
           moment(new Date(), 'YYYY-MM-DD')
         )
       ) {

@@ -21,7 +21,11 @@ class BookingService extends BaseService<IBooking> {
 
   async beforeCreate(data: IBooking): Promise<void> {}
 
-  async createBooking(booking: IBooking, schedule: ISchedule) {
+  async createBooking(
+    booking: IBooking,
+    schedule: ISchedule,
+    loginUser: string
+  ) {
     if (
       moment(booking.startDate, 'YYYY-MM-DD').isAfter(
         moment(booking.endDate, 'YYYY-MM-DD')
@@ -56,7 +60,7 @@ class BookingService extends BaseService<IBooking> {
       endDate: booking.endDate,
       court: booking.court,
       status: BookingStatusEnum.PENDING,
-      customer: booking.customer
+      customer: loginUser
     };
 
     booking = await bookingModel.create(newBooking);

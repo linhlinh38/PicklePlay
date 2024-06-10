@@ -6,10 +6,14 @@ import { AuthRequest } from '../middlewares/authentication';
 import moment from 'moment';
 import { scheduleService } from '../services/schedule.service';
 
-async function createBooking(req: Request, res: Response, next: NextFunction) {
+async function createBooking(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
   const { booking, schedule } = req.body;
   try {
-    await bookingService.createBooking(booking, schedule);
+    await bookingService.createBooking(booking, schedule, req.loginUser);
     return res.status(201).json({ message: 'Created Booking Successfully' });
   } catch (error) {
     next(error);

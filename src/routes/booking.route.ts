@@ -1,7 +1,9 @@
 import express from 'express';
+import authentication from '../middlewares/authentication';
 import bookingController from '../controllers/booking.controller';
 
 const bookingRouter = express.Router();
+bookingRouter.use(authentication);
 bookingRouter.post('/', bookingController.createBooking);
 bookingRouter.get('/', bookingController.getAllBooking);
 bookingRouter.get(
@@ -9,7 +11,7 @@ bookingRouter.get(
   bookingController.getAllBookingOfCourt
 );
 bookingRouter.get(
-  '/GetBookigByStatus/:status',
+  '/GetBookingByStatus/:status',
   bookingController.getBookigByStatus
 );
 bookingRouter.get('/:id', bookingController.getBookingById);
