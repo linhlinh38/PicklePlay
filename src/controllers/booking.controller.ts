@@ -54,6 +54,8 @@ async function getBookingById(req: Request, res: Response, next: NextFunction) {
 async function cancelBooking(req: Request, res: Response, next: NextFunction) {
   try {
     const booking = await bookingService.getById(req.params.id);
+    if (booking == null)
+      return res.status(400).json({ message: 'Booking not found' });
     const schedules = await scheduleService.search({ booking: booking._id });
     if (!booking) {
       return res.status(400).json({ message: 'Booking not found!' });
