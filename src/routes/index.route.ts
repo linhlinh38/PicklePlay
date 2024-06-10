@@ -8,6 +8,7 @@ import branchRoute from './branch.route';
 import customerRoute from './customer.route';
 import courtRoute from './court.route';
 import bookingRouter from './booking.route';
+import scheduleRouter from './schedule.route';
 import fileRoute from './file.route';
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.use('/package-court', packageCourtRoute);
 router.use('/package-purchase', packagePurchaseRoute);
 router.use('/branch', branchRoute);
 router.use('/booking', bookingRouter);
+router.use('/schedule', scheduleRouter);
 router.use('/file', fileRoute);
 // router.post(
 //   '/upload',

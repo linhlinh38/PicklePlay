@@ -7,22 +7,22 @@ const scheduleSchema = mongoose.Schema(
       type: String,
       required: true
     },
-    startDate: {
-      type: Date,
+    startTime: {
+      type: String,
       required: true
     },
-    endDate: {
-      type: Date,
+    endTime: {
+      type: String,
       required: true
     },
     slot: {
       type: String,
       required: true
     },
-    // date: {
-    //   type: Date,
-    //   required: true
-    // },
+    date: {
+      type: Date,
+      required: true
+    },
     status: {
       type: String,
       required: true,

@@ -61,8 +61,12 @@ export enum BookingTypeEnum {
 
 export enum ScheduleStatusEnum {
   AVAILABLE = 'Available',
-  DONE = 'Done',
-  CANCELLED = 'Cancelled'
+  DONE = 'Done'
+}
+
+export enum ScheduleTypeEnum {
+  MAINTENANCE = 'Maintenance',
+  BOOKING = 'Booking'
 }
 
 export enum PackageCourtTypeEnum {
