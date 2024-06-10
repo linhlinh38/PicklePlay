@@ -5,6 +5,7 @@ import { IPayment } from '../interfaces/payment.interface';
 import paymentModel from '../models/payment.model';
 import { EmailAlreadyExistError } from '../errors/emailAlreadyExistError';
 import bcrypt from 'bcrypt';
+import { userService } from './user.service';
 
 class ManagerService extends BaseService<IManager> {
   constructor() {
@@ -18,7 +19,10 @@ class ManagerService extends BaseService<IManager> {
   };
 
   async createManager(managerDTO: IManager) {
-    const emailUserExist = await this.search({ email: managerDTO.email });
+    const emailUserExist = await userService.search({
+      email: managerDTO.email
+    });
+
     if (emailUserExist.length > 0) throw new EmailAlreadyExistError();
 
     const payments: [IPayment] = [...managerDTO.payments];

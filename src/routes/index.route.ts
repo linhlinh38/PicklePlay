@@ -10,6 +10,7 @@ import courtRoute from './court.route';
 import bookingRouter from './booking.route';
 import scheduleRouter from './schedule.route';
 import fileRoute from './file.route';
+import staffRoute from './staff.route';
 
 const router = express.Router();
 
@@ -24,6 +25,7 @@ router.use('/branch', branchRoute);
 router.use('/booking', bookingRouter);
 router.use('/schedule', scheduleRouter);
 router.use('/file', fileRoute);
+router.use('/staff', staffRoute);
 // router.post(
 //   '/upload',
 //   uploadImage.fields([

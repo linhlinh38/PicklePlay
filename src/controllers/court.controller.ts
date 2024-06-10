@@ -5,10 +5,10 @@ import { courtService } from '../services/court.service';
 
 async function createCourt(req: Request, res: Response, next: NextFunction) {
   const newCourt: ICourt = {
-    name: req.body.data.name,
+    name: req.body.name,
     type: req.body.type,
     price: req.body.price,
-    images: req.files as Express.Multer.File[],
+    images: req.body.images,
     description: req.body.description,
     status: CourtStatusEnum.PENDING,
     branch: req.body.branch
