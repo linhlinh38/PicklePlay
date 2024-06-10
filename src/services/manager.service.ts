@@ -22,10 +22,6 @@ class ManagerService extends BaseService<IManager> {
     const emailUserExist = await userService.search({
       email: managerDTO.email
     });
-    console.log(managerDTO.email);
-
-    console.log(emailUserExist);
-    console.log(1);
 
     if (emailUserExist.length > 0) throw new EmailAlreadyExistError();
 
