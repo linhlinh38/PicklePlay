@@ -92,7 +92,7 @@ async function createSchedule(
   try {
     const newSchedule: ISchedule = {
       type: req.body.type,
-      slot: req.body.slot,
+      slots: req.body.slots,
       startTime: req.body.startTime,
       endTime: req.body.endTime,
       date: req.body.date,
@@ -101,18 +101,20 @@ async function createSchedule(
       status: ScheduleStatusEnum.AVAILABLE
     };
 
-    const booking = await bookingService.getById(newSchedule.booking as string);
-    const user = await userService.getById(req.loginUser);
+    let booking;
+    if (newSchedule.booking) {
+      booking = await bookingService.getById(newSchedule.booking as string);
+      const user = await userService.getById(req.loginUser);
 
-    if (
-      booking.type !== BookingTypeEnum.FLEXIBLE_SCHEDULE &&
-      user.role === RoleEnum.CUSTOMER
-    ) {
-      throw new BadRequestError(
-        'Create schedule is for FLEXIBLE_SCHEDULE or staff and manager'
-      );
+      if (
+        booking.type !== BookingTypeEnum.FLEXIBLE_SCHEDULE &&
+        user.role === RoleEnum.CUSTOMER
+      ) {
+        throw new BadRequestError(
+          'Create schedule is for FLEXIBLE_SCHEDULE or staff and manager'
+        );
+      }
     }
-
     await scheduleService.createSchedule(newSchedule);
     return res.status(201).json({ message: 'Created Schedule Successfully' });
   } catch (error) {

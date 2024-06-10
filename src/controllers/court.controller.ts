@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ICourt } from '../interfaces/court.interface';
 import { CourtStatusEnum } from '../utils/enums';
 import { courtService } from '../services/court.service';
+import { branchService } from '../services/branch.service';
 
 async function createCourt(req: Request, res: Response, next: NextFunction) {
   const newCourt: ICourt = {
@@ -14,7 +15,14 @@ async function createCourt(req: Request, res: Response, next: NextFunction) {
     branch: req.body.branch
   };
   try {
-    await courtService.create(newCourt);
+    const result = await courtService.create(newCourt);
+    if (result._id) {
+      const branch = await branchService.getById(result.branch as string);
+      branch.courts = [...branch.courts, result];
+      await branchService.update(branch._id, {
+        courts: branch.courts
+      });
+    }
     return res.status(201).json({ message: 'Created Court Successfully' });
   } catch (error) {
     next(error);

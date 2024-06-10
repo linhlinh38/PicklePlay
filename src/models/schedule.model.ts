@@ -15,10 +15,13 @@ const scheduleSchema = mongoose.Schema(
       type: String,
       required: true
     },
-    slot: {
-      type: String,
-      required: true
-    },
+    slots: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Slot',
+        required: true
+      }
+    ],
     date: {
       type: Date,
       required: true
@@ -30,8 +33,7 @@ const scheduleSchema = mongoose.Schema(
     },
     booking: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Booking',
-      required: true
+      ref: 'Booking'
     },
     court: {
       type: mongoose.Schema.Types.ObjectId,

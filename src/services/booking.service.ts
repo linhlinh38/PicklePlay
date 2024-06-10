@@ -13,6 +13,7 @@ import {
 import { BaseService } from './base.service';
 import { courtService } from './court.service';
 import { scheduleService } from './schedule.service';
+import scheduleModel from '../models/schedule.model';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -38,9 +39,9 @@ class BookingService extends BaseService<IBooking> {
     if (!court) throw new NotFoundError('Court not found');
 
     if (booking.type !== BookingTypeEnum.FLEXIBLE_SCHEDULE) {
-      const checkSchedule = await scheduleService.search({
+      const checkSchedule = await scheduleModel.find({
         court: schedule.court,
-        slot: schedule.slot,
+        slots: { $in: schedule.slots },
         date: schedule.date,
         status: ScheduleStatusEnum.AVAILABLE
       });
@@ -83,7 +84,7 @@ class BookingService extends BaseService<IBooking> {
       const promises = allDates.map(async (date) => {
         const newSchedule = {
           type: ScheduleTypeEnum.BOOKING,
-          slot: schedule.slot,
+          slots: schedule.slots,
           startTime: schedule.startTime,
           endTime: schedule.endTime,
           date,
@@ -99,7 +100,7 @@ class BookingService extends BaseService<IBooking> {
     if (booking.type === BookingTypeEnum.SINGLE_SCHEDULE) {
       const newSchedule = {
         type: schedule.type,
-        slot: schedule.slot,
+        slots: schedule.slots,
         startTime: schedule.startTime,
         endTime: schedule.endTime,
         date: schedule.date,
