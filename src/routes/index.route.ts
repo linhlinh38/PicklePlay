@@ -12,6 +12,7 @@ import scheduleRouter from './schedule.route';
 import fileRoute from './file.route';
 import staffRoute from './staff.route';
 import paymentRoute from './payment.route';
+import courtReportRoute from './courtReport.route';
 
 const router = express.Router();
 
@@ -28,5 +29,6 @@ router.use('/schedule', scheduleRouter);
 router.use('/file', fileRoute);
 router.use('/staff', staffRoute);
 router.use('/payment', paymentRoute);
+router.use('/court-report', courtReportRoute);
 
 export default router;
