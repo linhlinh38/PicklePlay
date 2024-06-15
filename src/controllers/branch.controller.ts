@@ -4,10 +4,25 @@ import { branchService } from '../services/branch.service';
 import { BranchStatusEnum } from '../utils/enums';
 
 export default class BranchController {
+  static async search(req: Request, res: Response, next: NextFunction) {
+    try {
+      const key: Partial<IBranch> = req.body;
+      const branchs = await branchService.search(key);
+      return res.status(200).json({
+        message: 'Search success',
+        data: branchs
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
   static async updateStatus(req: Request, res: Response, next: NextFunction) {
     const { branchId, status } = req.body;
     try {
       await branchService.updateStatus(branchId, status);
+      return res.status(200).json({
+        message: 'Update status success'
+      });
     } catch (err) {
       next(err);
     }
