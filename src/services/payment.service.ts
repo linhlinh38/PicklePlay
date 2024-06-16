@@ -2,9 +2,32 @@ import moment from 'moment';
 import { config } from '../config/envConfig';
 import querystring from 'qs';
 import crypto from 'crypto';
+import { BaseService } from './base.service';
+import { IPayment } from '../interfaces/payment.interface';
+import paymentModel from '../models/payment.model';
+import { userService } from './user.service';
+import { NotFoundError } from '../errors/notFound';
+import { BadRequestError } from '../errors/badRequestError';
 
-export default class PaymentService {
-  static createPaymentUrl(amount: number) {
+export default class PaymentService extends BaseService<IPayment> {
+  async addPayment(paymentDTO: IPayment) {
+    const user = await userService.getById(paymentDTO.user);
+    if (!user) throw new NotFoundError('User not found');
+
+    const paymentExist = await paymentModel.findOne({
+      accountNumber: paymentDTO.accountNumber,
+      accountName: paymentDTO.accountName,
+      accountBank: paymentDTO.accountBank,
+      owner: user._id
+    });
+    if (paymentExist) throw new BadRequestError('This payment already exist');
+
+    await paymentModel.create(paymentDTO);
+  }
+  constructor() {
+    super(paymentModel);
+  }
+  createPaymentUrl(amount: number) {
     const currentDate = new Date();
     const createDate = moment(currentDate).format('YYYYMMDDHHmmss');
 
@@ -43,7 +66,7 @@ export default class PaymentService {
     return vnpUrl;
   }
 
-  static verifySuccessUrl(url: string) {
+  verifySuccessUrl(url: string) {
     const queryString = url.split('?')[1];
     const params = new URLSearchParams(queryString);
     let vnp_Params = {};
@@ -68,7 +91,7 @@ export default class PaymentService {
     return secureHash === signed;
   }
 
-  static sortObject(obj) {
+  sortObject(obj) {
     const sorted = {};
     const str = [];
     let key;
@@ -84,3 +107,5 @@ export default class PaymentService {
     return sorted;
   }
 }
+
+export const paymentService = new PaymentService();

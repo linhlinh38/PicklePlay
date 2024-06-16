@@ -1,7 +1,6 @@
 import { BaseService } from './base.service';
 import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
-import branchModel from '../models/branch.model';
 import { BranchStatusEnum, RoleEnum } from '../utils/enums';
 import { courtService } from './court.service';
 import { ICourtReport } from '../interfaces/courtReport.interface';
@@ -11,7 +10,7 @@ import { userService } from './user.service';
 
 class CourtReportService extends BaseService<ICourtReport> {
   constructor() {
-    super(branchModel);
+    super(courtReportModel);
   }
   async createCourtReport(reportDTO: ICourtReport, creatorId: string) {
     const creator = await userService.getById(creatorId);

@@ -14,6 +14,7 @@ import staffRoute from './staff.route';
 import paymentRoute from './payment.route';
 import courtReportRoute from './courtReport.route';
 import transactionRoute from './transaction.route';
+import slotRoute from './slot.route';
 
 const router = express.Router();
 
@@ -32,5 +33,6 @@ router.use('/staff', staffRoute);
 router.use('/payment', paymentRoute);
 router.use('/court-report', courtReportRoute);
 router.use('/transaction', transactionRoute);
+router.use('/slot', slotRoute);
 
 export default router;

@@ -25,6 +25,11 @@ export enum TransactionTypeEnum {
   ADD_COURT = 'Add Court'
 }
 
+export enum PaymentMethodEnum {
+  LINKED_ACCOUNT = 'Linked Account',
+  MANUAL_ENTRY = 'Manual Entry'
+}
+
 export enum CourtReportStatus {
   AVAILABLE = 'Available',
   WARN = 'Warn',

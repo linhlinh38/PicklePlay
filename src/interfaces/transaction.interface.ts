@@ -4,4 +4,6 @@ export interface ITransaction {
   to?: string;
   content: string;
   type: string;
+  payment?: string;
+  paymentMethod: string;
 }

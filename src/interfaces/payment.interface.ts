@@ -3,4 +3,5 @@ export interface IPayment {
   accountName: string;
   accountBank?: string;
   expDate?: Date;
+  user?: string;
 }

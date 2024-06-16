@@ -4,10 +4,19 @@ import { transactionService } from '../services/transaction.service';
 
 export default class TransactionController {
   static async create(req: Request, res: Response, next: NextFunction) {
-    const { amount, from, to, content, type } = req.body;
-    const transactionDTO: ITransaction = { amount, from, to, content, type };
+    const { amount, from, to, content, type, paymentId, paymentMethod } =
+      req.body;
+    const transactionDTO: ITransaction = {
+      amount,
+      from,
+      to,
+      content,
+      type,
+      payment: paymentId,
+      paymentMethod
+    };
     try {
-      await transactionService.createTransaciton(transactionDTO);
+      await transactionService.createTransaction(transactionDTO);
       res.status(200).json({
         message: 'Create transaction success'
       });
@@ -15,6 +24,7 @@ export default class TransactionController {
       next(err);
     }
   }
+
   static async getOfUser(req: Request, res: Response, next: NextFunction) {
     const userId = req.params.userId;
     try {

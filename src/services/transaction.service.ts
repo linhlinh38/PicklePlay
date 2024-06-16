@@ -1,15 +1,14 @@
 import { BaseService } from './base.service';
 import { NotFoundError } from '../errors/notFound';
-import branchModel from '../models/branch.model';
 import { userService } from './user.service';
 import { ITransaction } from '../interfaces/transaction.interface';
 import transactionModel from '../models/transaction.model';
 
 class TransactionService extends BaseService<ITransaction> {
   constructor() {
-    super(branchModel);
+    super(transactionModel);
   }
-  async createTransaciton(transactionDTO: ITransaction) {
+  async createTransaction(transactionDTO: ITransaction) {
     const from = userService.getById(transactionDTO.from);
     if (!from) throw new NotFoundError('Sender not found');
     const to = userService.getById(transactionDTO.to);
