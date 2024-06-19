@@ -1,10 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import express from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { config } from '../config/envConfig';
-import userModel from '../models/user.model';
 
-export interface AuthRequest extends express.Request {
+export interface AuthRequest extends Request {
   loginUser?: string;
 }
 

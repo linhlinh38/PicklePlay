@@ -1,4 +1,4 @@
-import { TransactionTypeEnum } from '../utils/enums';
+import { PaymentMethodEnum, TransactionTypeEnum } from '../utils/enums';
 
 const mongoose = require('mongoose');
 const transactionSchema = mongoose.Schema(
@@ -25,6 +25,15 @@ const transactionSchema = mongoose.Schema(
       type: String,
       require: true,
       enum: Object.values(TransactionTypeEnum)
+    },
+    paymentMethod: {
+      type: String,
+      require: true,
+      enum: Object.values(PaymentMethodEnum)
+    },
+    payment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Payment'
     }
   },
   {

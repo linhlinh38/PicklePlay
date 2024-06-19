@@ -43,4 +43,5 @@ router.put(
   validate(updateBranchStatusSchema),
   BranchController.updateStatus
 );
+router.post('/search', BranchController.search);
 export default router;
