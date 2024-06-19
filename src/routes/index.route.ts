@@ -12,6 +12,10 @@ import scheduleRouter from './schedule.route';
 import fileRoute from './file.route';
 import staffRoute from './staff.route';
 import { sendBookingBillEmail } from '../controllers/mail.controller';
+import paymentRoute from './payment.route';
+import courtReportRoute from './courtReport.route';
+import transactionRoute from './transaction.route';
+import slotRoute from './slot.route';
 
 const router = express.Router();
 
@@ -28,46 +32,9 @@ router.use('/schedule', scheduleRouter);
 router.use('/file', fileRoute);
 router.use('/staff', staffRoute);
 router.post('/mail', sendBookingBillEmail);
-// router.post(
-//   '/upload',
-//   uploadImage.fields([
-//     {
-//       name: 'branchs',
-//       maxCount: 10
-//     },
-//     {
-//       name: 'courts',
-//       maxCount: 10
-//     },
-//     {
-//       name: 'license',
-//       maxCount: 10
-//     }
-//   ]),
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//       const files = req.files as any;
+router.use('/payment', paymentRoute);
+router.use('/court-report', courtReportRoute);
+router.use('/transaction', transactionRoute);
+router.use('/slot', slotRoute);
 
-// if (!req.files || !Array.isArray(req.files)) {
-//   return res.status(400).json({ message: 'No files uploaded' });
-// }
-//       const branchsUrls = await filesUploadProcessing(files.branchs);
-//       const courtsUrls = await filesUploadProcessing(files.courts);
-//       const licenseUrls = await filesUploadProcessing(files.license);
-
-//       const fileUrls = {
-//         branchs: branchsUrls,
-//         courts: courtsUrls,
-//         license: licenseUrls
-//       };
-
-//       res.status(200).json({
-//         message: 'Files uploaded successfully',
-//         fileUrls: fileUrls
-//       });
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
 export default router;

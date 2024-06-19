@@ -21,5 +21,3 @@ export const createCourtObject = z.object({
 export const createCourtSchema = z.object({
   body: createCourtObject
 });
-
-export type updateUserType = z.infer<typeof createCourtSchema>;
