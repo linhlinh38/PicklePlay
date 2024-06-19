@@ -11,6 +11,7 @@ import bookingRouter from './booking.route';
 import scheduleRouter from './schedule.route';
 import fileRoute from './file.route';
 import staffRoute from './staff.route';
+import { sendBookingBillEmail } from '../controllers/mail.controller';
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ router.use('/booking', bookingRouter);
 router.use('/schedule', scheduleRouter);
 router.use('/file', fileRoute);
 router.use('/staff', staffRoute);
+router.post('/mail', sendBookingBillEmail);
 // router.post(
 //   '/upload',
 //   uploadImage.fields([
