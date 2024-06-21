@@ -20,7 +20,6 @@ async function login(req: Request, res: Response, next: NextFunction) {
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid password' });
     }
-    console.log(isMatch);
 
     if (user.status === UserStatusEnum.INACTIVE) {
       return res.status(401).json({ message: 'Account is INACTIVE' });

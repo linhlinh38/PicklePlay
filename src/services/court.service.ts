@@ -1,8 +1,10 @@
 import { BadRequestError } from '../errors/badRequestError';
 import { NotFoundError } from '../errors/notFound';
 import { ICourt } from '../interfaces/court.interface';
+import { ISchedule } from '../interfaces/schedule.interface';
 import branchModel from '../models/branch.model';
 import courtModel from '../models/court.model';
+import scheduleModel from '../models/schedule.model';
 import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
 import { BaseService } from './base.service';
 import { branchService } from './branch.service';
@@ -58,6 +60,29 @@ class CourtService extends BaseService<ICourt> {
     });
 
     return availableCourtsOfManager.length;
+  }
+
+  async getCourtAvailable(
+    slots: string[],
+    date: Date,
+    branch: string
+  ): Promise<number> {
+    const courtBooked = await scheduleModel.find({
+      slots: { $in: slots },
+      date: date
+    });
+
+    let court: string[] = [];
+    courtBooked.map((item: ISchedule) => {
+      return court.push(item.court.toString());
+    });
+
+    const availableCourt = await courtModel.find({
+      _id: { $nin: [...court] },
+      branch: branch
+    });
+
+    return availableCourt;
   }
 }
 

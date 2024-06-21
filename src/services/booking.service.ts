@@ -111,6 +111,7 @@ class BookingService extends BaseService<IBooking> {
 
       await scheduleService.create(newSchedule);
     }
+    return true;
   }
   async updateTotalHours(bookingId: string, duration: number) {
     const booking = await this.getById(bookingId);

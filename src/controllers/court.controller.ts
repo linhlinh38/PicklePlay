@@ -53,9 +53,24 @@ async function searchCourt(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function getCourtAvailable(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { slots, date, branch } = req.body;
+    const court = await courtService.getCourtAvailable(slots, date, branch);
+    return res.status(200).json({ court: court });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default {
   createCourt,
   getAllCourt,
   getCourtById,
-  searchCourt
+  searchCourt,
+  getCourtAvailable
 };

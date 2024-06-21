@@ -5,6 +5,8 @@ import { bookingService } from '../services/booking.service';
 import { AuthRequest } from '../middlewares/authentication';
 import moment from 'moment';
 import { scheduleService } from '../services/schedule.service';
+import { sendBookingBillEmail } from '../services/mail.service';
+import { userService } from '../services/user.service';
 
 async function createBooking(
   req: AuthRequest,
@@ -13,7 +15,16 @@ async function createBooking(
 ) {
   const { booking, schedule } = req.body;
   try {
-    await bookingService.createBooking(booking, schedule, req.loginUser);
+    const result = await bookingService.createBooking(
+      booking,
+      schedule,
+      req.loginUser
+    );
+    if (result) {
+      const user = await userService.getById(req.loginUser);
+      await sendBookingBillEmail(booking, user);
+    }
+
     return res.status(201).json({ message: 'Created Booking Successfully' });
   } catch (error) {
     next(error);
