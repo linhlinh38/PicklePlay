@@ -18,8 +18,7 @@ const validate =
       Logging.error(error_message);
       return res.status(400).json({
         status: 'Bad Request!',
-        path: error_message[0].path[1],
-        message: error_message[0].message
+        error: error_message
       });
     }
   };
