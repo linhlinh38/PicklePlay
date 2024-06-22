@@ -13,7 +13,7 @@ FROM node:latest
 
 WORKDIR /app
 
-COPY --from=builder ./build . 
+COPY --from=builder /app/build . 
 EXPOSE 3000 
 
 COPY package*.json ./
