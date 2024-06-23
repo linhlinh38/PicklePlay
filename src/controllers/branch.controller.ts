@@ -132,15 +132,23 @@ export default class BranchController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     const id: string = req.params.id;
-    const { name, phone, address, license, description, availableTime } =
-      req.body;
+    const {
+      name,
+      phone,
+      address,
+      license,
+      description,
+      availableTime,
+      images
+    } = req.body;
     const branchDTO: Partial<IBranch> = {
       name,
       phone,
       address,
       license,
       description,
-      availableTime
+      availableTime,
+      images
     };
     try {
       await branchService.update(id, branchDTO);
