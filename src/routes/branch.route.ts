@@ -23,6 +23,12 @@ router.post(
   BranchController.requestCreateBranch
 );
 router.put(
+  '/update-status',
+  Author([RoleEnum.MANAGER, RoleEnum.ADMIN]),
+  validate(updateBranchStatusSchema),
+  BranchController.updateStatus
+);
+router.put(
   '/:id',
   Author([RoleEnum.MANAGER, RoleEnum.ADMIN]),
   BranchController.update
@@ -36,12 +42,6 @@ router.post(
   '/handle-request',
   Author([RoleEnum.OPERATOR, RoleEnum.ADMIN]),
   BranchController.handleRequest
-);
-router.put(
-  '/update-status',
-  Author([RoleEnum.MANAGER, RoleEnum.ADMIN]),
-  validate(updateBranchStatusSchema),
-  BranchController.updateStatus
 );
 router.post('/search', BranchController.search);
 export default router;

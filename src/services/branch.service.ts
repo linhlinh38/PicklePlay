@@ -19,8 +19,28 @@ class BranchService extends BaseService<IBranch> {
   async updateStatus(branchId: string, status: string) {
     const branch = await branchService.getById(branchId);
     if (!branch) throw new NotFoundError('Branch not found');
+    if (
+      ![
+        BranchStatusEnum.ACTIVE.toString(),
+        BranchStatusEnum.INACTIVE.toString()
+      ].includes(status)
+    )
+      throw new BadRequestError('Status only accepts Active/Inactive');
+    if (
+      branch.status == BranchStatusEnum.PENDING ||
+      branch.status == BranchStatusEnum.DENIED
+    )
+      throw new BadRequestError(
+        'Can not update status of branch while they are Pending/Denied'
+      );
     branch.status = status;
     await branchService.update(branchId, branch);
+    if (status == BranchStatusEnum.INACTIVE) {
+      await courtModel.updateMany(
+        { branch: branchId },
+        { $set: { status: CourtStatusEnum.TERMINATION } }
+      );
+    }
   }
 
   async handleRequest(branchId: string, approve: string) {
