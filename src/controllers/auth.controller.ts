@@ -5,9 +5,11 @@ import { generateRefreshToken, verifyToken } from '../utils/jwt';
 import { userService } from '../services/user.service';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { UserStatusEnum } from '../utils/enums';
+import { RoleEnum, UserStatusEnum } from '../utils/enums';
 import { OAuth2Client } from 'google-auth-library';
 import { BadRequestError } from '../errors/badRequestError';
+import { IUser } from '../interfaces/user.interface';
+import adminModel from '../models/admin.model';
 const { SECRET_KEY_FOR_ACCESS_TOKEN, SECRET_KEY_FOR_REFRESH_TOKEN } = config;
 
 async function loginGoogle(req: Request, res: Response, next: NextFunction) {

@@ -7,6 +7,7 @@ import router from './routes/index.route';
 import Logging from './utils/Logging';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { createAdmin } from './utils/createAdmin';
 const app = express();
 
 const StartServer = () => {
@@ -77,6 +78,7 @@ mongoose
   .connect(config.mongo_uri, { retryWrites: true, w: 'majority' })
   .then(() => {
     Logging.info('Connected to Mongo');
+    createAdmin();
     StartServer();
   })
   .catch((error) => Logging.error(error));
