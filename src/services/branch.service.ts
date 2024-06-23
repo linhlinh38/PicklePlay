@@ -10,6 +10,7 @@ import courtModel from '../models/court.model';
 import { courtService } from './court.service';
 import slotModel from '../models/slot.model';
 import { ISlot } from '../interfaces/slot.interface';
+import scheduleModel from '../models/schedule.model';
 
 class BranchService extends BaseService<IBranch> {
   constructor() {
@@ -74,6 +75,43 @@ class BranchService extends BaseService<IBranch> {
     return await this.model.find({
       status: BranchStatusEnum.PENDING
     });
+  }
+
+  async getPopularBranches() {
+    const result = await scheduleModel.aggregate([
+      {
+        $lookup: {
+          from: 'courts',
+          localField: 'court',
+          foreignField: '_id',
+          as: 'courtDetails'
+        }
+      },
+      {
+        $unwind: '$courtDetails'
+      },
+      {
+        $lookup: {
+          from: 'branches',
+          localField: 'courtDetails.branch',
+          foreignField: '_id',
+          as: 'branchDetails'
+        }
+      },
+      {
+        $unwind: '$branchDetails'
+      },
+      {
+        $group: {
+          _id: '$branchDetails._id',
+          scheduleCount: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { scheduleCount: -1 }
+      }
+    ]);
+    return result;
   }
 
   async getAllBranchesOfManager(managerId: string) {

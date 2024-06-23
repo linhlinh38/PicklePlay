@@ -40,23 +40,40 @@ class PackageCourtService extends BaseService<IPackageCourt> {
     const manager = await managerService.getById(buyPackageDTO.managerId);
     if (!manager) throw new NotFoundError('Manager not found');
 
-    const currentDate = new Date();
-
-    const currentPackagePurchase = await packagePurchaseModel.findOne({
-      manager: buyPackageDTO.managerId,
-      endDate: { $gte: currentDate }
-    });
-
-    if (currentPackagePurchase) {
-      const timeLeft = Math.ceil(
-        currentPackagePurchase.endDate.getTime() - currentDate.getTime()
-      );
-      if (timeLeft > 0) {
+    if (packageCourt.type == PackageCourtTypeEnum.CUSTOM) {
+      if (packageCourt.maxCourt > 20)
         throw new BadRequestError(
-          'You cannot purchase a new court package as your current package is still active'
+          'Custom package can only be bought for maximum 20 courts'
         );
-      }
     }
+
+    const currentDate = new Date();
+    if (manager.expiredDate && manager.expiredDate > currentDate) {
+      throw new BadRequestError(
+        'You cannot purchase a new court package as your current package is still active'
+      );
+    }
+    //     const currentPackagePurchase = await packagePurchaseModel.findOne({
+    //       manager: buyPackageDTO.managerId,
+    //       endDate: { $gte: currentDate }
+    //     });
+
+    // if (currentPackagePurchase) {
+    //   const timeLeft = Math.ceil(
+    //     currentPackagePurchase.endDate.getTime() - currentDate.getTime()
+    //   );
+    //   if (timeLeft > 0) {
+    //     throw new BadRequestError(
+    //       'You cannot purchase a new court package as your current package is still active'
+    //     );
+    //   }
+    // }
+
+    const duration = packageCourt.duration || 1;
+    const totalCourt = packageCourt.maxCourt || buyPackageDTO.totalCourt;
+    const totalPrice =
+      packageCourt.totalPrice ||
+      packageCourt.priceEachCourt * buyPackageDTO.totalCourt;
 
     const startDateOfPackagePurchase = new Date(
       manager.expiredDate || new Date()
@@ -66,17 +83,14 @@ class PackageCourtService extends BaseService<IPackageCourt> {
     );
     const endDateOfPackagePurchase = new Date(startDateOfPackagePurchase);
     endDateOfPackagePurchase.setMonth(
-      endDateOfPackagePurchase.getMonth() +
-        (packageCourt.duration || buyPackageDTO.duration)
+      endDateOfPackagePurchase.getMonth() + duration
     );
 
     const createdPackagePurchase = {
-      totalPrice:
-        packageCourt.totalPrice ||
-        packageCourt.priceEachCourt *
-          buyPackageDTO.totalCourt *
-          buyPackageDTO.duration,
-      totalCourt: packageCourt.maxCourt || buyPackageDTO.totalCourt,
+      totalPrice,
+      totalCourt,
+      duration,
+      priceEachCourt: packageCourt.priceEachCourt,
       startDate: startDateOfPackagePurchase,
       endDate: endDateOfPackagePurchase,
       manager: buyPackageDTO.managerId,

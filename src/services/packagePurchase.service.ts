@@ -12,7 +12,9 @@ class PackagePurchaseService extends BaseService<IPackagePurchase> {
   async getPurchasesOfManager(managerId: string) {
     const manager = await managerService.getById(managerId);
     if (!manager) throw new NotFoundError('Manager not found');
-    return await this.model.find({ manager: manager._id });
+    return await this.model
+      .find({ manager: manager._id })
+      .populate('packageCourt');
   }
 }
 
