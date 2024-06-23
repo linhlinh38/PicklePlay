@@ -1,6 +1,5 @@
 import jwt, { VerifyOptions, SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-// import Roles from "../constant/roles";
 
 import { config } from '../config/envConfig';
 const { SECRET_KEY_FOR_ACCESS_TOKEN, SECRET_KEY_FOR_REFRESH_TOKEN } = config;
