@@ -48,13 +48,12 @@ class PackageCourtService extends BaseService<IPackageCourt> {
     });
 
     if (currentPackagePurchase) {
-      const daysLeft = Math.ceil(
-        (currentPackagePurchase.endDate.getTime() - currentDate.getTime()) /
-          (1000 * 60 * 60 * 24)
+      const timeLeft = Math.ceil(
+        currentPackagePurchase.endDate.getTime() - currentDate.getTime()
       );
-      if (daysLeft > 7) {
+      if (timeLeft > 0) {
         throw new BadRequestError(
-          'You cannot purchase a new court package as your current package is still active for more than 7 days.'
+          'You cannot purchase a new court package as your current package is still active'
         );
       }
     }
