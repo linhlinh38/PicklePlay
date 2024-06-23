@@ -9,6 +9,13 @@ const packagePurchaseSchema = mongoose.Schema(
       type: Number,
       required: true
     },
+    duration: {
+      type: Number,
+      required: true
+    },
+    priceEachCourt: {
+      type: Number
+    },
     startDate: {
       type: Date,
       required: true

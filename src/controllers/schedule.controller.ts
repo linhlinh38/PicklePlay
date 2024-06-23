@@ -4,12 +4,7 @@ import { scheduleService } from '../services/schedule.service';
 import { AuthRequest } from '../middlewares/authentication';
 import { IBooking } from '../interfaces/booking.interface';
 import { bookingService } from '../services/booking.service';
-import {
-  BookingTypeEnum,
-  RoleEnum,
-  ScheduleStatusEnum,
-  ScheduleTypeEnum
-} from '../utils/enums';
+import { BookingTypeEnum, RoleEnum, ScheduleStatusEnum } from '../utils/enums';
 import { BadRequestError } from '../errors/badRequestError';
 import { userService } from '../services/user.service';
 import { NotFoundError } from '../errors/notFound';

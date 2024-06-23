@@ -16,6 +16,20 @@ export default class BranchController {
       next(err);
     }
   }
+  static async getPopularBranches(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      return res.status(200).json({
+        message: 'Get popular branches success',
+        data: await branchService.getPopularBranches()
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
   static async updateStatus(req: Request, res: Response, next: NextFunction) {
     const { branchId, status } = req.body;
     try {
