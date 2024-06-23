@@ -12,6 +12,8 @@ const VNP_HASH_SECRET = process.env.VNP_HASH_SECRET;
 const VNP_URL = process.env.VNP_URL;
 const VNP_API = process.env.VNP_API;
 const VNP_RETURN_URL = process.env.VNP_RETURN_URL;
+const GG_CLIENT_ID = process.env.GG_CLIENT_ID;
+
 export const config = {
   mongo_uri: MONGO_DB_URI,
   port: PORT,
@@ -24,5 +26,6 @@ export const config = {
     URL: VNP_URL,
     API: VNP_API,
     RETURN_URL: VNP_RETURN_URL
-  }
+  },
+  GG_CLIENT_ID: GG_CLIENT_ID
 };
