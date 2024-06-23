@@ -20,6 +20,15 @@ class PackageCourtService extends BaseService<IPackageCourt> {
       });
       if (existPackageCustom)
         throw new BadRequestError('Already have custom package');
+
+      if (data.duration)
+        throw new BadRequestError('Custom package can not have Duration info');
+      if (data.maxCourt)
+        throw new BadRequestError('Custom package can not have Max Court info');
+      if (data.totalPrice)
+        throw new BadRequestError(
+          'Custom package can not have Total Price info'
+        );
     }
   }
 
@@ -29,9 +38,30 @@ class PackageCourtService extends BaseService<IPackageCourt> {
     );
     if (!packageCourt) throw new NotFoundError('Package not found');
     const manager = await managerService.getById(buyPackageDTO.managerId);
-
     if (!manager) throw new NotFoundError('Manager not found');
-    const startDateOfPackagePurchase = new Date(manager.expiredDate);
+
+    const currentDate = new Date();
+
+    const currentPackagePurchase = await packagePurchaseModel.findOne({
+      manager: buyPackageDTO.managerId,
+      endDate: { $gte: currentDate }
+    });
+
+    if (currentPackagePurchase) {
+      const daysLeft = Math.ceil(
+        (currentPackagePurchase.endDate.getTime() - currentDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+      if (daysLeft > 7) {
+        throw new BadRequestError(
+          'You cannot purchase a new court package as your current package is still active for more than 7 days.'
+        );
+      }
+    }
+
+    const startDateOfPackagePurchase = new Date(
+      manager.expiredDate || new Date()
+    );
     startDateOfPackagePurchase.setDate(
       startDateOfPackagePurchase.getDate() + 1
     );
