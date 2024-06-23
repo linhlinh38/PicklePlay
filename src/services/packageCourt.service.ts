@@ -7,7 +7,6 @@ import { managerService } from './manager.service';
 import packagePurchaseModel from '../models/packagePurchase.model';
 import { PackageCourtTypeEnum } from '../utils/enums';
 import { BadRequestError } from '../errors/badRequestError';
-import { duration } from 'moment';
 
 class PackageCourtService extends BaseService<IPackageCourt> {
   constructor() {
