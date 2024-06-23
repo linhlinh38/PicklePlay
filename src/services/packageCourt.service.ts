@@ -5,10 +5,22 @@ import { IBuyPackage } from '../interfaces/buyPackage.interface';
 import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
 import packagePurchaseModel from '../models/packagePurchase.model';
+import { PackageCourtTypeEnum } from '../utils/enums';
+import { BadRequestError } from '../errors/badRequestError';
 
 class PackageCourtService extends BaseService<IPackageCourt> {
   constructor() {
     super(packageCourtModel);
+  }
+
+  async beforeCreate(data: IPackageCourt): Promise<void> {
+    if (data.type == PackageCourtTypeEnum.CUSTOM) {
+      const existPackageCustom = await this.model.findOne({
+        type: data.type
+      });
+      if (existPackageCustom)
+        throw new BadRequestError('Already have custom package');
+    }
   }
 
   async buyPackageCourt(buyPackageDTO: IBuyPackage) {
