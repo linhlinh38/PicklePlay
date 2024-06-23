@@ -12,6 +12,7 @@ const courtRoute = express.Router();
 courtRoute.get('/', courtController.getAllCourt);
 courtRoute.get('/:id', courtController.getCourtById);
 courtRoute.post('/search', courtController.searchCourt);
+courtRoute.post('/get-court-available', courtController.getCourtAvailable);
 
 courtRoute.use(authentication);
 courtRoute.post(

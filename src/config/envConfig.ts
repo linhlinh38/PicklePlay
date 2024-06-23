@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { MailerSend } from 'mailersend';
 
 dotenv.config();
 
@@ -7,6 +8,7 @@ const PORT = process.env.PORT;
 const SECRET_KEY_FOR_ACCESS_TOKEN = process.env.SECRET_KEY_FOR_ACCESS_TOKEN;
 const SECRET_KEY_FOR_REFRESH_TOKEN = process.env.SECRET_KEY_FOR_REFRESH_TOKEN;
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
+const MAILERSEND_API_KEY = process.env.MAILERSEND_API_KEY;
 const VNP_TMN_CODE = process.env.VNP_TMN_CODE;
 const VNP_HASH_SECRET = process.env.VNP_HASH_SECRET;
 const VNP_URL = process.env.VNP_URL;
@@ -29,3 +31,7 @@ export const config = {
   },
   GG_CLIENT_ID: GG_CLIENT_ID
 };
+
+export const mailersend = new MailerSend({
+  apiKey: MAILERSEND_API_KEY
+});

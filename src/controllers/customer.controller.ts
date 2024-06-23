@@ -31,7 +31,10 @@ async function createCustomer(req: Request, res: Response, next: NextFunction) {
     if (customer.length !== 0) {
       throw new EmailAlreadyExistError('Email already exists!');
     }
-    newCustomer.password = await encryptedPassword(req.body.password);
+    if (newCustomer.password) {
+      newCustomer.password = await encryptedPassword(req.body.password);
+    }
+
     await customerService.create(newCustomer);
     return res.status(201).json({ message: 'Created Customer Successfully' });
   } catch (error) {

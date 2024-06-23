@@ -58,11 +58,14 @@ async function login(req: Request, res: Response, next: NextFunction) {
       return res.status(401).json({ message: 'Invalid email' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid password' });
+    if (user.password.length > 0) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: 'Invalid password' });
+      }
+    } else {
+      return res.status(400).json({ message: 'User must login by google' });
     }
-    console.log(isMatch);
 
     if (user.status === UserStatusEnum.INACTIVE) {
       return res.status(401).json({ message: 'Account is INACTIVE' });
