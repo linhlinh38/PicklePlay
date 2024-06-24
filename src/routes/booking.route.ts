@@ -18,8 +18,9 @@ bookingRouter.get(
 );
 bookingRouter.get(
   '/GetBookingByStatus/:status',
-  bookingController.getBookigByStatus
+  bookingController.getBookingByStatus
 );
+bookingRouter.get('/MyBooking', bookingController.getBookingOfCustomer);
 bookingRouter.get('/:id', bookingController.getBookingById);
 bookingRouter.post('/cancel/:id', bookingController.cancelBooking);
 export default bookingRouter;
