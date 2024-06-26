@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { BookingStatusEnum, BranchStatusEnum } from '../utils/enums';
+import { BookingStatusEnum } from '../utils/enums';
 import { IBooking } from '../interfaces/booking.interface';
 import { bookingService } from '../services/booking.service';
 import { AuthRequest } from '../middlewares/authentication';
 import moment from 'moment';
 import { scheduleService } from '../services/schedule.service';
-import { sendBookingBillEmail } from '../services/mail.service';
 import { userService } from '../services/user.service';
 
 async function createBooking(
@@ -22,7 +21,7 @@ async function createBooking(
     );
     if (result) {
       const user = await userService.getById(req.loginUser);
-      await sendBookingBillEmail(booking, user);
+      //await sendBookingBillEmail(booking, user);
     }
 
     return res.status(201).json({ message: 'Created Booking Successfully' });
@@ -36,10 +35,18 @@ async function getAllBooking(req: Request, res: Response) {
   return res.status(200).json({ bookingList: booking });
 }
 
-async function getBookigByStatus(req: AuthRequest, res: Response) {
+async function getBookingByStatus(req: AuthRequest, res: Response) {
   const key: Partial<IBooking> = {
     customer: req.loginUser,
     status: req.params.status
+  };
+  const booking = await bookingService.search(key);
+  return res.status(200).json({ bookingList: booking });
+}
+
+async function getBookingOfCustomer(req: AuthRequest, res: Response) {
+  const key: Partial<IBooking> = {
+    customer: req.loginUser
   };
   const booking = await bookingService.search(key);
   return res.status(200).json({ bookingList: booking });
@@ -113,7 +120,8 @@ export default {
   createBooking,
   getAllBooking,
   getBookingById,
-  getBookigByStatus,
+  getBookingByStatus,
+  getBookingOfCustomer,
   getAllBookingOfCourt,
   cancelBooking,
   getOwnBooking

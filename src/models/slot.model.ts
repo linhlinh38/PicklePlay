@@ -3,9 +3,6 @@ import { WeekDayEnum } from '../utils/enums';
 const mongoose = require('mongoose');
 const slotSchema = mongoose.Schema(
   {
-    name: {
-      type: String
-    },
     weekDay: {
       type: String,
       required: true,
