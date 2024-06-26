@@ -117,20 +117,6 @@ class BookingService extends BaseService<IBooking> {
       await scheduleService.create(newSchedule);
     }
 
-    const user = await userService.getById(loginUser);
-    console.log(user);
-
-    const bookingData: BookingData = {
-      customer: user.firstName + ' ' + user.lastName,
-      email: user.email,
-      bookingId: booking._id,
-      type: booking.type
-    };
-
-    await generateQrCode(
-      bookingData,
-      `D:/visual code/Bookminton/image/${bookingData.bookingId}.png`
-    );
     return true;
   }
 
