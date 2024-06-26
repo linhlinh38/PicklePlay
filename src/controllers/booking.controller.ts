@@ -46,10 +46,7 @@ async function getBookingByStatus(req: AuthRequest, res: Response) {
 }
 
 async function getBookingOfCustomer(req: AuthRequest, res: Response) {
-  const key: Partial<IBooking> = {
-    customer: req.loginUser
-  };
-  const booking = await bookingService.search(key);
+  const booking = await bookingService.getBookingByCustomer(req.loginUser);
   return res.status(200).json({ bookingList: booking });
 }
 
