@@ -14,6 +14,9 @@ import { BaseService } from './base.service';
 import { courtService } from './court.service';
 import { scheduleService } from './schedule.service';
 import scheduleModel from '../models/schedule.model';
+import { checkValidId } from '../utils/validID';
+import userModel from '../models/user.model';
+import customerModel from '../models/customer.model';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -119,6 +122,24 @@ class BookingService extends BaseService<IBooking> {
       totalHour: booking.totalHour - duration
     };
     await this.update(bookingId, updateData);
+  }
+
+  async getOwnBooking(loginUser: string) {
+    if (!checkValidId(loginUser))
+      throw new BadRequestError('Account not found');
+    const user = await customerModel.findById(loginUser);
+    if (!user) throw new BadRequestError('Account not found');
+    const bookings = await bookingModel
+      .find({
+        customer: loginUser
+      })
+      .populate({
+        path: 'court',
+        populate: {
+          path: 'branch'
+        }
+      });
+    return bookings;
   }
 }
 

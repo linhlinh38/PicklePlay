@@ -95,11 +95,26 @@ async function cancelBooking(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function getOwnBooking(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    res
+      .status(200)
+      .json({ data: await bookingService.getOwnBooking(req.loginUser) });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export default {
   createBooking,
   getAllBooking,
   getBookingById,
   getBookigByStatus,
   getAllBookingOfCourt,
-  cancelBooking
+  cancelBooking,
+  getOwnBooking
 };

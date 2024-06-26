@@ -6,6 +6,9 @@ import { userService } from '../services/user.service';
 export const Author = (roles: Array<string>) => {
   return async (req: AuthRequest, res: Response, next: NextFunction) => {
     const id = req.loginUser;
+    console.log(id);
+    console.log('meomeo');
+
     let user;
     try {
       user = await userService.getById(id);
