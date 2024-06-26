@@ -27,15 +27,13 @@ export default class PaymentService extends BaseService<IPayment> {
   constructor() {
     super(paymentModel);
   }
-  createPaymentUrl(amount: number) {
+  createPaymentUrl(amount: number, returnUrl: string, bookingId?: string) {
     const currentDate = new Date();
     const createDate = moment(currentDate).format('YYYYMMDDHHmmss');
 
     const tmnCode = config.VNP.TMN_CODE;
     const secretKey = config.VNP.HASH_SECRET;
     let vnpUrl = config.VNP.URL;
-    const returnUrl = config.VNP.RETURN_URL;
-    const orderId = moment(currentDate).format('DDHHmmss');
     const bankCode = 'VNBANK';
     const locale = 'vn';
     const currCode = 'VND';
@@ -46,8 +44,8 @@ export default class PaymentService extends BaseService<IPayment> {
     vnp_Params['vnp_TmnCode'] = tmnCode;
     vnp_Params['vnp_Locale'] = locale;
     vnp_Params['vnp_CurrCode'] = currCode;
-    vnp_Params['vnp_TxnRef'] = orderId;
-    vnp_Params['vnp_OrderInfo'] = 'Thanh toán cho mã GD: ' + orderId;
+    vnp_Params['vnp_TxnRef'] = bookingId;
+    vnp_Params['vnp_OrderInfo'] = bookingId;
     vnp_Params['vnp_OrderType'] = 'other';
     vnp_Params['vnp_Amount'] = amount * 100;
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
