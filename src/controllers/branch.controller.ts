@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { IBranch } from '../interfaces/branch.interface';
 import { branchService } from '../services/branch.service';
 import { BranchStatusEnum } from '../utils/enums';
+import { AuthRequest } from '../middlewares/authentication';
 
 export default class BranchController {
   static async searchByNameOrAddress(
@@ -82,7 +83,7 @@ export default class BranchController {
     }
   }
   static async requestCreateBranch(
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction
   ) {
@@ -90,10 +91,9 @@ export default class BranchController {
       name,
       phone,
       address,
-      license,
+      licenses,
       images,
       description,
-      managerId,
       courts,
       availableTime,
       slots
@@ -102,11 +102,11 @@ export default class BranchController {
       name,
       phone,
       address,
-      license,
+      licenses,
       images,
       availableTime,
       description,
-      manager: managerId,
+      manager: req.loginUser,
       status: BranchStatusEnum.PENDING,
       courts,
       slots
@@ -165,7 +165,7 @@ export default class BranchController {
       name,
       phone,
       address,
-      license,
+      licenses,
       description,
       availableTime,
       images
@@ -174,7 +174,7 @@ export default class BranchController {
       name,
       phone,
       address,
-      license,
+      licenses,
       description,
       availableTime,
       images

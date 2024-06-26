@@ -8,7 +8,7 @@ export interface IBranch {
   phone: string;
   address: string;
   images?: Express.Multer.File[] | string[];
-  license: string[];
+  licenses: string[];
   description: string;
   availableTime: string;
   status?: string;
