@@ -4,6 +4,21 @@ import { branchService } from '../services/branch.service';
 import { BranchStatusEnum } from '../utils/enums';
 
 export default class BranchController {
+  static async searchByNameOrAddress(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { keyword } = req.body;
+      return res.status(200).json({
+        data: await branchService.searchByNameOrAddress(keyword)
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async search(req: Request, res: Response, next: NextFunction) {
     try {
       const key: Partial<IBranch> = req.body;
