@@ -56,7 +56,6 @@ async function getScheduleOfCustomer(
     const searchBooking: Partial<IBooking> = {
       customer: req.loginUser
     };
-    console.log('bookings', req.loginUser);
     const bookings = await bookingService.search(searchBooking);
     if (bookings.length === 0) {
       return res

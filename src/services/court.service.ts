@@ -20,6 +20,13 @@ class CourtService extends BaseService<ICourt> {
     if (!branch) {
       throw new NotFoundError('Branch not found');
     }
+    if (
+      branch.status === BranchStatusEnum.DENIED ||
+      branch.status === BranchStatusEnum.INACTIVE
+    ) {
+      throw new NotFoundError('Cannot create court for branch not working');
+    }
+
     const availableCourt = await this.getCountAvailableCourtsOfManager(
       branch.manager as string
     );
