@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { BookingStatusEnum, BranchStatusEnum } from '../utils/enums';
+import { BookingStatusEnum } from '../utils/enums';
 import { IBooking } from '../interfaces/booking.interface';
 import { bookingService } from '../services/booking.service';
 import { AuthRequest } from '../middlewares/authentication';
 import moment from 'moment';
 import { scheduleService } from '../services/schedule.service';
-import { sendBookingBillEmail } from '../services/mail.service';
 import { userService } from '../services/user.service';
 
 async function createBooking(
@@ -100,6 +99,20 @@ async function cancelBooking(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function getOwnBooking(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    res
+      .status(200)
+      .json({ data: await bookingService.getOwnBooking(req.loginUser) });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export default {
   createBooking,
   getAllBooking,
@@ -107,5 +120,6 @@ export default {
   getBookingByStatus,
   getBookingOfCustomer,
   getAllBookingOfCourt,
-  cancelBooking
+  cancelBooking,
+  getOwnBooking
 };

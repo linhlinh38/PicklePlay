@@ -9,7 +9,8 @@ export const createBranchSchema = z.object({
       .string()
       .min(1, { message: 'Username must be greater than 1 characters!' }),
     address: z.string(),
-    license: z.array(z.string()).min(1, 'License must have at least 1'),
+    licenses: z.array(z.string()).min(1, 'License must have at least 1'),
+    images: z.array(z.string()).min(1, 'Image must have at least 1'),
     description: z.string().optional().nullable(),
     availableTime: z.string(),
     phone: z

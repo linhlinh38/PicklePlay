@@ -26,7 +26,7 @@ const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
 
     if (isJwtPayload(decoded)) {
       req.loginUser = decoded.userId;
-      next();
+      return next();
     } else {
       res.status(401).json({ message: 'Invalid token' });
     }
