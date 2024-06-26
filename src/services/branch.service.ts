@@ -17,6 +17,16 @@ class BranchService extends BaseService<IBranch> {
     super(branchModel);
   }
 
+  async searchByNameOrAddress(keyword: string) {
+    const branches = await branchModel.find({
+      $or: [
+        { name: { $regex: keyword, $options: 'i' } },
+        { address: { $regex: keyword, $options: 'i' } }
+      ]
+    });
+    return branches;
+  }
+
   async updateStatus(branchId: string, status: string) {
     const branch = await branchService.getById(branchId);
     if (!branch) throw new NotFoundError('Branch not found');

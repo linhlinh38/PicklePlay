@@ -10,6 +10,8 @@ import { Author } from '../middlewares/authorization';
 const router = express.Router();
 router.get('/', BranchController.getAll);
 router.get('/get-by-id/:id', BranchController.getById);
+router.post('/search', BranchController.searchByNameOrAddress);
+
 router.use(authentication);
 router.get(
   '/get-pending',
@@ -44,5 +46,4 @@ router.post(
   Author([RoleEnum.OPERATOR, RoleEnum.ADMIN]),
   BranchController.handleRequest
 );
-router.post('/search', BranchController.search);
 export default router;
