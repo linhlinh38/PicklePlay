@@ -4,9 +4,11 @@ import { NotFoundError } from '../errors/notFound';
 import { IBooking } from '../interfaces/booking.interface';
 import { ISchedule } from '../interfaces/schedule.interface';
 import bookingModel from '../models/booking.model';
+
 import {
   BookingStatusEnum,
   BookingTypeEnum,
+  RoleEnum,
   ScheduleStatusEnum,
   ScheduleTypeEnum
 } from '../utils/enums';
@@ -14,8 +16,8 @@ import { BaseService } from './base.service';
 import { courtService } from './court.service';
 import { scheduleService } from './schedule.service';
 import scheduleModel from '../models/schedule.model';
-import { checkValidId } from '../utils/validID';
-import userModel from '../models/user.model';
+import { BookingData, generateQrCode } from './mail.service';
+import { userService } from './user.service';
 import customerModel from '../models/customer.model';
 
 class BookingService extends BaseService<IBooking> {
@@ -114,8 +116,24 @@ class BookingService extends BaseService<IBooking> {
 
       await scheduleService.create(newSchedule);
     }
+
+    const user = await userService.getById(loginUser);
+    console.log(user);
+
+    const bookingData: BookingData = {
+      customer: user.firstName + ' ' + user.lastName,
+      email: user.email,
+      bookingId: booking._id,
+      type: booking.type
+    };
+
+    await generateQrCode(
+      bookingData,
+      `D:/visual code/Bookminton/image/${bookingData.bookingId}.png`
+    );
     return true;
   }
+
   async updateTotalHours(bookingId: string, duration: number) {
     const booking = await this.getById(bookingId);
     const updateData: Partial<IBooking> = {
@@ -123,23 +141,18 @@ class BookingService extends BaseService<IBooking> {
     };
     await this.update(bookingId, updateData);
   }
-
-  async getOwnBooking(loginUser: string) {
-    if (!checkValidId(loginUser))
-      throw new BadRequestError('Account not found');
-    const user = await customerModel.findById(loginUser);
-    if (!user) throw new BadRequestError('Account not found');
-    const bookings = await bookingModel
-      .find({
-        customer: loginUser
-      })
-      .populate({
-        path: 'court',
-        populate: {
-          path: 'branch'
-        }
-      });
-    return bookings;
+  async getBookingByCustomer(customerId: string) {
+    const customer = await customerModel.findOne({ _id: customerId });
+    if (customer.role !== RoleEnum.CUSTOMER) {
+      throw new BadRequestError('Only customer can get booking');
+    }
+    const booking = await bookingModel.find({ customer: customerId }).populate({
+      path: 'court',
+      populate: {
+        path: 'branch'
+      }
+    });
+    return booking;
   }
 }
 
