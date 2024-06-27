@@ -14,8 +14,7 @@ export enum GenderEnum {
 
 export enum UserStatusEnum {
   ACTIVE = 'Active',
-  INACTIVE = 'Inactive',
-  PENDING = 'Pending'
+  INACTIVE = 'Inactive'
 }
 
 export enum TransactionTypeEnum {
@@ -87,4 +86,9 @@ export enum WeekDayEnum {
   FRIDAY = 'Friday',
   SATURDAY = 'Saturday',
   SUNDAY = 'Sunday'
+}
+
+export enum PackageCourtStatusEnum {
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive'
 }

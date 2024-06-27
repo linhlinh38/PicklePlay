@@ -1,4 +1,4 @@
-import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
+import { CourtStatusEnum } from '../utils/enums';
 
 const mongoose = require('mongoose');
 const courtSchema = mongoose.Schema(
