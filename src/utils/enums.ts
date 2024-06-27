@@ -14,8 +14,7 @@ export enum GenderEnum {
 
 export enum UserStatusEnum {
   ACTIVE = 'Active',
-  INACTIVE = 'Inactive',
-  PENDING = 'Pending'
+  INACTIVE = 'Inactive'
 }
 
 export enum TransactionTypeEnum {
