@@ -175,7 +175,6 @@ class BranchService extends BaseService<IBranch> {
     const formatSlots: ISlot[] = slots.map((slot) => {
       return { ...slot, branch: savedBranch._id };
     });
-    console.log(formatSlots);
 
     if (formatSlots.length > 0 && !this.checkSlots(formatSlots))
       throw new BadRequestError('Slots are overlap');
