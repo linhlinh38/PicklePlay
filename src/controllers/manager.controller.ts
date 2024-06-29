@@ -50,7 +50,7 @@ export default class ManagerController {
       dob,
       payments,
       role: RoleEnum.MANAGER,
-      status: UserStatusEnum.PENDING
+      status: UserStatusEnum.ACTIVE
     };
 
     try {

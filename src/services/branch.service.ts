@@ -175,7 +175,8 @@ class BranchService extends BaseService<IBranch> {
     const formatSlots: ISlot[] = slots.map((slot) => {
       return { ...slot, branch: savedBranch._id };
     });
-    if (formatCourts.length > 0 && !this.checkSlots(formatSlots))
+
+    if (formatSlots.length > 0 && !this.checkSlots(formatSlots))
       throw new BadRequestError('Slots are overlap');
     const savedSlots = await slotModel.insertMany(formatSlots);
 
@@ -198,8 +199,8 @@ class BranchService extends BaseService<IBranch> {
     slots.forEach((slot) => {
       slotMap[slot.weekDay].push(slot);
     });
-    for (let i = 0; i < 7; i++) {
-      if (!this.doSlotsOverLap(slotMap[i])) return false;
+    for (const day of Object.keys(slotMap)) {
+      if (!this.doSlotsOverLap(slotMap[day])) return false;
     }
     return true;
   }

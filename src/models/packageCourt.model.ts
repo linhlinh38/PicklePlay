@@ -1,4 +1,4 @@
-import { PackageCourtTypeEnum } from '../utils/enums';
+import { PackageCourtStatusEnum, PackageCourtTypeEnum } from '../utils/enums';
 
 const mongoose = require('mongoose');
 const packageCourtSchema = mongoose.Schema({
@@ -25,6 +25,11 @@ const packageCourtSchema = mongoose.Schema({
   },
   description: {
     type: String
+  },
+  status: {
+    type: String,
+    default: PackageCourtStatusEnum.ACTIVE,
+    enum: Object.values(PackageCourtStatusEnum)
   }
 });
 
