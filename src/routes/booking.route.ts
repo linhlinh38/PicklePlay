@@ -22,6 +22,10 @@ bookingRouter.get(
   '/GetBookingByStatus/:status',
   bookingController.getBookingByStatus
 );
+bookingRouter.put(
+  '/UpdateBookingAfterPayment/:bookingId',
+  bookingController.updateBookingAfterPayment
+);
 bookingRouter.get('/MyBooking', bookingController.getBookingOfCustomer);
 bookingRouter.get('/:id', bookingController.getBookingById);
 bookingRouter.post('/cancel/:id', bookingController.cancelBooking);

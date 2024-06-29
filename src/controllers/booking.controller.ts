@@ -6,6 +6,7 @@ import { AuthRequest } from '../middlewares/authentication';
 import moment from 'moment';
 import { scheduleService } from '../services/schedule.service';
 import { userService } from '../services/user.service';
+import { sendBookingBillEmail } from '../services/mail.service';
 
 async function createBooking(
   req: AuthRequest,
@@ -19,10 +20,6 @@ async function createBooking(
       schedule,
       req.loginUser
     );
-    if (result) {
-      const user = await userService.getById(req.loginUser);
-      //await sendBookingBillEmail(booking, user);
-    }
 
     return res.status(201).json({ message: 'Created Booking Successfully' });
   } catch (error) {
@@ -55,6 +52,26 @@ async function getAllBookingOfCourt(req: AuthRequest, res: Response) {
   };
   const booking = await bookingService.search(key);
   return res.status(200).json({ bookingList: booking });
+}
+
+async function updateBookingAfterPayment(req: AuthRequest, res: Response) {
+  const bookingId = req.params.bookingId;
+  const paymentResult = req.body.paymentResult;
+  const { result, relativePath } =
+    await bookingService.updateBookingAfterPayment(paymentResult, bookingId);
+  if (result._id) {
+    const user = await userService.getById(req.loginUser);
+    await sendBookingBillEmail(result, user, relativePath);
+  }
+  return res.status(200).json({ booking: result });
+}
+
+async function updateBookingStatus(req: AuthRequest, res: Response) {
+  const bookingId = req.params.bookingId;
+  const booking = await bookingService.update(bookingId, {
+    status: BookingStatusEnum.DONE
+  });
+  return res.status(200).json({ booking: booking });
 }
 
 async function getBookingById(req: Request, res: Response, next: NextFunction) {
@@ -106,5 +123,7 @@ export default {
   getBookingByStatus,
   getBookingOfCustomer,
   getAllBookingOfCourt,
-  cancelBooking
+  cancelBooking,
+  updateBookingAfterPayment,
+  updateBookingStatus
 };

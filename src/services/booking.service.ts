@@ -19,6 +19,8 @@ import scheduleModel from '../models/schedule.model';
 import { BookingData, generateQrCode } from './mail.service';
 import { userService } from './user.service';
 import customerModel from '../models/customer.model';
+import { ServerError } from '../errors/serverError';
+import path from 'path';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -116,7 +118,6 @@ class BookingService extends BaseService<IBooking> {
 
       await scheduleService.create(newSchedule);
     }
-
     return true;
   }
 
@@ -125,8 +126,38 @@ class BookingService extends BaseService<IBooking> {
     const updateData: Partial<IBooking> = {
       totalHour: booking.totalHour - duration
     };
-    await this.update(bookingId, updateData);
+    try {
+      await this.update(bookingId, updateData);
+      return true;
+    } catch (error) {
+      throw new ServerError(error);
+    }
   }
+
+  async updateBookingAfterPayment(paymentResult: boolean, bookingId: string) {
+    let updateData: Partial<IBooking>;
+    const relativePath = path.join(__dirname, 'image', `${bookingId}.png`);
+    if (paymentResult) {
+      updateData = {
+        status: BookingStatusEnum.BOOKED
+      };
+      const bookingData: BookingData = {
+        redirectUrl: `/checkin/${bookingId}`
+      };
+      await generateQrCode(bookingData, relativePath);
+    } else {
+      updateData = {
+        status: BookingStatusEnum.CANCELLED
+      };
+    }
+    try {
+      const result = await this.update(bookingId, updateData);
+      return { result, relativePath };
+    } catch (error) {
+      throw new ServerError(error);
+    }
+  }
+
   async getBookingByCustomer(customerId: string) {
     const customer = await customerModel.findOne({ _id: customerId });
     if (customer.role !== RoleEnum.CUSTOMER) {
