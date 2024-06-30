@@ -88,3 +88,8 @@ export enum WeekDayEnum {
   SATURDAY = 'Saturday',
   SUNDAY = 'Sunday'
 }
+
+export enum PackagePurchaseStatusEnum {
+  PENDING = 'Pending',
+  ACTIVE = 'Active'
+}

@@ -5,8 +5,16 @@ import { IBuyPackage } from '../interfaces/buyPackage.interface';
 import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
 import packagePurchaseModel from '../models/packagePurchase.model';
-import { PackageCourtTypeEnum } from '../utils/enums';
+import {
+  PackageCourtTypeEnum,
+  PackagePurchaseStatusEnum,
+  PaymentMethodEnum,
+  TransactionTypeEnum
+} from '../utils/enums';
 import { BadRequestError } from '../errors/badRequestError';
+import transactionModel from '../models/transaction.model';
+import adminModel from '../models/admin.model';
+import moment from 'moment';
 
 class PackageCourtService extends BaseService<IPackageCourt> {
   constructor() {
@@ -35,12 +43,6 @@ class PackageCourtService extends BaseService<IPackageCourt> {
 
   async beforeCreate(data: IPackageCourt): Promise<void> {
     if (data.type == PackageCourtTypeEnum.CUSTOM) {
-      const existPackageCustom = await this.model.findOne({
-        type: data.type
-      });
-      if (existPackageCustom)
-        throw new BadRequestError('Already have custom package');
-
       if (data.duration)
         throw new BadRequestError('Custom package can not have Duration info');
       if (data.maxCourt)
@@ -50,6 +52,66 @@ class PackageCourtService extends BaseService<IPackageCourt> {
           'Custom package can not have Total Price info'
         );
     }
+  }
+
+  async buyPackageFull(buyPackageDTO: Partial<IBuyPackage>) {
+    const packageCourt: IPackageCourt = await packageCourtService.getById(
+      buyPackageDTO.packageId
+    );
+    if (!packageCourt) throw new NotFoundError('Package not found');
+    const manager = await managerService.getById(buyPackageDTO.managerId);
+
+    const currentDate = new Date();
+    if (manager.expiredDate && manager.expiredDate > currentDate) {
+      throw new BadRequestError(
+        'You cannot purchase a new court package as your current package is still active'
+      );
+    }
+
+    const duration = packageCourt.duration;
+    const totalCourt = packageCourt.maxCourt || buyPackageDTO.totalCourt;
+    const totalPrice =
+      packageCourt.totalPrice ||
+      packageCourt.priceEachCourt * buyPackageDTO.totalCourt;
+
+    const startDateOfPackagePurchase = new Date(
+      manager.expiredDate || new Date()
+    );
+    startDateOfPackagePurchase.setDate(
+      startDateOfPackagePurchase.getDate() + 1
+    );
+    const endDateOfPackagePurchase = new Date(startDateOfPackagePurchase);
+    endDateOfPackagePurchase.setMonth(
+      endDateOfPackagePurchase.getMonth() + duration
+    );
+
+    const createdPackagePurchase = {
+      totalPrice,
+      totalCourt,
+      duration,
+      priceEachCourt: packageCourt.priceEachCourt,
+      startDate: startDateOfPackagePurchase,
+      endDate: endDateOfPackagePurchase,
+      manager: buyPackageDTO.managerId,
+      packageCourt: buyPackageDTO.packageId,
+      status: PackagePurchaseStatusEnum.ACTIVE
+    };
+    await packagePurchaseModel.create(createdPackagePurchase);
+
+    managerService.update(manager._id, {
+      expiredDate: endDateOfPackagePurchase,
+      maxCourt: createdPackagePurchase.totalCourt
+    });
+
+    transactionModel.create({
+      amount: totalPrice,
+      from: buyPackageDTO.managerId,
+      to: await adminModel.findOne({}),
+      content: `Manager ${manager.firstName} orders package purchase on ${moment(new Date()).format('YYYY-MM-DD')}`,
+      type: TransactionTypeEnum.PACKAGE,
+      paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT,
+      payment: buyPackageDTO.paymentId
+    });
   }
 
   async buyPackageCourt(buyPackageDTO: IBuyPackage) {
@@ -73,21 +135,6 @@ class PackageCourtService extends BaseService<IPackageCourt> {
         'You cannot purchase a new court package as your current package is still active'
       );
     }
-    //     const currentPackagePurchase = await packagePurchaseModel.findOne({
-    //       manager: buyPackageDTO.managerId,
-    //       endDate: { $gte: currentDate }
-    //     });
-
-    // if (currentPackagePurchase) {
-    //   const timeLeft = Math.ceil(
-    //     currentPackagePurchase.endDate.getTime() - currentDate.getTime()
-    //   );
-    //   if (timeLeft > 0) {
-    //     throw new BadRequestError(
-    //       'You cannot purchase a new court package as your current package is still active'
-    //     );
-    //   }
-    // }
 
     const duration = packageCourt.duration || 1;
     const totalCourt = packageCourt.maxCourt || buyPackageDTO.totalCourt;

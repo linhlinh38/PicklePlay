@@ -3,4 +3,5 @@ export interface IBuyPackage {
   managerId: string;
   duration: number;
   totalCourt: number;
+  paymentId?: string;
 }

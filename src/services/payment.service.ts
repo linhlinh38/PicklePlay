@@ -20,14 +20,11 @@ export default class PaymentService extends BaseService<IPayment> {
   }
 
   async addPayment(paymentDTO: IPayment) {
-    const user = await userService.getById(paymentDTO.user);
-    if (!user) throw new NotFoundError('User not found');
-
     const paymentExist = await paymentModel.findOne({
       accountNumber: paymentDTO.accountNumber,
       accountName: paymentDTO.accountName,
       accountBank: paymentDTO.accountBank,
-      owner: user._id
+      owner: paymentDTO.owner
     });
     if (paymentExist) throw new BadRequestError('This payment already exist');
 

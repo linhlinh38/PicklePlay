@@ -48,7 +48,7 @@ export default class PaymentController {
         accountName,
         accountBank,
         expDate,
-        user: req.loginUser
+        owner: req.loginUser
       };
 
       await paymentService.addPayment(paymentDTO);
