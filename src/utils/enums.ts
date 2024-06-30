@@ -13,6 +13,7 @@ export enum GenderEnum {
 }
 
 export enum UserStatusEnum {
+  PENDING = 'Pending',
   ACTIVE = 'Active',
   INACTIVE = 'Inactive'
 }
@@ -64,6 +65,7 @@ export enum BookingTypeEnum {
 }
 
 export enum ScheduleStatusEnum {
+  PENDING = 'Pending',
   AVAILABLE = 'Available',
   DONE = 'Done'
 }
