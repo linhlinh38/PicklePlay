@@ -29,7 +29,9 @@ async function createBooking(
 
 async function getAllBooking(req: Request, res: Response) {
   const booking = await bookingService.getAll();
-  return res.status(200).json({ bookingList: booking });
+  return res
+    .status(200)
+    .json({ message: 'Get all booking success', data: booking });
 }
 
 async function getBookingByStatus(req: AuthRequest, res: Response) {
@@ -38,12 +40,16 @@ async function getBookingByStatus(req: AuthRequest, res: Response) {
     status: req.params.status
   };
   const booking = await bookingService.search(key);
-  return res.status(200).json({ bookingList: booking });
+  return res
+    .status(200)
+    .json({ message: 'Get booking success', data: booking });
 }
 
 async function getBookingOfCustomer(req: AuthRequest, res: Response) {
   const booking = await bookingService.getBookingByCustomer(req.loginUser);
-  return res.status(200).json({ bookingList: booking });
+  return res
+    .status(200)
+    .json({ message: 'Get booking success', data: booking });
 }
 
 async function getAllBookingOfCourt(req: AuthRequest, res: Response) {
@@ -51,7 +57,9 @@ async function getAllBookingOfCourt(req: AuthRequest, res: Response) {
     court: req.params.court
   };
   const booking = await bookingService.search(key);
-  return res.status(200).json({ bookingList: booking });
+  return res
+    .status(200)
+    .json({ message: 'Get booking success', data: booking });
 }
 
 async function updateBookingAfterPayment(req: AuthRequest, res: Response) {
@@ -63,7 +71,9 @@ async function updateBookingAfterPayment(req: AuthRequest, res: Response) {
     const user = await userService.getById(req.loginUser);
     await sendBookingBillEmail(result, user, relativePath);
   }
-  return res.status(200).json({ booking: result });
+  return res
+    .status(200)
+    .json({ message: 'Update booking success', data: result });
 }
 
 async function updateBookingStatus(req: AuthRequest, res: Response) {
@@ -71,13 +81,17 @@ async function updateBookingStatus(req: AuthRequest, res: Response) {
   const booking = await bookingService.update(bookingId, {
     status: BookingStatusEnum.DONE
   });
-  return res.status(200).json({ booking: booking });
+  return res
+    .status(200)
+    .json({ message: 'Update booking success', data: booking });
 }
 
 async function getBookingById(req: Request, res: Response, next: NextFunction) {
   try {
     const booking = await bookingService.getById(req.params.id);
-    return res.status(200).json({ booking: booking });
+    return res
+      .status(200)
+      .json({ message: 'Get booking success', data: booking });
   } catch (error) {
     next(error);
   }

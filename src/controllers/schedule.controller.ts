@@ -20,7 +20,9 @@ async function getScheduleByCourt(
       status: ScheduleStatusEnum.AVAILABLE
     };
     const schedule = await scheduleService.search(key);
-    return res.status(200).json({ scheduleList: schedule });
+    return res
+      .status(200)
+      .json({ message: 'Get Schedule Successfully', data: schedule });
   } catch (error) {
     next(error);
   }
@@ -36,7 +38,9 @@ async function getScheduleByBooking(
       booking: req.params.booking as string
     };
     const schedule = await scheduleService.search(key);
-    return res.status(200).json({ scheduleList: schedule });
+    return res
+      .status(200)
+      .json({ message: 'Get Schedule Successfully', data: schedule });
   } catch (error) {
     next(error);
   }
@@ -72,7 +76,9 @@ async function getScheduleOfCustomer(
       }
       filterSchedules[status].push(schedule);
     });
-    return res.status(200).json({ scheduleList: filterSchedules });
+    return res
+      .status(200)
+      .json({ message: 'Get Schedule Successfully', data: filterSchedules });
   } catch (error) {
     next(error);
   }
