@@ -44,7 +44,9 @@ async function createCustomer(req: Request, res: Response, next: NextFunction) {
 
 async function getAllCustomers(req: Request, res: Response) {
   const customer = await customerService.getAll();
-  return res.status(200).json({ customerList: customer });
+  return res
+    .status(200)
+    .json({ message: 'Get Customer Successfully', data: customer });
 }
 
 async function getCustomerInfo(
@@ -54,7 +56,9 @@ async function getCustomerInfo(
 ) {
   try {
     const customer = await customerService.getById(req.loginUser);
-    return res.status(200).json({ customer: customer });
+    return res
+      .status(200)
+      .json({ message: 'Get Customer Successfully', data: customer });
   } catch (error) {
     next(error);
   }
@@ -67,7 +71,9 @@ async function getCustomerById(
 ) {
   try {
     const customer = await customerService.getById(req.params.id);
-    return res.status(200).json({ customer: customer });
+    return res
+      .status(200)
+      .json({ message: 'Get Customer Successfully', data: customer });
   } catch (error) {
     next(error);
   }
@@ -83,7 +89,9 @@ async function updateCustomer(
     const updateData = req.body as Partial<IUser>;
     const customer = await customerService.update(id, updateData);
     if (!customer) throw new NotFoundError('Customer not found');
-    return res.status(200).json({ customer: customer });
+    return res
+      .status(200)
+      .json({ message: 'Update Customer Successfully', data: customer });
   } catch (error) {
     next(error);
   }
