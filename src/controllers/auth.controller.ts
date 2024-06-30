@@ -108,7 +108,7 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
     const accessToken = authorization.split(' ')[1];
     const { payload } = verifyToken(accessToken);
     const user = await userService.getById(payload.userId);
-    return res.status(200).json({ user: user });
+    return res.status(200).json({ data: user });
   } catch (error) {
     next(error);
   }
