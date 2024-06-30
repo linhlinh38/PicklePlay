@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ITransaction } from '../interfaces/transaction.interface';
 import { transactionService } from '../services/transaction.service';
+import { AuthRequest } from '../middlewares/authentication';
 
 export default class TransactionController {
   static async create(req: Request, res: Response, next: NextFunction) {
@@ -25,12 +26,16 @@ export default class TransactionController {
     }
   }
 
-  static async getOfUser(req: Request, res: Response, next: NextFunction) {
-    const userId = req.params.userId;
+  static async getMyTransactions(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const userId = req.loginUser;
     try {
       res.status(200).json({
         message: 'Get transactions success',
-        data: await transactionService.getOfUser(userId)
+        data: await transactionService.getMyTransactions(userId)
       });
     } catch (err) {
       next(err);

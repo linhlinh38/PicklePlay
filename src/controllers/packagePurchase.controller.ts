@@ -79,9 +79,9 @@ export default class PackagePurchaseController {
     };
 
     try {
-      await packageCourtService.buyPackageFull(buyPackageDTO);
       return res.status(200).json({
-        message: 'Buy package Successfully'
+        message: 'Buy package Successfully',
+        data: await packageCourtService.buyPackageFull(buyPackageDTO)
       });
     } catch (error) {
       next(error);

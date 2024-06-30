@@ -96,7 +96,9 @@ class PackageCourtService extends BaseService<IPackageCourt> {
       packageCourt: buyPackageDTO.packageId,
       status: PackagePurchaseStatusEnum.ACTIVE
     };
-    await packagePurchaseModel.create(createdPackagePurchase);
+    const savedPurchase = await packagePurchaseModel.create(
+      createdPackagePurchase
+    );
 
     managerService.update(manager._id, {
       expiredDate: endDateOfPackagePurchase,
@@ -112,6 +114,8 @@ class PackageCourtService extends BaseService<IPackageCourt> {
       paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT,
       payment: buyPackageDTO.paymentId
     });
+
+    return savedPurchase;
   }
 
   async buyPackageCourt(buyPackageDTO: IBuyPackage) {
