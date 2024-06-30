@@ -48,7 +48,7 @@ export default class PackageCourtController {
     };
 
     try {
-      await packageCourtService.create(packageCourtDTO);
+      await packageCourtService.createPackage(packageCourtDTO);
       return res.status(201).json({
         message: 'Create package Successfully'
       });

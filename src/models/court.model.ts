@@ -1,4 +1,4 @@
-import { BranchStatusEnum } from '../utils/enums';
+import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
 
 const mongoose = require('mongoose');
 const courtSchema = mongoose.Schema(
@@ -26,7 +26,7 @@ const courtSchema = mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: Object.values(BranchStatusEnum)
+      enum: Object.values(CourtStatusEnum)
     },
     branch: {
       type: mongoose.Schema.Types.ObjectId,

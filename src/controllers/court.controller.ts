@@ -3,6 +3,7 @@ import { ICourt } from '../interfaces/court.interface';
 import { CourtStatusEnum } from '../utils/enums';
 import { courtService } from '../services/court.service';
 import { branchService } from '../services/branch.service';
+import { AuthRequest } from '../middlewares/authentication';
 
 async function createCourt(req: Request, res: Response, next: NextFunction) {
   const newCourt: ICourt = {
@@ -67,10 +68,25 @@ async function getCourtAvailable(
   }
 }
 
+async function getMyAvailableCourts(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    return res
+      .status(200)
+      .json({ data: await courtService.getMyAvailableCourts(req.loginUser) });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default {
   createCourt,
   getAllCourt,
   getCourtById,
   searchCourt,
-  getCourtAvailable
+  getCourtAvailable,
+  getMyAvailableCourts
 };

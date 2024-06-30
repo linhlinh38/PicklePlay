@@ -30,5 +30,9 @@ courtRoute.post(
   ]),
   courtController.createCourt
 );
-
+courtRoute.get(
+  '/get-my-available-courts',
+  Author([RoleEnum.MANAGER]),
+  courtController.getMyAvailableCourts
+);
 export default courtRoute;

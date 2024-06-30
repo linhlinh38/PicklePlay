@@ -13,6 +13,26 @@ class PackageCourtService extends BaseService<IPackageCourt> {
     super(packageCourtModel);
   }
 
+  async createPackage(packageCourtDTO: IPackageCourt) {
+    if (packageCourtDTO.type == PackageCourtTypeEnum.STANDARD) {
+      await packageCourtModel.create({
+        name: packageCourtDTO.name,
+        totalPrice: packageCourtDTO.totalPrice,
+        maxCourt: packageCourtDTO.maxCourt,
+        duration: packageCourtDTO.duration,
+        description: packageCourtDTO.description,
+        type: packageCourtDTO.type
+      });
+    }
+    await packageCourtModel.create({
+      name: packageCourtDTO.name,
+      priceEachCourt: packageCourtDTO.priceEachCourt,
+      duration: packageCourtDTO.duration,
+      description: packageCourtDTO.description,
+      type: packageCourtDTO.type
+    });
+  }
+
   async beforeCreate(data: IPackageCourt): Promise<void> {
     if (data.type == PackageCourtTypeEnum.CUSTOM) {
       const existPackageCustom = await this.model.findOne({
