@@ -28,7 +28,7 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
 
 async function getAllUsers(req: Request, res: Response) {
   const user = await userService.getAll();
-  return res.status(200).json({ userList: user });
+  return res.status(200).json({ data: user });
 }
 const getUserByIdHandler = async (
   req: Request,
