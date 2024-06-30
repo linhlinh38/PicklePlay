@@ -90,6 +90,10 @@ export enum WeekDayEnum {
   SUNDAY = 'Sunday'
 }
 
+export enum PackagePurchaseStatusEnum {
+  PENDING = 'Pending',
+  ACTIVE = 'Active'
+}
 export enum PackageCourtStatusEnum {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive'

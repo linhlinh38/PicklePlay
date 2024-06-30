@@ -1,3 +1,5 @@
+import { PackagePurchaseStatusEnum } from '../utils/enums';
+
 const mongoose = require('mongoose');
 const packagePurchaseSchema = mongoose.Schema(
   {
@@ -24,6 +26,12 @@ const packagePurchaseSchema = mongoose.Schema(
       type: Date,
       required: true
     },
+    status: {
+      type: String,
+      enum: Object.values(PackagePurchaseStatusEnum),
+      required: true
+    },
+
     manager: { type: mongoose.Schema.Types.ObjectId, ref: 'Manager' },
     packageCourt: { type: mongoose.Schema.Types.ObjectId, ref: 'PackageCourt' }
   },

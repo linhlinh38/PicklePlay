@@ -5,6 +5,21 @@ import { BranchStatusEnum } from '../utils/enums';
 import { AuthRequest } from '../middlewares/authentication';
 
 export default class BranchController {
+  static async getMyBranchs(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      return res.status(200).json({
+        message: 'Get branchs success',
+        data: await branchService.getMyBranchs(req.loginUser)
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async searchByNameOrAddress(
     req: Request,
     res: Response,

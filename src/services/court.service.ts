@@ -15,6 +15,17 @@ class CourtService extends BaseService<ICourt> {
     super(courtModel);
   }
 
+  async getMyAvailableCourts(loginUser: string) {
+    const branchs = await branchModel.find({ manager: loginUser });
+    const branchIds = branchs.map((branch) => branch._id);
+
+    const courts = await courtModel.find({
+      status: CourtStatusEnum.INUSE,
+      branch: { $in: branchIds }
+    });
+    return courts;
+  }
+
   async beforeCreate(data: ICourt): Promise<void> {
     const branch = await branchService.getById(data.branch as string);
     if (!branch) {

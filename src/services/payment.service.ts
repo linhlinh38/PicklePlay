@@ -5,28 +5,30 @@ import crypto from 'crypto';
 import { BaseService } from './base.service';
 import { IPayment } from '../interfaces/payment.interface';
 import paymentModel from '../models/payment.model';
-import { userService } from './user.service';
-import { NotFoundError } from '../errors/notFound';
 import { BadRequestError } from '../errors/badRequestError';
 
 export default class PaymentService extends BaseService<IPayment> {
-  async addPayment(paymentDTO: IPayment) {
-    const user = await userService.getById(paymentDTO.user);
-    if (!user) throw new NotFoundError('User not found');
+  constructor() {
+    super(paymentModel);
+  }
 
+  async getMyPayments(userId: string) {
+    const payments = await paymentModel.find({ owner: userId });
+    return payments;
+  }
+
+  async addPayment(paymentDTO: IPayment) {
     const paymentExist = await paymentModel.findOne({
       accountNumber: paymentDTO.accountNumber,
       accountName: paymentDTO.accountName,
       accountBank: paymentDTO.accountBank,
-      owner: user._id
+      owner: paymentDTO.owner
     });
     if (paymentExist) throw new BadRequestError('This payment already exist');
 
     await paymentModel.create(paymentDTO);
   }
-  constructor() {
-    super(paymentModel);
-  }
+
   createPaymentUrl(amount: number, returnUrl: string, bookingId?: string) {
     const currentDate = new Date();
     const createDate = moment(currentDate).format('YYYYMMDDHHmmss');

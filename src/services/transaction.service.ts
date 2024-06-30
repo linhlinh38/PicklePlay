@@ -16,10 +16,7 @@ class TransactionService extends BaseService<ITransaction> {
 
     await transactionModel.create(transactionDTO);
   }
-  async getOfUser(userId: string) {
-    const user = userService.getById(userId);
-    if (!user) throw new NotFoundError('User not found');
-
+  async getMyTransactions(userId: string) {
     const transactions = await transactionModel
       .find({
         $or: [{ from: userId }, { to: userId }]
