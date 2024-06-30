@@ -1,4 +1,4 @@
-import { GenderEnum, RoleEnum, UserStatusEnum } from '../utils/enums';
+import { RoleEnum, UserStatusEnum } from '../utils/enums';
 
 const mongoose = require('mongoose');
 const userSchema = mongoose.Schema(
