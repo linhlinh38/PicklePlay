@@ -4,6 +4,20 @@ import { AuthRequest } from '../middlewares/authentication';
 import { IPayment } from '../interfaces/payment.interface';
 
 export default class PaymentController {
+  static async getMyPayments(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      return res.status(200).json({
+        message: 'Get payments success',
+        data: await paymentService.getMyPayments(req.loginUser)
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
   static createPaymentUrl(req: Request, res: Response, next: NextFunction) {
     const { amount, returnUrl, bookingId } = req.body;
     try {
@@ -37,7 +51,7 @@ export default class PaymentController {
         accountName,
         accountBank,
         expDate,
-        user: req.loginUser
+        owner: req.loginUser
       };
 
       await paymentService.addPayment(paymentDTO);

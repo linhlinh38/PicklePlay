@@ -6,7 +6,7 @@ export const createPackageCourtSchema = z.object({
     totalPrice: z.number().nullable().optional(),
     priceEachCourt: z.number().nullable().optional(),
     maxCourt: z.number().int().min(1).optional().nullable(),
-    duration: z.number().int().min(1).optional().nullable(),
+    duration: z.number().int().min(1).max(12).optional().nullable(),
     description: z.string().optional(),
     type: z
       .string()

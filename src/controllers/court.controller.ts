@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ICourt } from '../interfaces/court.interface';
-import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
+import { CourtStatusEnum } from '../utils/enums';
 import { courtService } from '../services/court.service';
 import { branchService } from '../services/branch.service';
 import { AuthRequest } from '../middlewares/authentication';
@@ -127,12 +127,27 @@ async function deleteCourt(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function getMyAvailableCourts(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    return res
+      .status(200)
+      .json({ data: await courtService.getMyAvailableCourts(req.loginUser) });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default {
   createCourt,
   getAllCourt,
   getCourtById,
   searchCourt,
   getCourtAvailable,
+  getMyAvailableCourts,
   updateCourt,
   updateCourtStatus,
   deleteCourt

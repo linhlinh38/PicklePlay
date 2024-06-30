@@ -17,6 +17,11 @@ class BranchService extends BaseService<IBranch> {
     super(branchModel);
   }
 
+  async getMyBranchs(userId: string) {
+    return await branchModel.find({
+      manager: userId
+    });
+  }
   async searchByNameOrAddress(keyword: string) {
     const branches = await branchModel.find({
       $or: [

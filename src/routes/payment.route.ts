@@ -6,4 +6,5 @@ const router = express.Router();
 router.post('/create-payment-url', PaymentController.createPaymentUrl);
 router.post('/verify-success-url', PaymentController.verifySuccessUrl);
 router.post('/add', authentication, PaymentController.addPayment);
+router.get('/get-my-payments', authentication, PaymentController.getMyPayments);
 export default router;

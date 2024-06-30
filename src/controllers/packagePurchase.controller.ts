@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { packagePurchaseService } from '../services/packagePurchase.service';
 import { packageCourtService } from '../services/packageCourt.service';
 import { IBuyPackage } from '../interfaces/buyPackage.interface';
+import { AuthRequest } from '../middlewares/authentication';
 
 export default class PackagePurchaseController {
   static async getPurchasesOfManager(
@@ -59,6 +60,28 @@ export default class PackagePurchaseController {
       await packageCourtService.buyPackageCourt(buyPackageDTO);
       return res.status(200).json({
         message: 'Buy package Successfully'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async buyPackageFull(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { packageId, totalCourt } = req.body;
+    const buyPackageDTO: Partial<IBuyPackage> = {
+      packageId,
+      totalCourt,
+      managerId: req.loginUser
+    };
+
+    try {
+      return res.status(200).json({
+        message: 'Buy package Successfully',
+        data: await packageCourtService.buyPackageFull(buyPackageDTO)
       });
     } catch (error) {
       next(error);

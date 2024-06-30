@@ -5,12 +5,17 @@ import { Author } from '../middlewares/authorization';
 import courtController from '../controllers/court.controller';
 import { RoleEnum } from '../utils/enums';
 import { createCourtSchema } from '../models/validateSchema/createCourt.validate.schema';
-import { uploadImage } from '../config/multerConfig';
 import { updateCourtSchema } from '../models/validateSchema/updateCourt.validate.schema';
 
 const courtRoute = express.Router();
 
 courtRoute.get('/', courtController.getAllCourt);
+courtRoute.get(
+  '/get-my-available-courts',
+  authentication,
+  Author([RoleEnum.MANAGER]),
+  courtController.getMyAvailableCourts
+);
 courtRoute.get('/:id', courtController.getCourtById);
 courtRoute.post('/search', courtController.searchCourt);
 courtRoute.post('/get-court-available', courtController.getCourtAvailable);
