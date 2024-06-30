@@ -97,7 +97,7 @@ class BookingService extends BaseService<IBooking> {
           date,
           booking: booking._id,
           court: schedule.court,
-          status: ScheduleStatusEnum.AVAILABLE
+          status: ScheduleStatusEnum.PENDING
         };
         await scheduleService.create(newSchedule);
       });
@@ -113,7 +113,7 @@ class BookingService extends BaseService<IBooking> {
         date: schedule.date,
         booking: booking._id,
         court: schedule.court,
-        status: ScheduleStatusEnum.AVAILABLE
+        status: ScheduleStatusEnum.PENDING
       };
 
       await scheduleService.create(newSchedule);
@@ -136,10 +136,15 @@ class BookingService extends BaseService<IBooking> {
 
   async updateBookingAfterPayment(paymentResult: boolean, bookingId: string) {
     let updateData: Partial<IBooking>;
+    let updateSchedule: Partial<ISchedule>;
+    const schedules = await scheduleModel.find({ booking: bookingId });
     const relativePath = path.join(__dirname, 'image', `${bookingId}.png`);
     if (paymentResult) {
       updateData = {
         status: BookingStatusEnum.BOOKED
+      };
+      updateSchedule = {
+        status: ScheduleStatusEnum.AVAILABLE
       };
       const bookingData: BookingData = {
         redirectUrl: `/checkin/${bookingId}`
@@ -152,6 +157,19 @@ class BookingService extends BaseService<IBooking> {
     }
     try {
       const result = await this.update(bookingId, updateData);
+      if (schedules.length > 0) {
+        if (result.status === BookingStatusEnum.BOOKED) {
+          schedules.map(async (schedule) => {
+            return await scheduleService.update(schedule._id, updateSchedule);
+          });
+        }
+        if (result.status === BookingStatusEnum.CANCELLED) {
+          schedules.map(async (schedule) => {
+            return await scheduleService.delete(schedule._id);
+          });
+        }
+      }
+
       return { result, relativePath };
     } catch (error) {
       throw new ServerError(error);
