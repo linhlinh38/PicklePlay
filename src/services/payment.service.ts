@@ -10,6 +10,15 @@ import { NotFoundError } from '../errors/notFound';
 import { BadRequestError } from '../errors/badRequestError';
 
 export default class PaymentService extends BaseService<IPayment> {
+  constructor() {
+    super(paymentModel);
+  }
+
+  async getMyPayments(userId: string) {
+    const payments = await paymentModel.find({ owner: userId });
+    return payments;
+  }
+
   async addPayment(paymentDTO: IPayment) {
     const user = await userService.getById(paymentDTO.user);
     if (!user) throw new NotFoundError('User not found');
@@ -24,9 +33,7 @@ export default class PaymentService extends BaseService<IPayment> {
 
     await paymentModel.create(paymentDTO);
   }
-  constructor() {
-    super(paymentModel);
-  }
+
   createPaymentUrl(amount: number) {
     const currentDate = new Date();
     const createDate = moment(currentDate).format('YYYYMMDDHHmmss');
