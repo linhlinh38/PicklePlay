@@ -50,7 +50,9 @@ class BookingService extends BaseService<IBooking> {
         court: schedule.court,
         slots: { $in: schedule.slots },
         date: schedule.date,
-        status: ScheduleStatusEnum.AVAILABLE
+        status: {
+          $in: [ScheduleStatusEnum.AVAILABLE, ScheduleStatusEnum.PENDING]
+        }
       });
 
       if (checkSchedule.length !== 0) {
