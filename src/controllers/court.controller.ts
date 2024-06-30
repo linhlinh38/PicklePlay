@@ -21,7 +21,7 @@ async function createCourt(
   };
   try {
     const branch = await branchService.getById(newCourt.branch as string);
-    if (branch.manager !== req.loginUser) {
+    if (branch.manager.toString() !== req.loginUser) {
       return res.status(401).json({
         message: 'User not have credential to create court on this branch'
       });
