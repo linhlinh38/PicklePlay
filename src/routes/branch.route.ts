@@ -45,4 +45,10 @@ router.post(
   BranchController.handleRequest
 );
 router.post('/search', BranchController.search);
+router.get(
+  '/get-my-branchs',
+  authentication,
+  Author([RoleEnum.MANAGER]),
+  BranchController.getMyBranchs
+);
 export default router;

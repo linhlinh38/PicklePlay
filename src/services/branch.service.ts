@@ -17,6 +17,12 @@ class BranchService extends BaseService<IBranch> {
     super(branchModel);
   }
 
+  async getMyBranchs(userId: string) {
+    return await branchModel.find({
+      manager: userId
+    });
+  }
+
   async updateStatus(branchId: string, status: string) {
     const branch = await branchService.getById(branchId);
     if (!branch) throw new NotFoundError('Branch not found');
