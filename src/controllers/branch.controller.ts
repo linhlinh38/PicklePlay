@@ -20,6 +20,21 @@ export default class BranchController {
     }
   }
 
+  static async searchByNameOrAddress(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { keyword } = req.body;
+      return res.status(200).json({
+        data: await branchService.searchByNameOrAddress(keyword)
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async search(req: Request, res: Response, next: NextFunction) {
     try {
       const key: Partial<IBranch> = req.body;
@@ -83,7 +98,7 @@ export default class BranchController {
     }
   }
   static async requestCreateBranch(
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction
   ) {
@@ -91,10 +106,9 @@ export default class BranchController {
       name,
       phone,
       address,
-      license,
+      licenses,
       images,
       description,
-      managerId,
       courts,
       availableTime,
       slots
@@ -103,11 +117,11 @@ export default class BranchController {
       name,
       phone,
       address,
-      license,
+      licenses,
       images,
       availableTime,
       description,
-      manager: managerId,
+      manager: req.loginUser,
       status: BranchStatusEnum.PENDING,
       courts,
       slots
@@ -166,7 +180,7 @@ export default class BranchController {
       name,
       phone,
       address,
-      license,
+      licenses,
       description,
       availableTime,
       images
@@ -175,7 +189,7 @@ export default class BranchController {
       name,
       phone,
       address,
-      license,
+      licenses,
       description,
       availableTime,
       images

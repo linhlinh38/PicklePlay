@@ -8,6 +8,8 @@ import bcrypt from 'bcrypt';
 import { UserStatusEnum } from '../utils/enums';
 import { OAuth2Client } from 'google-auth-library';
 import { BadRequestError } from '../errors/badRequestError';
+import * as authService from '../services/auth.service';
+
 const { SECRET_KEY_FOR_ACCESS_TOKEN, SECRET_KEY_FOR_REFRESH_TOKEN } = config;
 
 async function loginGoogle(req: Request, res: Response, next: NextFunction) {
@@ -53,37 +55,19 @@ async function loginGoogle(req: Request, res: Response, next: NextFunction) {
 async function login(req: Request, res: Response, next: NextFunction) {
   const { email, password } = req.body;
   try {
-    const user = await userModel.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid email' });
-    }
-
-    if (user.password.length > 0) {
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid password' });
-      }
+    const loginResult = await authService.login(email, password);
+    if (loginResult) {
+      res.setHeader('Authorization', `Bearer ${loginResult.token}`);
+      res.status(200).json({
+        message: 'Login successful',
+        accessToken: loginResult.token,
+        refreshToken: loginResult.refreshToken
+      });
     } else {
-      return res.status(400).json({ message: 'User must login by google' });
+      res.status(500).json({
+        message: 'Server Error'
+      });
     }
-
-    if (user.status === UserStatusEnum.INACTIVE) {
-      return res.status(401).json({ message: 'Account is INACTIVE' });
-    }
-
-    const payload = { userId: user.id.toString() };
-
-    const token = jwt.sign(payload, SECRET_KEY_FOR_ACCESS_TOKEN, {
-      expiresIn: '1h'
-    });
-    const refreshToken = generateRefreshToken(user.id.toString());
-
-    res.setHeader('Authorization', `Bearer ${token}`);
-    res.status(200).json({
-      message: 'Login successful',
-      accessToken: token,
-      refreshToken: refreshToken
-    });
   } catch (error) {
     next(error);
   }
@@ -103,7 +87,7 @@ async function refreshToken(req: Request, res: Response) {
     ) as JwtPayload;
     const userId = decoded.userId;
 
-    const user = await userModel.findById(userId);
+    const user = await userService.getById(userId);
     if (!user) {
       return res.status(401).json({ message: 'Invalid refresh token' });
     }

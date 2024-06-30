@@ -20,7 +20,7 @@ const branchSchema = mongoose.Schema(
         type: String
       }
     ],
-    license: [
+    licenses: [
       {
         type: String,
         required: true

@@ -19,10 +19,13 @@ export default class PaymentController {
     }
   }
   static createPaymentUrl(req: Request, res: Response, next: NextFunction) {
+    const { amount, returnUrl, bookingId } = req.body;
     try {
       return res.status(200).json({
         message: 'Return url success',
-        data: paymentService.createPaymentUrl(req.body.amount as number)
+        data: bookingId
+          ? paymentService.createPaymentUrl(amount, returnUrl, bookingId)
+          : paymentService.createPaymentUrl(amount, returnUrl)
       });
     } catch (err) {
       next(err);

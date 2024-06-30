@@ -3,7 +3,7 @@ FROM node:latest AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 COPY . .
 
@@ -11,12 +11,15 @@ RUN npm run build
 
 FROM node:latest
 
-WORKDIR /app
+ENV NODE_ENV production
+USER node
 
-COPY --from=builder /app/build . 
-EXPOSE 3000 
+WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci --production
 
-CMD [ "npm", "run dev" ]
+COPY --from=builder /app/build ./build
+EXPOSE 3000 
+
+CMD [ "node", "build/index.js" ]

@@ -4,9 +4,11 @@ import { NotFoundError } from '../errors/notFound';
 import { IBooking } from '../interfaces/booking.interface';
 import { ISchedule } from '../interfaces/schedule.interface';
 import bookingModel from '../models/booking.model';
+
 import {
   BookingStatusEnum,
   BookingTypeEnum,
+  RoleEnum,
   ScheduleStatusEnum,
   ScheduleTypeEnum
 } from '../utils/enums';
@@ -14,6 +16,9 @@ import { BaseService } from './base.service';
 import { courtService } from './court.service';
 import { scheduleService } from './schedule.service';
 import scheduleModel from '../models/schedule.model';
+import { BookingData, generateQrCode } from './mail.service';
+import { userService } from './user.service';
+import customerModel from '../models/customer.model';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -111,14 +116,29 @@ class BookingService extends BaseService<IBooking> {
 
       await scheduleService.create(newSchedule);
     }
+
     return true;
   }
+
   async updateTotalHours(bookingId: string, duration: number) {
     const booking = await this.getById(bookingId);
     const updateData: Partial<IBooking> = {
       totalHour: booking.totalHour - duration
     };
     await this.update(bookingId, updateData);
+  }
+  async getBookingByCustomer(customerId: string) {
+    const customer = await customerModel.findOne({ _id: customerId });
+    if (customer.role !== RoleEnum.CUSTOMER) {
+      throw new BadRequestError('Only customer can get booking');
+    }
+    const booking = await bookingModel.find({ customer: customerId }).populate({
+      path: 'court',
+      populate: {
+        path: 'branch'
+      }
+    });
+    return booking;
   }
 }
 

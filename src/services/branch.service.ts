@@ -22,6 +22,15 @@ class BranchService extends BaseService<IBranch> {
       manager: userId
     });
   }
+  async searchByNameOrAddress(keyword: string) {
+    const branches = await branchModel.find({
+      $or: [
+        { name: { $regex: keyword, $options: 'i' } },
+        { address: { $regex: keyword, $options: 'i' } }
+      ]
+    });
+    return branches;
+  }
 
   async updateStatus(branchId: string, status: string) {
     const branch = await branchService.getById(branchId);
@@ -171,12 +180,53 @@ class BranchService extends BaseService<IBranch> {
     const formatSlots: ISlot[] = slots.map((slot) => {
       return { ...slot, branch: savedBranch._id };
     });
+
+    if (formatSlots.length > 0 && !this.checkSlots(formatSlots))
+      throw new BadRequestError('Slots are overlap');
     const savedSlots = await slotModel.insertMany(formatSlots);
 
     savedBranch.courts = savedCourts.map((court) => court._id);
     savedBranch.slots = savedSlots.map((slot) => slot._id);
 
     await savedBranch.save();
+  }
+
+  checkSlots(slots: ISlot[]) {
+    const slotMap = {
+      Monday: [],
+      Tuesday: [],
+      Wednesday: [],
+      Thursday: [],
+      Friday: [],
+      Saturday: [],
+      Sunday: []
+    };
+    slots.forEach((slot) => {
+      slotMap[slot.weekDay].push(slot);
+    });
+    for (const day of Object.keys(slotMap)) {
+      if (!this.doSlotsOverLap(slotMap[day])) return false;
+    }
+    return true;
+  }
+  doSlotsOverLap(slots: ISlot[]) {
+    for (let i = 0; i < slots.length; i++) {
+      for (let j = i + 1; j < slots.length; j++) {
+        if (
+          this.convertToDate(slots[i].startTime) <
+            this.convertToDate(slots[j].endTime) &&
+          this.convertToDate(slots[j].startTime) <
+            this.convertToDate(slots[i].endTime)
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  convertToDate(timeString: string) {
+    return new Date(`1970-01-01T${timeString}:00`);
   }
 }
 
