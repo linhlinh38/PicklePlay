@@ -25,7 +25,7 @@ export abstract class BaseService<T> implements ICRUDService<T> {
 
   async getById(id: string): Promise<T | null> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestError('Invalid ID format');
+      throw new BadRequestError('Data not found');
     }
     return await this.model.findById(id);
   }
@@ -36,7 +36,7 @@ export abstract class BaseService<T> implements ICRUDService<T> {
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestError('Invalid ID format');
+      throw new BadRequestError('Data not found');
     }
     this.beforeUpdate(id, data);
     const document = await this.model.findById(id);
@@ -52,7 +52,7 @@ export abstract class BaseService<T> implements ICRUDService<T> {
 
   async delete(id: string): Promise<void> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new BadRequestError('Invalid ID format');
+      throw new BadRequestError('Data not found');
     }
     await this.model.findByIdAndDelete(id);
   }
