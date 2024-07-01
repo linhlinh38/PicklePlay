@@ -39,5 +39,5 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd bookminton
-            docker-compose pull
-            docker-compose up -d
+            /snap/bin/docker-compose pull
+            /snap/bin/docker-compose up -d
