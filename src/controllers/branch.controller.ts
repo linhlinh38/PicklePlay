@@ -3,6 +3,7 @@ import { IBranch } from '../interfaces/branch.interface';
 import { branchService } from '../services/branch.service';
 import { BranchStatusEnum } from '../utils/enums';
 import { AuthRequest } from '../middlewares/authentication';
+import { populate } from 'dotenv';
 
 export default class BranchController {
   static async getMyBranchs(

@@ -85,7 +85,7 @@ async function getAllCourt(req: Request, res: Response) {
 async function getCourtById(req: Request, res: Response, next: NextFunction) {
   try {
     const court = await courtService.getById(req.params.id);
-    return res.status(200).json({ court: court });
+    return res.status(200).json({ data: court });
   } catch (error) {
     next(error);
   }

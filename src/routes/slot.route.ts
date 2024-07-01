@@ -3,7 +3,7 @@ import authentication from '../middlewares/authentication';
 import SlotController from '../controllers/slot.controller';
 
 const router = express.Router();
-router.use(authentication);
+// router.use(authentication);
 router.get('/get-of-branch/:branchId', SlotController.getSlotsOfBranch);
 router.post('/get-of-court-by-date', SlotController.getSlotsOfCourtByDate);
 router.post('/create/:branchId', SlotController.create);
