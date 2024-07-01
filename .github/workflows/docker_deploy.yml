@@ -39,5 +39,6 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd bookminton
+            ls
             # docker compose -f docker-compose.yml pull -q
             docker compose up -d
