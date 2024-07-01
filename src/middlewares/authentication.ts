@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { config } from '../config/envConfig';
+import { blacklist } from '../services/auth.service';
 
 export interface AuthRequest extends Request {
   loginUser?: string;
@@ -19,6 +20,10 @@ const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
 
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  if (blacklist.has(token)) {
+    return res.status(401).json({ message: 'Invalid token' });
   }
 
   try {

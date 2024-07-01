@@ -36,3 +36,10 @@ export async function login(email: string, password: string) {
 
   return { token, refreshToken };
 }
+
+export const blacklist = new Set();
+
+export async function logout(accessToken: string) {
+  blacklist.add(accessToken);
+  return { message: 'Logout successful' };
+}

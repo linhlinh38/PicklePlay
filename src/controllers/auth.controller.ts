@@ -121,4 +121,16 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { login, getProfile, refreshToken, loginGoogle };
+async function logout(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authorization = req.headers.authorization;
+    const accessToken = authorization.split(' ')[1];
+    await authService.logout(accessToken);
+    res.setHeader('Authorization', '');
+    return res.status(200).json({ message: 'Logout successful' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export default { login, logout, getProfile, refreshToken, loginGoogle };

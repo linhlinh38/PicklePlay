@@ -8,6 +8,7 @@ const authRoute = express.Router();
 authRoute.post('/login-google', authController.loginGoogle);
 authRoute.post('/login', validate(loginSchema), authController.login);
 authRoute.use(authentication);
+authRoute.get('/logout', authController.logout);
 authRoute.post('/refresh', authController.refreshToken);
 authRoute.get('/me', authController.getProfile);
 export default authRoute;
