@@ -10,7 +10,9 @@ const router = express.Router();
 // router.use(auth);
 router.get('/', PackagePurchaseController.getAll);
 router.get(
-  '/get-purchases/:managerId',
+  '/get-my-purchases',
+  authentication,
+  Author([RoleEnum.MANAGER]),
   PackagePurchaseController.getPurchasesOfManager
 );
 router.get('/:id', PackagePurchaseController.getById);

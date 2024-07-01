@@ -28,7 +28,9 @@ class ScheduleService extends BaseService<ISchedule> {
       court: data.court,
       slots: { $in: data.slots },
       date: data.date,
-      status: ScheduleStatusEnum.AVAILABLE
+      status: {
+        $in: [ScheduleStatusEnum.AVAILABLE, ScheduleStatusEnum.PENDING]
+      }
     });
 
     if (

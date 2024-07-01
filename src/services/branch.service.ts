@@ -16,6 +16,9 @@ class BranchService extends BaseService<IBranch> {
   constructor() {
     super(branchModel);
   }
+  async getBranchById(id: string) {
+    return await branchModel.findById(id).populate('slots courts');
+  }
 
   async getMyBranchs(userId: string) {
     return await branchModel.find({

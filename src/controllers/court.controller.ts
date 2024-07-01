@@ -21,7 +21,7 @@ async function createCourt(
   };
   try {
     const branch = await branchService.getById(newCourt.branch as string);
-    if (branch.manager !== req.loginUser) {
+    if (branch.manager.toString() !== req.loginUser) {
       return res.status(401).json({
         message: 'User not have credential to create court on this branch'
       });
@@ -79,13 +79,17 @@ async function updateCourtStatus(
 
 async function getAllCourt(req: Request, res: Response) {
   const court = await courtService.getAll();
-  return res.status(200).json({ courtList: court });
+  return res
+    .status(200)
+    .json({ message: 'Get Court Successfully', data: court });
 }
 
 async function getCourtById(req: Request, res: Response, next: NextFunction) {
   try {
     const court = await courtService.getById(req.params.id);
-    return res.status(200).json({ data: court });
+    return res
+      .status(200)
+      .json({ message: 'Get Court Successfully', data: court });
   } catch (error) {
     next(error);
   }
@@ -95,7 +99,9 @@ async function searchCourt(req: Request, res: Response, next: NextFunction) {
   try {
     const key: Partial<ICourt> = req.body;
     const court = await courtService.search(key);
-    return res.status(200).json({ court: court });
+    return res
+      .status(200)
+      .json({ message: 'Search Court Successfully', data: court });
   } catch (error) {
     next(error);
   }
@@ -109,7 +115,9 @@ async function getCourtAvailable(
   try {
     const { slots, date, branch } = req.body;
     const court = await courtService.getCourtAvailable(slots, date, branch);
-    return res.status(200).json({ court: court });
+    return res
+      .status(200)
+      .json({ message: 'Get Court Successfully', data: court });
   } catch (error) {
     next(error);
   }

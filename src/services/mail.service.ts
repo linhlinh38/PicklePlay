@@ -4,21 +4,34 @@ import { IUser } from '../interfaces/user.interface';
 import { generateBookingBillContent } from '../utils/email';
 import { EmailParams, Recipient, Sender } from 'mailersend';
 import * as qrcode from 'qrcode';
+import * as fs from 'fs';
 
-export async function sendBookingBillEmail(booking: IBooking, user: IUser) {
+export async function sendBookingBillEmail(
+  booking: IBooking,
+  user: IUser,
+  imagePath: string
+) {
   try {
     const recipients = [
       new Recipient(user.email, user.firstName + ' ' + user.lastName)
     ];
     const sender = new Sender('linh@trial-v69oxl5ok8dg785k.mlsender.net');
     const body = generateBookingBillContent(booking, user);
+    const data = await fs.promises.readFile(imagePath);
+    const base64Encoded = Buffer.from(data).toString('base64');
     const emailParams = new EmailParams()
       .setFrom(sender)
       .setTo(recipients)
       .setSubject('Bookminton: Booking Comfirmed')
       .setHtml(body.html)
-      .setText(body.text);
-    // .setAttachments();
+      .setText(body.text)
+      .setAttachments([
+        {
+          filename: 'BookingQR.png',
+          content: base64Encoded,
+          disposition: 'attachment'
+        }
+      ]);
 
     await mailersend.email.send(emailParams);
     return;
@@ -28,10 +41,7 @@ export async function sendBookingBillEmail(booking: IBooking, user: IUser) {
 }
 
 export interface BookingData {
-  customer: string;
-  email: string;
-  bookingId: string;
-  type: string;
+  redirectUrl: string;
 }
 
 export async function generateQrCode(
@@ -39,7 +49,7 @@ export async function generateQrCode(
   outputPath: string
 ) {
   try {
-    const bookingString = JSON.stringify(bookingData);
+    const bookingString = `http://localhost:3000/${bookingData.redirectUrl}`;
     await qrcode.toFile(outputPath, bookingString, {
       errorCorrectionLevel: 'H',
       type: 'png'

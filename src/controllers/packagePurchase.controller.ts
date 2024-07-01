@@ -6,11 +6,11 @@ import { AuthRequest } from '../middlewares/authentication';
 
 export default class PackagePurchaseController {
   static async getPurchasesOfManager(
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction
   ) {
-    const managerId = req.params.managerId;
+    const managerId = req.loginUser;
     try {
       return res.status(200).json({
         message: 'Get all purchase packages success',

@@ -168,7 +168,7 @@ export default class BranchController {
     try {
       return res.status(200).json({
         message: 'Get branch success',
-        data: await branchService.getById(id)
+        data: await branchService.getBranchById(id)
       });
     } catch (error) {
       next(error);

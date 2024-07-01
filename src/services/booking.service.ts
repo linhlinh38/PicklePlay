@@ -19,6 +19,8 @@ import scheduleModel from '../models/schedule.model';
 import { BookingData, generateQrCode } from './mail.service';
 import { userService } from './user.service';
 import customerModel from '../models/customer.model';
+import { ServerError } from '../errors/serverError';
+import path from 'path';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -48,7 +50,9 @@ class BookingService extends BaseService<IBooking> {
         court: schedule.court,
         slots: { $in: schedule.slots },
         date: schedule.date,
-        status: ScheduleStatusEnum.AVAILABLE
+        status: {
+          $in: [ScheduleStatusEnum.AVAILABLE, ScheduleStatusEnum.PENDING]
+        }
       });
 
       if (checkSchedule.length !== 0) {
@@ -95,7 +99,7 @@ class BookingService extends BaseService<IBooking> {
           date,
           booking: booking._id,
           court: schedule.court,
-          status: ScheduleStatusEnum.AVAILABLE
+          status: ScheduleStatusEnum.PENDING
         };
         await scheduleService.create(newSchedule);
       });
@@ -111,12 +115,11 @@ class BookingService extends BaseService<IBooking> {
         date: schedule.date,
         booking: booking._id,
         court: schedule.court,
-        status: ScheduleStatusEnum.AVAILABLE
+        status: ScheduleStatusEnum.PENDING
       };
 
       await scheduleService.create(newSchedule);
     }
-
     return true;
   }
 
@@ -125,8 +128,56 @@ class BookingService extends BaseService<IBooking> {
     const updateData: Partial<IBooking> = {
       totalHour: booking.totalHour - duration
     };
-    await this.update(bookingId, updateData);
+    try {
+      await this.update(bookingId, updateData);
+      return true;
+    } catch (error) {
+      throw new ServerError(error);
+    }
   }
+
+  async updateBookingAfterPayment(paymentResult: boolean, bookingId: string) {
+    let updateData: Partial<IBooking>;
+    let updateSchedule: Partial<ISchedule>;
+    const schedules = await scheduleModel.find({ booking: bookingId });
+    const relativePath = path.join(__dirname, 'image', `${bookingId}.png`);
+    if (paymentResult) {
+      updateData = {
+        status: BookingStatusEnum.BOOKED
+      };
+      updateSchedule = {
+        status: ScheduleStatusEnum.AVAILABLE
+      };
+      const bookingData: BookingData = {
+        redirectUrl: `/checkin/${bookingId}`
+      };
+      await generateQrCode(bookingData, relativePath);
+    } else {
+      updateData = {
+        status: BookingStatusEnum.CANCELLED
+      };
+    }
+    try {
+      const result = await this.update(bookingId, updateData);
+      if (schedules.length > 0) {
+        if (result.status === BookingStatusEnum.BOOKED) {
+          schedules.map(async (schedule) => {
+            return await scheduleService.update(schedule._id, updateSchedule);
+          });
+        }
+        if (result.status === BookingStatusEnum.CANCELLED) {
+          schedules.map(async (schedule) => {
+            return await scheduleService.delete(schedule._id);
+          });
+        }
+      }
+
+      return { result, relativePath };
+    } catch (error) {
+      throw new ServerError(error);
+    }
+  }
+
   async getBookingByCustomer(customerId: string) {
     const customer = await customerModel.findOne({ _id: customerId });
     if (customer.role !== RoleEnum.CUSTOMER) {

@@ -60,8 +60,10 @@ async function login(req: Request, res: Response, next: NextFunction) {
       res.setHeader('Authorization', `Bearer ${loginResult.token}`);
       res.status(200).json({
         message: 'Login successful',
-        accessToken: loginResult.token,
-        refreshToken: loginResult.refreshToken
+        data: {
+          accessToken: loginResult.token,
+          refreshToken: loginResult.refreshToken
+        }
       });
     } else {
       res.status(500).json({
@@ -95,7 +97,10 @@ async function refreshToken(req: Request, res: Response) {
     const newAccessToken = jwt.sign({ userId }, SECRET_KEY_FOR_ACCESS_TOKEN, {
       expiresIn: '1h'
     });
-    res.status(200).json({ accessToken: newAccessToken });
+    res.status(200).json({
+      message: 'Refresh token Successful',
+      data: { accessToken: newAccessToken }
+    });
   } catch (error) {
     console.error(error);
     res.status(401).json({ message: 'Invalid refresh token' });
@@ -108,7 +113,9 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
     const accessToken = authorization.split(' ')[1];
     const { payload } = verifyToken(accessToken);
     const user = await userService.getById(payload.userId);
-    return res.status(200).json({ user: user });
+    return res
+      .status(200)
+      .json({ message: 'Get Profile successful', data: user });
   } catch (error) {
     next(error);
   }
