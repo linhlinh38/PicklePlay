@@ -38,8 +38,6 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            docker pull linlii/bookminton:latest
             cd bookminton
-            ls
-            # docker compose -f docker-compose.yml pull -q
+            docker-compose pull
             docker-compose up -d
