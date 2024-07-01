@@ -17,7 +17,7 @@ USER node
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --production
+RUN npm ci 
 
 COPY --from=builder /app/build ./build
 EXPOSE 3000 
