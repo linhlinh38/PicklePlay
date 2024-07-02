@@ -21,7 +21,7 @@ async function createBooking(
       req.loginUser
     );
 
-    return res.status(201).json({ message: 'Created Booking Successfully!' });
+    return res.status(201).json({ message: 'Created Booking Successfully' });
   } catch (error) {
     next(error);
   }
