@@ -3,7 +3,7 @@ FROM node:latest AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm i
 
 COPY . .
 
@@ -17,7 +17,7 @@ USER node
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --production
+RUN npm i 
 
 COPY --from=builder /app/build ./build
 EXPOSE 3000 
