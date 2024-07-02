@@ -22,4 +22,4 @@ RUN npm i
 COPY --from=builder /app/build ./build
 EXPOSE 3000 
 
-CMD [ "node", "build/index.js" ]
+CMD [ "npm", "start" ]
