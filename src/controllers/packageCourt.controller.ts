@@ -65,7 +65,8 @@ export default class PackageCourtController {
       priceEachCourt,
       maxCourt,
       duration,
-      description
+      description,
+      status
     } = req.body;
     const packageCourtDTO: Partial<IPackageCourt> = {
       name,
@@ -73,7 +74,8 @@ export default class PackageCourtController {
       priceEachCourt,
       maxCourt,
       duration,
-      description
+      description,
+      status
     };
     try {
       await packageCourtService.update(id, packageCourtDTO);
