@@ -191,6 +191,22 @@ class BookingService extends BaseService<IBooking> {
     });
     return booking;
   }
+
+  async getBookingByStatus(customerId: string, status: string) {
+    const customer = await customerModel.findOne({ _id: customerId });
+    if (customer.role !== RoleEnum.CUSTOMER) {
+      throw new BadRequestError('Only customer can get booking');
+    }
+    const booking = await bookingModel
+      .find({ customer: customerId, status: status })
+      .populate({
+        path: 'court',
+        populate: {
+          path: 'branch'
+        }
+      });
+    return booking;
+  }
 }
 
 export const bookingService = new BookingService();
