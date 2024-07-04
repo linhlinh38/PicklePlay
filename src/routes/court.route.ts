@@ -47,4 +47,10 @@ courtRoute.delete(
   courtController.deleteCourt
 );
 
+courtRoute.get(
+  '/get-all-courts-of-manager/:id',
+  Author([RoleEnum.ADMIN]),
+  courtController.getAllCourtsOfManager
+);
+
 export default courtRoute;
