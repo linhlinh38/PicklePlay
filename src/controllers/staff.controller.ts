@@ -27,6 +27,17 @@ export default class StaffController {
     }
   }
 
+  static async getMyBranch(req: Request, res: Response, next: NextFunction) {
+    try {
+      return res.status(200).json({
+        message: 'Get branch and its courts success',
+        data: await staffService.getMyBranch(res.locals.user)
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async create(req: Request, res: Response, next: NextFunction) {
     const {
       username,
