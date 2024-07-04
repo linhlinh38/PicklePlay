@@ -7,10 +7,18 @@ import { NotFoundError } from '../errors/notFound';
 import { branchService } from './branch.service';
 import staffModel from '../models/staff.model';
 import { userService } from './user.service';
+import userModel from '../models/user.model';
+import { BadRequestError } from '../errors/badRequestError';
 
 class StaffService extends BaseService<IStaff> {
   constructor() {
     super(staffModel);
+  }
+
+  async getMyBranch(userId: string) {
+    const user = await userModel.findById(userId).populte('branch');
+    if (!user) throw new BadRequestError('User not found');
+    return user.branch;
   }
 
   async createStaff(staffDTO: IStaff) {
