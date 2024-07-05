@@ -4,26 +4,72 @@ import { managerService } from './manager.service';
 import branchModel from '../models/branch.model';
 import { IBranch } from '../interfaces/branch.interface';
 import { BadRequestError } from '../errors/badRequestError';
-import { BranchStatusEnum, CourtStatusEnum } from '../utils/enums';
+import { BranchStatusEnum, CourtStatusEnum, RoleEnum } from '../utils/enums';
 import { ICourt } from '../interfaces/court.interface';
 import courtModel from '../models/court.model';
 import { courtService } from './court.service';
 import slotModel from '../models/slot.model';
 import { ISlot } from '../interfaces/slot.interface';
 import scheduleModel from '../models/schedule.model';
+import userModel from '../models/user.model';
+import { slotService } from './slot.service';
 
 class BranchService extends BaseService<IBranch> {
   constructor() {
     super(branchModel);
   }
+
+  async updateBranch(id: string, branchDTO: Partial<IBranch>) {
+    const branch = await branchModel.findById(id);
+    if (!branch) throw new BadRequestError('Branch not found');
+    if (branchDTO.slots && branchDTO.slots.length > 0) {
+      const currentDate = new Date();
+      const slotIds = branchDTO.slots.map((slot) => slot._id);
+      const upcomingSchedules = await scheduleModel.find({
+        slots: { $in: slotIds },
+        date: { $gt: currentDate }
+      });
+      if (upcomingSchedules && upcomingSchedules.length > 0)
+        throw new BadRequestError(
+          'Can not update slots as they have upcoming schedules'
+        );
+      const otherSlots = await slotModel.find({
+        branch: id,
+        _id: { $nin: slotIds }
+      });
+      const isOverSlap = branchService.checkSlots([
+        ...branchDTO.slots,
+        ...otherSlots
+      ]);
+      if (isOverSlap) throw new BadRequestError('Slots are overlap');
+      branchDTO.slots.forEach((slot) => {
+        slotService.update(slot._id, slot);
+      });
+    }
+    const branchData = {
+      name: branchDTO.name,
+      phone: branchDTO.phone,
+      address: branchDTO.address,
+      licenses: branchDTO.licenses,
+      description: branchDTO.description,
+      availableTime: branchDTO.availableTime,
+      images: branchDTO.images
+    };
+    branchService.update(id, branchData);
+  }
+
   async getBranchById(id: string) {
     return await branchModel.findById(id).populate('slots courts');
   }
 
   async getMyBranchs(userId: string) {
-    return await branchModel.find({
-      manager: userId
-    });
+    const user = await userModel.findById(userId);
+    if (user.role == RoleEnum.MANAGER)
+      return await branchModel.find({
+        manager: userId
+      });
+    const staff = await userModel.findById(userId).populate('branch');
+    return staff.branch;
   }
   async searchByNameOrAddress(keyword: string) {
     const branches = await branchModel.find({

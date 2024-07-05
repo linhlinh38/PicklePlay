@@ -4,6 +4,7 @@ import CourtReportController from '../controllers/courtReport.controller';
 
 const router = express.Router();
 router.use(authentication);
+router.get('/get-by-staff/:staffId', CourtReportController.getReportsOfCourt);
 router.get('/get-by-court/:courtId', CourtReportController.getReportsOfCourt);
 router.get(
   '/get-by-branch/:branchId',

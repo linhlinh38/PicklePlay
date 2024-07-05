@@ -16,7 +16,7 @@ class StaffService extends BaseService<IStaff> {
   }
 
   async getMyBranch(userId: string) {
-    const user = await userModel.findById(userId).populte('branch');
+    const user = await userModel.findById(userId).populate('branch');
     if (!user) throw new BadRequestError('User not found');
     return user.branch;
   }
