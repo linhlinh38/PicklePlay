@@ -114,7 +114,8 @@ class CourtService extends BaseService<ICourt> {
 
     const availableCourt = await courtModel.find({
       _id: { $nin: [...court] },
-      branch: branch
+      branch: branch,
+      status: CourtStatusEnum.INUSE
     });
 
     return availableCourt;
