@@ -77,26 +77,9 @@ class SlotService extends BaseService<ISlot> {
     const branch = await branchService.getById(branchId);
     if (!branch) throw new NotFoundError('Branch not found');
 
-    const weekDayOrder = Object.values(WeekDayEnum);
-
-    const slots = await slotModel.aggregate([
-      {
-        $match: { branch: branchId }
-      },
-      {
-        $sort: { startTime: 1 }
-      },
-      {
-        $group: {
-          _id: '$weekDay',
-          slots: { $push: '$$ROOT' }
-        }
-      }
-    ]);
-    slots.sort(
-      (a, b) => weekDayOrder.indexOf(a._id) - weekDayOrder.indexOf(b._id)
-    );
-
+    const slots = await slotModel.find({
+      branch: branchId
+    });
     return slots;
   }
 
