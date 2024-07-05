@@ -149,6 +149,23 @@ async function getMyAvailableCourts(
   }
 }
 
+async function getAllCourtsOfManager(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    return res
+      .status(200)
+      .json({
+        message: 'Get all courts of manager success',
+        data: await courtService.getAllCourtsOfManager(req.params.id)
+      });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default {
   createCourt,
   getAllCourt,
@@ -158,5 +175,6 @@ export default {
   getMyAvailableCourts,
   updateCourt,
   updateCourtStatus,
-  deleteCourt
+  deleteCourt,
+  getAllCourtsOfManager
 };

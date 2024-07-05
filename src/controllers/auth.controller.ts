@@ -95,7 +95,7 @@ async function refreshToken(req: Request, res: Response) {
     }
 
     const newAccessToken = jwt.sign({ userId }, SECRET_KEY_FOR_ACCESS_TOKEN, {
-      expiresIn: '1h'
+      expiresIn: '1d'
     });
     res.status(200).json({
       message: 'Refresh token Successful',

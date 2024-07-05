@@ -8,19 +8,22 @@ import bookingModel from '../models/booking.model';
 import {
   BookingStatusEnum,
   BookingTypeEnum,
+  CourtStatusEnum,
+  PaymentMethodEnum,
   RoleEnum,
   ScheduleStatusEnum,
-  ScheduleTypeEnum
+  ScheduleTypeEnum,
+  TransactionTypeEnum
 } from '../utils/enums';
 import { BaseService } from './base.service';
 import { courtService } from './court.service';
 import { scheduleService } from './schedule.service';
 import scheduleModel from '../models/schedule.model';
 import { BookingData, generateQrCode } from './mail.service';
-import { userService } from './user.service';
-import customerModel from '../models/customer.model';
 import { ServerError } from '../errors/serverError';
 import path from 'path';
+import { ITransaction } from '../interfaces/transaction.interface';
+import { transactionService } from './transaction.service';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -32,6 +35,7 @@ class BookingService extends BaseService<IBooking> {
   async createBooking(
     booking: IBooking,
     schedule: ISchedule,
+    transaction: ITransaction,
     loginUser: string
   ) {
     if (
@@ -44,6 +48,8 @@ class BookingService extends BaseService<IBooking> {
 
     const court = await courtService.getById(booking.court as string);
     if (!court) throw new NotFoundError('Court not found');
+    if (court.status === CourtStatusEnum.TERMINATION)
+      throw new BadRequestError('Court is Termination');
 
     if (booking.type !== BookingTypeEnum.FLEXIBLE_SCHEDULE) {
       const checkSchedule = await scheduleModel.find({
@@ -120,6 +126,17 @@ class BookingService extends BaseService<IBooking> {
 
       await scheduleService.create(newSchedule);
     }
+
+    const transactionDTO: ITransaction = {
+      amount: transaction.amount,
+      from: loginUser,
+      to: '66582c259a27f983f5bd6700',
+      type: TransactionTypeEnum.BOOKING,
+      payment: transaction.payment,
+      paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT
+    };
+    await transactionService.createTransaction(transactionDTO);
+
     return true;
   }
 
@@ -179,16 +196,24 @@ class BookingService extends BaseService<IBooking> {
   }
 
   async getBookingByCustomer(customerId: string) {
-    const customer = await customerModel.findOne({ _id: customerId });
-    if (customer.role !== RoleEnum.CUSTOMER) {
-      throw new BadRequestError('Only customer can get booking');
-    }
     const booking = await bookingModel.find({ customer: customerId }).populate({
       path: 'court',
       populate: {
         path: 'branch'
       }
     });
+    return booking;
+  }
+
+  async getBookingByStatus(customerId: string, status: string) {
+    const booking = await bookingModel
+      .find({ customer: customerId, status: status })
+      .populate({
+        path: 'court',
+        populate: {
+          path: 'branch'
+        }
+      });
     return booking;
   }
 }

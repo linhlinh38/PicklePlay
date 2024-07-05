@@ -6,4 +6,5 @@ export interface IPackageCourt {
   duration: number;
   description: string;
   type: string;
+  status?: string;
 }

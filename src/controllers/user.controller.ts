@@ -3,7 +3,17 @@ import { userService } from '../services/user.service';
 import { IUser } from '../interfaces/user.interface';
 import { NotFoundError } from '../errors/notFound';
 import { encryptedPassword } from '../utils/jwt';
-import { UserStatusEnum } from '../utils/enums';
+import {
+  BookingStatusEnum,
+  BranchStatusEnum,
+  CourtStatusEnum,
+  RoleEnum,
+  UserStatusEnum
+} from '../utils/enums';
+import { branchService } from '../services/branch.service';
+import { courtService } from '../services/court.service';
+import { bookingService } from '../services/booking.service';
+import { scheduleService } from '../services/schedule.service';
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
   const newUser: IUser = {
@@ -30,6 +40,55 @@ async function getAllUsers(req: Request, res: Response) {
   const user = await userService.getAll();
   return res.status(200).json({ data: user });
 }
+async function getAllUsersByRole(req: Request, res: Response) {
+  const user = await userService.search({ role: req.params.role });
+  return res.status(200).json({ data: user });
+}
+
+async function deActiveAccount(req: Request, res: Response) {
+  const user = await userService.update(req.body.id, {
+    status: UserStatusEnum.INACTIVE
+  });
+  if (user.role === RoleEnum.MANAGER) {
+    const branchs = await branchService.search({ manager: user._id });
+    if (branchs.length > 0) {
+      branchs.map(async (branch) => {
+        await Promise.all([
+          courtService.updateManyCourts(
+            branch._id,
+            CourtStatusEnum.TERMINATION
+          ),
+          branchService.update(branch._id, {
+            status: BranchStatusEnum.INACTIVE
+          })
+        ]);
+      });
+    }
+  }
+  if (user.role === RoleEnum.CUSTOMER) {
+    const bookings = await bookingService.search({
+      customer: user._id,
+      status: BookingStatusEnum.BOOKED
+    });
+    if (bookings.length > 0) {
+      bookings.map(async (booking) => {
+        bookingService.update(booking._id, {
+          status: BookingStatusEnum.CANCELLED
+        });
+
+        const schedules = await scheduleService.search({
+          booking: booking._id
+        });
+        if (schedules.length > 0) {
+          schedules.map(async (schedule) => {
+            return await scheduleService.delete(schedule._id);
+          });
+        }
+      });
+    }
+  }
+  return res.status(200).json({ data: user });
+}
 const getUserByIdHandler = async (
   req: Request,
   res: Response,
@@ -46,5 +105,7 @@ const getUserByIdHandler = async (
 export default {
   createUser,
   getUserByIdHandler,
-  getAllUsers
+  getAllUsers,
+  getAllUsersByRole,
+  deActiveAccount
 };

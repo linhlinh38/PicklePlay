@@ -2,13 +2,15 @@ import { NextFunction, Request, Response } from 'express';
 import { managerService } from '../services/manager.service';
 import { IPackageCourt } from '../interfaces/packageCourt.interface';
 import { packageCourtService } from '../services/packageCourt.service';
+import { AuthRequest } from '../middlewares/authentication';
+import { PackageCourtStatusEnum } from '../utils/enums';
 
 export default class PackageCourtController {
-  static async getAll(req: Request, res: Response, next: NextFunction) {
+  static async getAll(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       return res.status(200).json({
-        message: 'Get all court packages success',
-        data: await packageCourtService.getAll()
+        message: 'Get court packages success',
+        data: await packageCourtService.getAllPackages(req.loginUser)
       });
     } catch (error) {
       next(error);
@@ -65,7 +67,8 @@ export default class PackageCourtController {
       priceEachCourt,
       maxCourt,
       duration,
-      description
+      description,
+      status
     } = req.body;
     const packageCourtDTO: Partial<IPackageCourt> = {
       name,
@@ -73,7 +76,8 @@ export default class PackageCourtController {
       priceEachCourt,
       maxCourt,
       duration,
-      description
+      description,
+      status
     };
     try {
       await packageCourtService.update(id, packageCourtDTO);

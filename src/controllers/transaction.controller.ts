@@ -11,7 +11,6 @@ export default class TransactionController {
       amount,
       from,
       to,
-      content,
       type,
       payment: paymentId,
       paymentMethod

@@ -1,24 +1,44 @@
+import { IPackageCourt } from './../interfaces/packageCourt.interface';
 import { BaseService } from './base.service';
 import packageCourtModel from '../models/packageCourt.model';
-import { IPackageCourt } from '../interfaces/packageCourt.interface';
 import { IBuyPackage } from '../interfaces/buyPackage.interface';
 import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
 import packagePurchaseModel from '../models/packagePurchase.model';
 import {
+  PackageCourtStatusEnum,
   PackageCourtTypeEnum,
   PackagePurchaseStatusEnum,
   PaymentMethodEnum,
+  RoleEnum,
   TransactionTypeEnum
 } from '../utils/enums';
 import { BadRequestError } from '../errors/badRequestError';
 import transactionModel from '../models/transaction.model';
 import adminModel from '../models/admin.model';
 import moment from 'moment';
+import userModel from '../models/user.model';
 
 class PackageCourtService extends BaseService<IPackageCourt> {
   constructor() {
     super(packageCourtModel);
+  }
+
+  async getAllPackages(userId: string) {
+    console.log(userId);
+    if (!userId) {
+      return await packageCourtModel.find({
+        status: PackageCourtStatusEnum.ACTIVE
+      });
+    }
+    const user = await userModel.findById(userId);
+    if (!user) throw new BadRequestError('User not found');
+    if (user.role == RoleEnum.ADMIN || user.role == RoleEnum.OPERATOR) {
+      return await packageCourtModel.find({});
+    }
+    return await packageCourtModel.find({
+      status: PackageCourtStatusEnum.ACTIVE
+    });
   }
 
   async createPackage(packageCourtDTO: IPackageCourt) {

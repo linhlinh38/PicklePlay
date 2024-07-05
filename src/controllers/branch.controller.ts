@@ -184,7 +184,8 @@ export default class BranchController {
       licenses,
       description,
       availableTime,
-      images
+      images,
+      slots
     } = req.body;
     const branchDTO: Partial<IBranch> = {
       name,
@@ -193,10 +194,11 @@ export default class BranchController {
       licenses,
       description,
       availableTime,
-      images
+      images,
+      slots
     };
     try {
-      await branchService.update(id, branchDTO);
+      await branchService.updateBranch(id, branchDTO);
       return res.status(200).json({
         message: 'Update branch success'
       });

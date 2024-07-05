@@ -30,7 +30,7 @@ export async function login(email: string, password: string) {
   const payload = { userId: user.id.toString() };
 
   const token = jwt.sign(payload, SECRET_KEY_FOR_ACCESS_TOKEN, {
-    expiresIn: '1h'
+    expiresIn: '1d'
   });
   const refreshToken = generateRefreshToken(user.id.toString());
 

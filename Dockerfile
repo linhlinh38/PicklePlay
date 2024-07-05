@@ -20,6 +20,6 @@ COPY package*.json ./
 RUN npm i 
 
 COPY --from=builder /app/build ./build
-EXPOSE 3000 
+EXPOSE 3004
 
-CMD [ "node", "build/index.js" ]
+CMD [ "npm", "start" ]
