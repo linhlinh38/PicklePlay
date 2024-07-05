@@ -31,7 +31,7 @@ class CourtReportService extends BaseService<ICourtReport> {
       .find({
         court: { $in: courtIds }
       })
-      .populate('user court');
+      .populate('creator court');
 
     return reports;
   }
@@ -44,7 +44,7 @@ class CourtReportService extends BaseService<ICourtReport> {
       .find({
         court: courtId
       })
-      .populate('user court');
+      .populate('creator court');
 
     return reports;
   }
