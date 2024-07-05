@@ -1,7 +1,6 @@
 import { IPackageCourt } from './../interfaces/packageCourt.interface';
 import { BaseService } from './base.service';
 import packageCourtModel from '../models/packageCourt.model';
-import { IPackageCourt } from '../interfaces/packageCourt.interface';
 import { IBuyPackage } from '../interfaces/buyPackage.interface';
 import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
