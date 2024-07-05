@@ -86,7 +86,7 @@ class SlotService extends BaseService<ISlot> {
   async createCourtReport(reportDTO: ICourtReport, creatorId: string) {
     const creator = await userService.getById(creatorId);
     if (!creator) throw new NotFoundError('Creator not found');
-    if (creator.role == RoleEnum.STAFF) reportDTO.staff = creatorId;
+    reportDTO.creator = creatorId;
     await courtReportModel.create(reportDTO);
   }
 

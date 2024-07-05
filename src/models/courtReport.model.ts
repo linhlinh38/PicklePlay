@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const courtReportSchema = mongoose.Schema(
   {
-    staff: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     court: { type: mongoose.Schema.Types.ObjectId, ref: 'Court' },
     note: {
       type: String
