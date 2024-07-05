@@ -2,7 +2,7 @@ export interface ICourtReport {
   note: string;
   description?: string;
   court: string;
-  staff?: string;
+  creator?: string;
   images?: string[];
   status: string;
 }

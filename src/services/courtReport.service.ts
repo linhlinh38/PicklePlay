@@ -10,7 +10,7 @@ import { userService } from './user.service';
 
 class CourtReportService extends BaseService<ICourtReport> {
   async getReportById(id: string) {
-    return await courtReportModel.findById(id).populate('staff court');
+    return await courtReportModel.findById(id).populate('user court');
   }
   constructor() {
     super(courtReportModel);
@@ -18,7 +18,7 @@ class CourtReportService extends BaseService<ICourtReport> {
   async createCourtReport(reportDTO: ICourtReport, creatorId: string) {
     const creator = await userService.getById(creatorId);
     if (!creator) throw new NotFoundError('Creator not found');
-    if (creator.role == RoleEnum.STAFF) reportDTO.staff = creatorId;
+    reportDTO.creator = creatorId;
     await courtReportModel.create(reportDTO);
   }
 
@@ -31,7 +31,7 @@ class CourtReportService extends BaseService<ICourtReport> {
       .find({
         court: { $in: courtIds }
       })
-      .populate('staff court');
+      .populate('user court');
 
     return reports;
   }
@@ -44,7 +44,7 @@ class CourtReportService extends BaseService<ICourtReport> {
       .find({
         court: courtId
       })
-      .populate('staff court');
+      .populate('user court');
 
     return reports;
   }
