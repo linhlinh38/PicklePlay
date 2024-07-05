@@ -5,9 +5,10 @@ import { createPackageCourtSchema } from '../models/validateSchema/createPackage
 import { Author } from '../middlewares/authorization';
 import { RoleEnum } from '../utils/enums';
 import authentication from '../middlewares/authentication';
+import { parseToken } from '../middlewares/parseToken';
 
 const router = express.Router();
-router.get('/', PackageCourtController.getAll);
+router.get('/', parseToken, PackageCourtController.getAll);
 router.get('/:id', PackageCourtController.getById);
 router.post(
   '/',

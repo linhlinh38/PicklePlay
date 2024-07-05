@@ -66,7 +66,7 @@ export default class CourtReportController {
     try {
       return res.status(200).json({
         message: 'Get report success',
-        data: await courtReportService.getById(id)
+        data: await courtReportService.getReportById(id)
       });
     } catch (error) {
       next(error);

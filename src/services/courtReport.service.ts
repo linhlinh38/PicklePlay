@@ -9,6 +9,9 @@ import courtReportModel from '../models/courtReport.model';
 import { userService } from './user.service';
 
 class CourtReportService extends BaseService<ICourtReport> {
+  async getReportById(id: string) {
+    return await courtReportModel.findById(id).populate('staff court');
+  }
   constructor() {
     super(courtReportModel);
   }
@@ -41,7 +44,7 @@ class CourtReportService extends BaseService<ICourtReport> {
       .find({
         court: courtId
       })
-      .populate('staff');
+      .populate('staff court');
 
     return reports;
   }
