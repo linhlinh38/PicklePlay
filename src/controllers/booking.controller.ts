@@ -13,11 +13,12 @@ async function createBooking(
   res: Response,
   next: NextFunction
 ) {
-  const { booking, schedule } = req.body;
+  const { booking, schedule, transaction } = req.body;
   try {
     const result = await bookingService.createBooking(
       booking,
       schedule,
+      transaction,
       req.loginUser
     );
 

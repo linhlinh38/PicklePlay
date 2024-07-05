@@ -31,6 +31,11 @@ export const createScheduleSchema = z.object({
   court: z.string()
 });
 
+export const createTransactionSchema = z.object({
+  amount: z.number(),
+  payment: z.string()
+});
+
 export const createBookingSchema = z.object({
   body: z.object({
     booking: z.object({
@@ -67,7 +72,8 @@ export const createBookingSchema = z.object({
         ),
       court: z.string()
     }),
-    schedule: createScheduleSchema.optional()
+    schedule: createScheduleSchema.optional(),
+    transaction: createTransactionSchema.optional()
   })
 });
 

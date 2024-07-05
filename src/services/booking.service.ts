@@ -9,9 +9,11 @@ import {
   BookingStatusEnum,
   BookingTypeEnum,
   CourtStatusEnum,
+  PaymentMethodEnum,
   RoleEnum,
   ScheduleStatusEnum,
-  ScheduleTypeEnum
+  ScheduleTypeEnum,
+  TransactionTypeEnum
 } from '../utils/enums';
 import { BaseService } from './base.service';
 import { courtService } from './court.service';
@@ -20,6 +22,8 @@ import scheduleModel from '../models/schedule.model';
 import { BookingData, generateQrCode } from './mail.service';
 import { ServerError } from '../errors/serverError';
 import path from 'path';
+import { ITransaction } from '../interfaces/transaction.interface';
+import { transactionService } from './transaction.service';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -31,6 +35,7 @@ class BookingService extends BaseService<IBooking> {
   async createBooking(
     booking: IBooking,
     schedule: ISchedule,
+    transaction: ITransaction,
     loginUser: string
   ) {
     if (
@@ -121,6 +126,17 @@ class BookingService extends BaseService<IBooking> {
 
       await scheduleService.create(newSchedule);
     }
+
+    const transactionDTO: ITransaction = {
+      amount: transaction.amount,
+      from: loginUser,
+      to: '66582c259a27f983f5bd6700',
+      type: TransactionTypeEnum.BOOKING,
+      payment: transaction.payment,
+      paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT
+    };
+    await transactionService.createTransaction(transactionDTO);
+
     return true;
   }
 
