@@ -8,6 +8,7 @@ import bookingModel from '../models/booking.model';
 import {
   BookingStatusEnum,
   BookingTypeEnum,
+  CourtStatusEnum,
   RoleEnum,
   ScheduleStatusEnum,
   ScheduleTypeEnum
@@ -17,8 +18,6 @@ import { courtService } from './court.service';
 import { scheduleService } from './schedule.service';
 import scheduleModel from '../models/schedule.model';
 import { BookingData, generateQrCode } from './mail.service';
-import { userService } from './user.service';
-import customerModel from '../models/customer.model';
 import { ServerError } from '../errors/serverError';
 import path from 'path';
 
@@ -44,6 +43,8 @@ class BookingService extends BaseService<IBooking> {
 
     const court = await courtService.getById(booking.court as string);
     if (!court) throw new NotFoundError('Court not found');
+    if (court.status === CourtStatusEnum.TERMINATION)
+      throw new BadRequestError('Court is Termination');
 
     if (booking.type !== BookingTypeEnum.FLEXIBLE_SCHEDULE) {
       const checkSchedule = await scheduleModel.find({
@@ -179,10 +180,6 @@ class BookingService extends BaseService<IBooking> {
   }
 
   async getBookingByCustomer(customerId: string) {
-    const customer = await customerModel.findOne({ _id: customerId });
-    if (customer.role !== RoleEnum.CUSTOMER) {
-      throw new BadRequestError('Only customer can get booking');
-    }
     const booking = await bookingModel.find({ customer: customerId }).populate({
       path: 'court',
       populate: {
@@ -193,10 +190,6 @@ class BookingService extends BaseService<IBooking> {
   }
 
   async getBookingByStatus(customerId: string, status: string) {
-    const customer = await customerModel.findOne({ _id: customerId });
-    if (customer.role !== RoleEnum.CUSTOMER) {
-      throw new BadRequestError('Only customer can get booking');
-    }
     const booking = await bookingModel
       .find({ customer: customerId, status: status })
       .populate({

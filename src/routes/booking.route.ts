@@ -20,13 +20,18 @@ bookingRouter.get(
 );
 bookingRouter.get(
   '/GetBookingByStatus/:status',
+  Author([RoleEnum.CUSTOMER]),
   bookingController.getBookingByStatus
 );
 bookingRouter.put(
   '/UpdateBookingAfterPayment/:bookingId',
   bookingController.updateBookingAfterPayment
 );
-bookingRouter.get('/MyBooking', bookingController.getBookingOfCustomer);
+bookingRouter.get(
+  '/MyBooking',
+  Author([RoleEnum.CUSTOMER]),
+  bookingController.getBookingOfCustomer
+);
 bookingRouter.get('/:id', bookingController.getBookingById);
 bookingRouter.post('/cancel/:id', bookingController.cancelBooking);
 

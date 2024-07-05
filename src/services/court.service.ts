@@ -71,6 +71,15 @@ class CourtService extends BaseService<ICourt> {
     }
   }
 
+  async updateManyCourts(branchId: string, status: string): Promise<void> {
+    try {
+      await courtModel.updateMany({ branch: branchId }, { status: status });
+    } catch (error) {
+      console.error('Error creating courts:', error);
+      throw error;
+    }
+  }
+
   async getCountAvailableCourtsOfManager(managerId: string): Promise<number> {
     const availableBranchIdsOfManager = await branchModel.find(
       {
