@@ -22,6 +22,7 @@ import scheduleModel from '../models/schedule.model';
 import { BookingData, generateQrCode } from './mail.service';
 import { ServerError } from '../errors/serverError';
 import path from 'path';
+import fs from 'fs';
 import { ITransaction } from '../interfaces/transaction.interface';
 import { transactionService } from './transaction.service';
 
@@ -137,7 +138,10 @@ class BookingService extends BaseService<IBooking> {
     };
     await transactionService.createTransaction(transactionDTO);
 
-    return true;
+    const { result, relativePath } =
+      await bookingService.updateBookingAfterPayment(true, booking._id);
+
+    return { result, relativePath };
   }
 
   async updateTotalHours(bookingId: string, duration: number) {
@@ -157,8 +161,20 @@ class BookingService extends BaseService<IBooking> {
     let updateData: Partial<IBooking>;
     let updateSchedule: Partial<ISchedule>;
     const schedules = await scheduleModel.find({ booking: bookingId });
-    const relativePath = path.join(__dirname, 'image', `${bookingId}.png`);
+    const dirname = path.join(__dirname, '..');
+    const relativePath = path.join(dirname, 'image', `${bookingId}.png`);
+
+    async function createImageFolder() {
+      try {
+        fs.mkdirSync(path.dirname(relativePath), { recursive: true });
+      } catch (err) {
+        if (err.code !== 'EEXIST') {
+          console.error('Error creating image folder:', err);
+        }
+      }
+    }
     if (paymentResult) {
+      await createImageFolder();
       updateData = {
         status: BookingStatusEnum.BOOKED
       };

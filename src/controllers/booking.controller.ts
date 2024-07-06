@@ -15,12 +15,16 @@ async function createBooking(
 ) {
   const { booking, schedule, transaction } = req.body;
   try {
-    const result = await bookingService.createBooking(
+    const { result, relativePath } = await bookingService.createBooking(
       booking,
       schedule,
       transaction,
       req.loginUser
     );
+    if (result._id) {
+      const user = await userService.getById(req.loginUser);
+      await sendBookingBillEmail(result, user, relativePath);
+    }
 
     return res.status(201).json({ message: 'Created Booking Successfully!' });
   } catch (error) {
