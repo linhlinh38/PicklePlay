@@ -14,7 +14,7 @@ export default class SlotController {
         surcharge,
         branch: branchId
       };
-      await slotService.create(slotDTO);
+      await slotService.createSlot(slotDTO);
       res.status(200).json({
         message: 'Create slot success'
       });

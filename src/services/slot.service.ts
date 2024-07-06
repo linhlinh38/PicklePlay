@@ -11,8 +11,16 @@ import { ISlot } from '../interfaces/slot.interface';
 import slotModel from '../models/slot.model';
 import { BadRequestError } from '../errors/badRequestError';
 import scheduleModel from '../models/schedule.model';
+import branchModel from '../models/branch.model';
 
 class SlotService extends BaseService<ISlot> {
+  async createSlot(slotDTO: ISlot) {
+    const branch = await branchModel.findById(slotDTO.branch);
+    if (!branch) throw new NotFoundError('Branch not found');
+    const slot = await slotModel.create(slotDTO);
+    branch.slots = [...branch.slots, slot._id];
+    await branch.save();
+  }
   constructor() {
     super(slotModel);
   }
