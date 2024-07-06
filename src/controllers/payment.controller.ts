@@ -4,6 +4,16 @@ import { AuthRequest } from '../middlewares/authentication';
 import { IPayment } from '../interfaces/payment.interface';
 
 export default class PaymentController {
+  static async deletePayment(req: Request, res: Response, next: NextFunction) {
+    try {
+      await paymentService.delete(req.params.id);
+      return res.status(200).json({
+        message: 'Delete payment success'
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
   static async getMyPayments(
     req: AuthRequest,
     res: Response,

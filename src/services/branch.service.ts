@@ -33,14 +33,7 @@ class BranchService extends BaseService<IBranch> {
         throw new BadRequestError(
           'Can not update slots as they have upcoming schedules'
         );
-      const otherSlots = await slotModel.find({
-        branch: id,
-        _id: { $nin: slotIds }
-      });
-      const isOverSlap = branchService.checkSlots([
-        ...branchDTO.slots,
-        ...otherSlots
-      ]);
+      const isOverSlap = branchService.checkSlots(branchDTO.slots);
       if (isOverSlap) throw new BadRequestError('Slots are overlap');
       branchDTO.slots.forEach((slot) => {
         slotService.update(slot._id, slot);
