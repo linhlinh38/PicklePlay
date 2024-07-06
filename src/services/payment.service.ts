@@ -8,6 +8,9 @@ import paymentModel from '../models/payment.model';
 import { BadRequestError } from '../errors/badRequestError';
 
 export default class PaymentService extends BaseService<IPayment> {
+  async deletePayment(id: string) {
+    await paymentService.delete;
+  }
   constructor() {
     super(paymentModel);
   }
