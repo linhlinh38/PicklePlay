@@ -28,7 +28,7 @@ const packageCourtSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    default: PackageCourtStatusEnum.ACTIVE,
+    default: PackageCourtStatusEnum.INACTIVE,
     enum: Object.values(PackageCourtStatusEnum)
   }
 });
