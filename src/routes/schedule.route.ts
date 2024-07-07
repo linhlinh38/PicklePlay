@@ -22,4 +22,8 @@ scheduleRouter.get(
 );
 scheduleRouter.post('/update/:id', scheduleController.updateSchedule);
 scheduleRouter.post('/cancel/:id', scheduleController.cancelSchedule);
+scheduleRouter.post(
+  '/permanent',
+  scheduleController.calculatePermanentSchedule
+);
 export default scheduleRouter;

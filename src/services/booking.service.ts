@@ -83,19 +83,22 @@ class BookingService extends BaseService<IBooking> {
     booking = await bookingModel.create(newBooking);
 
     if (booking.type === BookingTypeEnum.PERMANENT_SCHEDULE) {
-      const allDates = [];
+      const allDates = await this.calculateSchedule(
+        booking.startDate,
+        booking.endDate
+      );
 
-      for (
-        let currentDate = moment(booking.startDate, 'YYYY-MM-DD').clone();
-        currentDate <= moment(booking.endDate);
-        currentDate.add(1, 'days')
-      ) {
-        // Check if the current date's weekday matches the permanent slot's preferred day
-        if (currentDate.day() === moment(schedule.date).day()) {
-          // 0 = Sunday, 1 = Monday, etc.
-          allDates.push(new Date(currentDate.toDate()));
-        }
-      }
+      // for (
+      //   let currentDate = moment(booking.startDate, 'YYYY-MM-DD').clone();
+      //   currentDate <= moment(booking.endDate);
+      //   currentDate.add(1, 'days')
+      // ) {
+      //   // Check if the current date's weekday matches the permanent slot's preferred day
+      //   if (currentDate.day() === moment(schedule.date).day()) {
+      //     // 0 = Sunday, 1 = Monday, etc.
+      //     allDates.push(new Date(currentDate.toDate()));
+      //   }
+      // }
 
       const promises = allDates.map(async (date) => {
         const newSchedule = {
@@ -231,6 +234,21 @@ class BookingService extends BaseService<IBooking> {
         }
       });
     return booking;
+  }
+
+  async calculateSchedule(startDate: string, endDate: string): Promise<any[]> {
+    const allDates = [];
+    for (
+      let currentDate = moment(startDate, 'YYYY-MM-DD').clone();
+      currentDate <= moment(endDate);
+      currentDate.add(1, 'days')
+    ) {
+      if (currentDate.day() === moment(startDate).day()) {
+        allDates.push(new Date(currentDate.locale('en').format('YYYY-MM-DD')));
+      }
+    }
+
+    return allDates;
   }
 }
 
