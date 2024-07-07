@@ -43,8 +43,13 @@ class BranchService extends BaseService<IBranch> {
       return await branchModel.find({
         manager: userId
       });
-    const staff = await userModel.findById(userId).populate('branch');
-    return staff.branch;
+    if (user.role == RoleEnum.STAFF) {
+      const staff = await userModel.findById(userId).populate('branch');
+      return [staff.branch];
+    }
+    if ([RoleEnum.ADMIN, RoleEnum.OPERATOR].includes(user.role)) {
+      return await branchModel.find({});
+    }
   }
   async searchByNameOrAddress(keyword: string) {
     const branches = await branchModel.find({
