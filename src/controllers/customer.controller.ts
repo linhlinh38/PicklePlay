@@ -23,8 +23,7 @@ async function createCustomer(req: Request, res: Response, next: NextFunction) {
   };
   try {
     const key: Partial<IUser> = {
-      email: req.body.email,
-      role: RoleEnum.CUSTOMER
+      email: req.body.email
     };
     const customer = await userService.search(key);
 

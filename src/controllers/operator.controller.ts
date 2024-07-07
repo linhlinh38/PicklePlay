@@ -3,6 +3,8 @@ import { IManager } from '../interfaces/manager.interface';
 import { RoleEnum, UserStatusEnum } from '../utils/enums';
 import { operatorService } from '../services/operator.service';
 import { IUser } from '../interfaces/user.interface';
+import { userService } from '../services/user.service';
+import { EmailAlreadyExistError } from '../errors/emailAlreadyExistError';
 
 export default class OperatorController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
@@ -48,11 +50,19 @@ export default class OperatorController {
       lastName,
       phone,
       dob,
-      role: RoleEnum.MANAGER,
+      role: RoleEnum.OPERATOR,
       status: UserStatusEnum.ACTIVE
     };
 
     try {
+      const key: Partial<IUser> = {
+        email: req.body.email
+      };
+      const operator = await userService.search(key);
+
+      if (operator.length !== 0) {
+        throw new EmailAlreadyExistError('Email already exists!');
+      }
       await operatorService.create(operatorDTO);
       return res.status(201).json({
         message: 'Create operator Successfully'
