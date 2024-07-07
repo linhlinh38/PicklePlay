@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { BookingStatusEnum } from '../utils/enums';
+import {
+  BookingPaymentType,
+  BookingStatusEnum,
+  PaymentMethodEnum,
+  TransactionTypeEnum
+} from '../utils/enums';
 import { IBooking } from '../interfaces/booking.interface';
 import { bookingService } from '../services/booking.service';
 import { AuthRequest } from '../middlewares/authentication';
@@ -7,6 +12,8 @@ import moment from 'moment';
 import { scheduleService } from '../services/schedule.service';
 import { userService } from '../services/user.service';
 import { sendBookingBillEmail } from '../services/mail.service';
+import { ITransaction } from '../interfaces/transaction.interface';
+import { transactionService } from '../services/transaction.service';
 
 async function createBooking(
   req: AuthRequest,
@@ -127,6 +134,19 @@ async function cancelBooking(req: Request, res: Response, next: NextFunction) {
     schedules.map(async (schedule) => {
       return await scheduleService.delete(schedule._id);
     });
+
+    if (booking.paymentType === BookingPaymentType.FULL) {
+      const transactionDTO: ITransaction = {
+        amount: booking.totalPrice / 2,
+        from: '66582c259a27f983f5bd6700',
+        to: booking.customer as string,
+        type: TransactionTypeEnum.REFUND,
+        payment: req.body.paymentId,
+        paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT
+      };
+      await transactionService.createTransaction(transactionDTO);
+    }
+
     return res.status(200).json({ message: 'Booking cancelled successfully' });
   } catch (error) {
     next(error);
