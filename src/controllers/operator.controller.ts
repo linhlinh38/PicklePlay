@@ -48,7 +48,7 @@ export default class OperatorController {
       lastName,
       phone,
       dob,
-      role: RoleEnum.MANAGER,
+      role: RoleEnum.OPERATOR,
       status: UserStatusEnum.ACTIVE
     };
 

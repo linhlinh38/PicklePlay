@@ -3,7 +3,6 @@ import { managerService } from '../services/manager.service';
 import { IPackageCourt } from '../interfaces/packageCourt.interface';
 import { packageCourtService } from '../services/packageCourt.service';
 import { AuthRequest } from '../middlewares/authentication';
-import { PackageCourtStatusEnum } from '../utils/enums';
 
 export default class PackageCourtController {
   static async getAll(req: AuthRequest, res: Response, next: NextFunction) {
