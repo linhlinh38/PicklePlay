@@ -1,14 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import { IManager } from '../interfaces/manager.interface';
 import { RoleEnum, UserStatusEnum } from '../utils/enums';
-import { managerService } from '../services/manager.service';
+import { operatorService } from '../services/operator.service';
+import { IUser } from '../interfaces/user.interface';
+import { userService } from '../services/user.service';
+import { EmailAlreadyExistError } from '../errors/emailAlreadyExistError';
 
-export default class ManagerController {
+export default class OperatorController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       return res.status(200).json({
-        message: 'Get all managers success',
-        data: await managerService.getAll()
+        message: 'Get all operators success',
+        data: await operatorService.getAll()
       });
     } catch (error) {
       next(error);
@@ -19,8 +22,8 @@ export default class ManagerController {
     const id: string = req.params.id;
     try {
       return res.status(200).json({
-        message: 'Get manager by id success',
-        data: await managerService.getById(id)
+        message: 'Get operator by id success',
+        data: await operatorService.getById(id)
       });
     } catch (error) {
       next(error);
@@ -36,27 +39,33 @@ export default class ManagerController {
       firstName,
       lastName,
       phone,
-      dob,
-      payments
+      dob
     } = req.body;
-    const managerDTO: IManager = {
-      username: username ?? '',
+    const operatorDTO: IUser = {
+      username,
       email,
       password,
-      gender: gender ?? '',
-      firstName: firstName ?? '',
-      lastName: lastName ?? '',
-      phone: phone ?? '',
-      dob: dob ?? '',
-      payments: payments ?? '',
-      role: RoleEnum.MANAGER,
+      gender,
+      firstName,
+      lastName,
+      phone,
+      dob,
+      role: RoleEnum.OPERATOR,
       status: UserStatusEnum.ACTIVE
     };
 
     try {
-      await managerService.createManager(managerDTO);
+      const key: Partial<IUser> = {
+        email: req.body.email
+      };
+      const operator = await userService.search(key);
+
+      if (operator.length !== 0) {
+        throw new EmailAlreadyExistError('Email already exists!');
+      }
+      await operatorService.create(operatorDTO);
       return res.status(201).json({
-        message: 'Create manager Successfully'
+        message: 'Create operator Successfully'
       });
     } catch (error) {
       next(error);
@@ -66,7 +75,7 @@ export default class ManagerController {
   static async update(req: Request, res: Response, next: NextFunction) {
     const id: string = req.params.id;
     const { gender, firstName, lastName, phone, dob } = req.body;
-    const managerDTO: Partial<IManager> = {
+    const operator: Partial<IUser> = {
       gender,
       firstName,
       lastName,
@@ -74,9 +83,9 @@ export default class ManagerController {
       dob
     };
     try {
-      await managerService.update(id, managerDTO);
+      await operatorService.update(id, operator);
       return res.status(200).json({
-        message: 'Update manager success'
+        message: 'Update operator success'
       });
     } catch (error) {
       next(error);
@@ -86,9 +95,9 @@ export default class ManagerController {
   static async delete(req: Request, res: Response, next: NextFunction) {
     const id: string = req.params.id;
     try {
-      await managerService.delete(id);
+      await operatorService.delete(id);
       return res.status(200).json({
-        message: 'Delete manager success'
+        message: 'Delete operator success'
       });
     } catch (error) {
       next(error);

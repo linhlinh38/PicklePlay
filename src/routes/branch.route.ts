@@ -50,7 +50,7 @@ router.post('/search', BranchController.search);
 router.get(
   '/get-my-branchs',
   authentication,
-  Author([RoleEnum.MANAGER, RoleEnum.STAFF]),
+  Author([RoleEnum.MANAGER, RoleEnum.STAFF, RoleEnum.ADMIN, RoleEnum.OPERATOR]),
   BranchController.getMyBranchs
 );
 export default router;

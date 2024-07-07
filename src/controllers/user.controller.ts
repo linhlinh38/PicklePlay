@@ -14,6 +14,9 @@ import { branchService } from '../services/branch.service';
 import { courtService } from '../services/court.service';
 import { bookingService } from '../services/booking.service';
 import { scheduleService } from '../services/schedule.service';
+import { AuthRequest } from '../middlewares/authentication';
+import { BadRequestError } from '../errors/badRequestError';
+import bcrypt from 'bcrypt';
 
 async function createUser(req: Request, res: Response, next: NextFunction) {
   const newUser: IUser = {
@@ -31,6 +34,40 @@ async function createUser(req: Request, res: Response, next: NextFunction) {
   try {
     await userService.create(newUser);
     return res.status(201).json({ message: 'Created User Successfully' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function updateUser(req: Request, res: Response, next: NextFunction) {
+  const updateUser: Partial<IUser> = req.body;
+  try {
+    await userService.update(req.params.id, updateUser);
+    return res.status(201).json({ message: 'Update User Successfully' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function resetPassword(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  const oldPassword: string = req.body.oldPassword;
+  const user = await userService.getById(req.loginUser);
+  if (!user) {
+    return res.status(400).json({ message: 'User not found!' });
+  }
+
+  const isMatch = await bcrypt.compare(oldPassword, user.password);
+  if (!isMatch) {
+    return res.status(400).json({ message: 'Invalid old password' });
+  }
+  const newPassword = await encryptedPassword(req.body.newPassword);
+  try {
+    await userService.update(req.loginUser, { password: newPassword });
+    return res.status(201).json({ message: 'Update Password Successfully' });
   } catch (error) {
     next(error);
   }
@@ -107,5 +144,7 @@ export default {
   getUserByIdHandler,
   getAllUsers,
   getAllUsersByRole,
-  deActiveAccount
+  deActiveAccount,
+  updateUser,
+  resetPassword
 };

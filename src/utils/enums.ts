@@ -30,6 +30,11 @@ export enum PaymentMethodEnum {
   MANUAL_ENTRY = 'Manual Entry'
 }
 
+export enum BookingPaymentType {
+  PARTIAL = 'partial',
+  FULL = 'full'
+}
+
 export enum CourtReportStatus {
   AVAILABLE = 'Available',
   WARN = 'Warn',

@@ -16,6 +16,7 @@ import paymentRoute from './payment.route';
 import courtReportRoute from './courtReport.route';
 import transactionRoute from './transaction.route';
 import slotRoute from './slot.route';
+import operatorRoute from './operator.route';
 
 const router = express.Router();
 
@@ -36,5 +37,6 @@ router.use('/payment', paymentRoute);
 router.use('/court-report', courtReportRoute);
 router.use('/transaction', transactionRoute);
 router.use('/slot', slotRoute);
+router.use('/operator', operatorRoute);
 
 export default router;

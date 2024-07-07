@@ -12,7 +12,6 @@ import slotModel from '../models/slot.model';
 import { ISlot } from '../interfaces/slot.interface';
 import scheduleModel from '../models/schedule.model';
 import userModel from '../models/user.model';
-import { slotService } from './slot.service';
 
 class BranchService extends BaseService<IBranch> {
   constructor() {
@@ -22,30 +21,6 @@ class BranchService extends BaseService<IBranch> {
   async updateBranch(id: string, branchDTO: Partial<IBranch>) {
     const branch = await branchModel.findById(id);
     if (!branch) throw new BadRequestError('Branch not found');
-    if (branchDTO.slots && branchDTO.slots.length > 0) {
-      const currentDate = new Date();
-      const slotIds = branchDTO.slots.map((slot) => slot._id);
-      const upcomingSchedules = await scheduleModel.find({
-        slots: { $in: slotIds },
-        date: { $gt: currentDate }
-      });
-      if (upcomingSchedules && upcomingSchedules.length > 0)
-        throw new BadRequestError(
-          'Can not update slots as they have upcoming schedules'
-        );
-      const otherSlots = await slotModel.find({
-        branch: id,
-        _id: { $nin: slotIds }
-      });
-      const isOverSlap = branchService.checkSlots([
-        ...branchDTO.slots,
-        ...otherSlots
-      ]);
-      if (isOverSlap) throw new BadRequestError('Slots are overlap');
-      branchDTO.slots.forEach((slot) => {
-        slotService.update(slot._id, slot);
-      });
-    }
     const branchData = {
       name: branchDTO.name,
       phone: branchDTO.phone,
@@ -68,8 +43,13 @@ class BranchService extends BaseService<IBranch> {
       return await branchModel.find({
         manager: userId
       });
-    const staff = await userModel.findById(userId).populate('branch');
-    return staff.branch;
+    if (user.role == RoleEnum.STAFF) {
+      const staff = await userModel.findById(userId).populate('branch');
+      return [staff.branch];
+    }
+    if ([RoleEnum.ADMIN, RoleEnum.OPERATOR].includes(user.role)) {
+      return await branchModel.find({});
+    }
   }
   async searchByNameOrAddress(keyword: string) {
     const branches = await branchModel.find({
@@ -259,7 +239,7 @@ class BranchService extends BaseService<IBranch> {
     return true;
   }
   doSlotsOverLap(slots: ISlot[]) {
-    for (let i = 0; i < slots.length; i++) {
+    for (let i = 0; i < slots.length - 1; i++) {
       for (let j = i + 1; j < slots.length; j++) {
         if (
           this.convertToDate(slots[i].startTime) <

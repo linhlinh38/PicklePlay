@@ -10,21 +10,20 @@ import { EmailAlreadyExistError } from '../errors/emailAlreadyExistError';
 
 async function createCustomer(req: Request, res: Response, next: NextFunction) {
   const newCustomer: IUser = {
-    username: req.body.username,
+    username: req.body.username ?? '',
     email: req.body.email,
     password: req.body.password,
     role: RoleEnum.CUSTOMER,
-    gender: req.body.gender,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    phone: req.body.phone,
-    dob: req.body.dob,
+    gender: req.body.gender ?? '',
+    firstName: req.body.firstName ?? '',
+    lastName: req.body.lastName ?? '',
+    phone: req.body.phone ?? '',
+    dob: req.body.dob ?? '',
     status: UserStatusEnum.ACTIVE
   };
   try {
     const key: Partial<IUser> = {
-      email: req.body.email,
-      role: RoleEnum.CUSTOMER
+      email: req.body.email
     };
     const customer = await userService.search(key);
 

@@ -5,8 +5,7 @@ import { AuthRequest } from '../middlewares/authentication';
 
 export default class TransactionController {
   static async create(req: Request, res: Response, next: NextFunction) {
-    const { amount, from, to, content, type, paymentId, paymentMethod } =
-      req.body;
+    const { amount, from, to, type, paymentId, paymentMethod } = req.body;
     const transactionDTO: ITransaction = {
       amount,
       from,
