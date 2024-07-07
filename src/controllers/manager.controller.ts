@@ -40,15 +40,15 @@ export default class ManagerController {
       payments
     } = req.body;
     const managerDTO: IManager = {
-      username,
+      username: username ?? '',
       email,
       password,
-      gender,
-      firstName,
-      lastName,
-      phone,
-      dob,
-      payments,
+      gender: gender ?? '',
+      firstName: firstName ?? '',
+      lastName: lastName ?? '',
+      phone: phone ?? '',
+      dob: dob ?? '',
+      payments: payments ?? '',
       role: RoleEnum.MANAGER,
       status: UserStatusEnum.ACTIVE
     };

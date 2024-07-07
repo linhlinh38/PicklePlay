@@ -52,16 +52,16 @@ export default class StaffController {
       manager
     } = req.body;
     const staffDTO: IStaff = {
-      username,
+      username: username ?? '',
       email,
       password,
-      gender,
-      firstName,
-      lastName,
-      phone,
-      dob,
-      role: RoleEnum.STAFF,
+      gender: gender ?? '',
+      firstName: firstName ?? '',
+      lastName: lastName ?? '',
+      phone: phone ?? '',
+      dob: dob ?? '',
       status: UserStatusEnum.ACTIVE,
+      role: RoleEnum.STAFF,
       branch,
       manager
     };
