@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { regexPhoneNumber } from '../../utils/regex';
 import moment from 'moment';
 
 export const createUserSchema = z.object({
