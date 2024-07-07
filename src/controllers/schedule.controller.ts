@@ -57,9 +57,10 @@ async function getScheduleOfCustomer(
     };
     const bookings = await bookingService.search(searchBooking);
     if (bookings.length === 0) {
-      return res
-        .status(404)
-        .json({ message: 'No bookings found for this customer' });
+      return res.status(404).json({
+        message: 'No bookings found for this customer',
+        data: []
+      });
     }
 
     const bookingIds = bookings.map((booking) => booking._id);
