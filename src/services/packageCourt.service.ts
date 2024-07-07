@@ -51,14 +51,14 @@ class PackageCourtService extends BaseService<IPackageCourt> {
         description: packageCourtDTO.description,
         type: packageCourtDTO.type
       });
-    }
-    await packageCourtModel.create({
-      name: packageCourtDTO.name,
-      priceEachCourt: packageCourtDTO.priceEachCourt,
-      duration: packageCourtDTO.duration,
-      description: packageCourtDTO.description,
-      type: packageCourtDTO.type
-    });
+    } else
+      await packageCourtModel.create({
+        name: packageCourtDTO.name,
+        priceEachCourt: packageCourtDTO.priceEachCourt,
+        duration: packageCourtDTO.duration,
+        description: packageCourtDTO.description,
+        type: packageCourtDTO.type
+      });
   }
 
   async beforeCreate(data: IPackageCourt): Promise<void> {
