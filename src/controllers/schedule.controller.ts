@@ -148,6 +148,28 @@ async function updateSchedule(
   }
 }
 
+async function calculatePermanentSchedule(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const schedule = await bookingService.calculateSchedule(startDate, endDate);
+
+    if (schedule.length === 0) {
+      throw new NotFoundError('Schedule Invalid');
+    }
+
+    return res
+      .status(201)
+      .json({ message: 'Get Permanent Schedule Successfully', data: schedule });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function cancelSchedule(
   req: AuthRequest,
   res: Response,
@@ -173,5 +195,6 @@ export default {
   getScheduleOfCustomer,
   createSchedule,
   updateSchedule,
-  cancelSchedule
+  cancelSchedule,
+  calculatePermanentSchedule
 };
