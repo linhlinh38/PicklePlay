@@ -8,6 +8,7 @@ import { BookingTypeEnum, RoleEnum, ScheduleStatusEnum } from '../utils/enums';
 import { BadRequestError } from '../errors/badRequestError';
 import { userService } from '../services/user.service';
 import { NotFoundError } from '../errors/notFound';
+import scheduleModel from '../models/schedule.model';
 
 async function getScheduleByCourt(
   req: Request,
@@ -68,7 +69,9 @@ async function getScheduleOfCustomer(
       booking: { $in: bookingIds } as any
     };
 
-    const schedules = await scheduleService.search(searchSchedule);
+    const schedules = await scheduleModel
+      .find(searchSchedule)
+      .populate('court');
     const filterSchedules: Record<string, ISchedule[]> = {};
     schedules.forEach((schedule) => {
       const status = schedule.status;
