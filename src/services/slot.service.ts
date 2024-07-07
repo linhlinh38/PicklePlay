@@ -1,7 +1,7 @@
 import { BaseService } from './base.service';
 import { NotFoundError } from '../errors/notFound';
 import { managerService } from './manager.service';
-import { BranchStatusEnum, RoleEnum, WeekDayEnum } from '../utils/enums';
+import { BranchStatusEnum, WeekDayEnum } from '../utils/enums';
 import { courtService } from './court.service';
 import { ICourtReport } from '../interfaces/courtReport.interface';
 import { branchService } from './branch.service';
@@ -79,20 +79,10 @@ class SlotService extends BaseService<ISlot> {
       throw new BadRequestError('Date can not be in the past');
     const court = await courtService.getById(courtId);
     if (!court) throw new NotFoundError('Court not found');
-
-    const slots = await slotModel.aggregate([
-      {
-        $match: { branch: court.branch, weekDay: this.getWeekDayFromDate(date) }
-      },
-      {
-        $addFields: {
-          startTimeObj: { $dateFromString: { dateString: '$startTime' } }
-        }
-      },
-      {
-        $sort: { startTimeObj: 1 }
-      }
-    ]);
+    const slots = await slotModel.find({
+      weekDay: this.getWeekDayFromDate(date),
+      branch: court.branch
+    });
     const slotIds = slots.map((slot) => slot._id);
     const schedules = await scheduleModel.find({
       slots: { $in: slotIds },
@@ -102,7 +92,8 @@ class SlotService extends BaseService<ISlot> {
       const schedule = schedules.find((schedule) =>
         schedule.slots.includes(slot._id)
       );
-      slot.schedule = schedule;
+      console.log(schedule);
+      slot = { ...slot.toObject(), schedule };
       return slot;
     });
   }
