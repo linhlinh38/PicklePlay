@@ -3,7 +3,7 @@ import moment from 'moment';
 
 export const createUserSchema = z.object({
   body: z.object({
-    username: z.string(),
+    username: z.string().optional(),
     email: z
       .string()
       .min(1, { message: 'Email must be greater than 1 characters!' })
