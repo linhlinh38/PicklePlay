@@ -12,7 +12,8 @@ export const createManagerSchema = z.object({
   body: z.object({
     username: z
       .string()
-      .min(1, { message: 'Username must be greater than 1 characters!' }),
+      .min(1, { message: 'Username must be greater than 1 characters!' })
+      .optional(),
     email: z
       .string()
       .min(1, { message: 'Email must be greater than 1 characters!' })
@@ -28,24 +29,29 @@ export const createManagerSchema = z.object({
         {
           message: 'Gender must be Male/Female/Other!'
         }
-      ),
+      )
+      .optional(),
     firstName: z
       .string()
-      .min(1, { message: 'First name must be greater than 1 characters!' }),
+      .min(1, { message: 'First name must be greater than 1 characters!' })
+      .optional(),
     lastName: z
       .string()
-      .min(1, { message: 'Last Name must be greater than 1 characters!' }),
+      .min(1, { message: 'Last Name must be greater than 1 characters!' })
+      .optional(),
     phone: z
       .string()
       .min(1, { message: 'Phone must be greater than 1 number!' })
       .max(10, { message: 'Phone must be less than 10 number!' })
-      .regex(regexPhoneNumber, { message: 'Phone must be a valid phone' }),
+      .regex(regexPhoneNumber, { message: 'Phone must be a valid phone' })
+      .optional(),
     dob: z
       .string()
       .transform((str) => new Date(str))
       .refine((dob) => dob < new Date(), {
         message: 'Date of birth must be in the past'
-      }),
-    payments: z.array(paymentSchema)
+      })
+      .optional(),
+    payments: z.array(paymentSchema).optional()
   })
 });
