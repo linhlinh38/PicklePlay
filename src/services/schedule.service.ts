@@ -63,7 +63,7 @@ class ScheduleService extends BaseService<ISchedule> {
 
         if (
           moment(booking.startDate, 'YYYY-MM-DD').isAfter(
-            moment(new Date(), 'YYYY-MM-DD')
+            moment(data.date, 'YYYY-MM-DD')
           )
         ) {
           throw new BadRequestError(
