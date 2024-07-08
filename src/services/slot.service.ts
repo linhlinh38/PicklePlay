@@ -19,8 +19,15 @@ class SlotService extends BaseService<ISlot> {
   }
 
   async updateSlot(id: string, slotDTO: ISlot) {
-    const slot = await slotModel.findById(id).populate('branch branch.slots');
+    const slot = await slotModel.findById(id).populate({
+      path: 'branch',
+      populate: {
+        path: 'slots'
+      }
+    });
     if (!slot) throw new BadRequestError('Slot not found');
+    if (branchService.compareTime(slotDTO.startTime, slotDTO.endTime) > 0)
+      throw new BadRequestError('Start time must be before End time');
     const currentDate = new Date();
     const upcomingSchedules = await scheduleModel.find({
       slots: { $elemMatch: { $eq: slot._id } },
@@ -31,7 +38,7 @@ class SlotService extends BaseService<ISlot> {
         'Can not update slots as it has upcoming schedules'
       );
     const otherSlots = slot.branch.slots.filter(
-      (slot) => slot._id.toString() != slot._id.toString()
+      (slotItem) => slotItem._id.toString() != slot._id.toString()
     );
     const isOverSlap = !branchService.checkSlots([...otherSlots, slot]);
     if (isOverSlap) throw new BadRequestError('Slots are overlap');
@@ -50,7 +57,8 @@ class SlotService extends BaseService<ISlot> {
     const branch = await branchModel.findById(slotDTO.branch).populate('slots');
     if (!branch) throw new NotFoundError('Branch not found');
     const slots = branch.slots;
-
+    if (branchService.compareTime(slotDTO.startTime, slotDTO.endTime) > 0)
+      throw new BadRequestError('Start time must be before End time');
     if (slots.length > 0 && !branchService.checkSlots([...slots, slotDTO]))
       throw new BadRequestError('Slots are overlap');
     if (
