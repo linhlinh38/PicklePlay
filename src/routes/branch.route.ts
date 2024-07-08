@@ -18,7 +18,7 @@ router.get(
   Author([RoleEnum.ADMIN, RoleEnum.OPERATOR]),
   BranchController.getPendingBranches
 );
-router.get('/get-popular', BranchController.getPendingBranches);
+router.get('/get-popular', BranchController.getPopularBranches);
 router.post(
   '/',
   Author([RoleEnum.MANAGER]),
