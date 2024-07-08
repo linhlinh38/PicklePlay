@@ -3,6 +3,7 @@ import {
   BookingPaymentType,
   BookingStatusEnum,
   PaymentMethodEnum,
+  ScheduleStatusEnum,
   TransactionTypeEnum
 } from '../utils/enums';
 import { IBooking } from '../interfaces/booking.interface';
@@ -44,6 +45,14 @@ async function getAllBooking(req: Request, res: Response) {
   return res
     .status(200)
     .json({ message: 'Get all booking success', data: booking });
+}
+
+async function searchBooking(req: Request, res: Response) {
+  const key: Partial<IBooking> = req.body;
+  const booking = await bookingService.search(key);
+  return res
+    .status(200)
+    .json({ message: 'Get booking success', data: booking });
 }
 
 async function getBookingByStatus(req: AuthRequest, res: Response) {
@@ -153,6 +162,31 @@ async function cancelBooking(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+async function doneBooking(req: Request, res: Response, next: NextFunction) {
+  try {
+    const booking = await bookingService.getById(req.params.id);
+    if (!booking || booking.status !== BookingStatusEnum.BOOKED)
+      return res.status(400).json({ message: 'Booking cannot change to done' });
+    const schedules = await scheduleService.search({ booking: booking._id });
+
+    await bookingService.update(booking._id, {
+      status: BookingStatusEnum.DONE
+    });
+
+    if (schedules.length > 0) {
+      schedules.map(async (schedule) => {
+        return await scheduleService.update(schedule._id, {
+          status: ScheduleStatusEnum.DONE
+        });
+      });
+    }
+
+    return res.status(200).json({ message: 'Booking is done' });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default {
   createBooking,
   getAllBooking,
@@ -162,5 +196,7 @@ export default {
   getAllBookingOfCourt,
   cancelBooking,
   updateBookingAfterPayment,
-  updateBookingStatus
+  updateBookingStatus,
+  searchBooking,
+  doneBooking
 };

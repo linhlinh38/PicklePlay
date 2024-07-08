@@ -34,5 +34,7 @@ bookingRouter.get(
 );
 bookingRouter.get('/:id', bookingController.getBookingById);
 bookingRouter.post('/cancel/:id', bookingController.cancelBooking);
+bookingRouter.put('/done/:id', bookingController.doneBooking);
+bookingRouter.post('/search', bookingController.searchBooking);
 
 export default bookingRouter;
