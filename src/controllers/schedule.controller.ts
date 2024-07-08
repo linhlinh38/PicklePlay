@@ -69,9 +69,12 @@ async function getScheduleOfCustomer(
       booking: { $in: bookingIds } as any
     };
 
-    const schedules = await scheduleModel
-      .find(searchSchedule)
-      .populate('court');
+    const schedules = await scheduleModel.find(searchSchedule).populate({
+      path: 'court',
+      populate: {
+        path: 'branch'
+      }
+    });
     const filterSchedules: Record<string, ISchedule[]> = {};
     schedules.forEach((schedule) => {
       const status = schedule.status;
