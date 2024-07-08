@@ -66,7 +66,8 @@ export enum BookingStatusEnum {
 export enum BookingTypeEnum {
   SINGLE_SCHEDULE = 'single_schedule',
   PERMANENT_SCHEDULE = 'permanent_schedule',
-  FLEXIBLE_SCHEDULE = 'flexible_schedule'
+  FLEXIBLE_SCHEDULE = 'flexible_schedule',
+  COMPETITION_SCHEDULE = 'competition_schedule'
 }
 
 export enum ScheduleStatusEnum {

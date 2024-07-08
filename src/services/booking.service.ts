@@ -25,6 +25,7 @@ import path from 'path';
 import fs from 'fs';
 import { ITransaction } from '../interfaces/transaction.interface';
 import { transactionService } from './transaction.service';
+import courtModel from '../models/court.model';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -160,10 +161,95 @@ class BookingService extends BaseService<IBooking> {
     }
   }
 
+  async createCompetionBooking(
+    courtArray: string[],
+    booking: IBooking,
+    schedule: ISchedule,
+    transaction: ITransaction,
+    loginUser: string
+  ) {
+    if (
+      moment(booking.startDate, 'YYYY-MM-DD').isAfter(
+        moment(booking.endDate, 'YYYY-MM-DD')
+      )
+    ) {
+      throw new Error('Start date must be before or equal to end date');
+    }
+
+    const court = await courtModel.find({
+      _id: { $in: courtArray },
+      status: CourtStatusEnum.INUSE
+    });
+
+    if (court.length !== courtArray.length)
+      throw new NotFoundError('Court not found');
+
+    const checkSchedule = await scheduleModel.find({
+      court: { $in: courtArray },
+      slots: { $in: schedule.slots },
+      date: schedule.date,
+      status: {
+        $in: [ScheduleStatusEnum.AVAILABLE, ScheduleStatusEnum.PENDING]
+      }
+    });
+
+    if (checkSchedule.length !== 0) {
+      throw new Error('Schedule is already booking');
+    }
+
+    const newBooking = {
+      type: BookingTypeEnum.COMPETITION_SCHEDULE,
+      paymentType: booking.paymentType,
+      paymentMethod: booking.paymentMethod,
+      totalPrice: booking.totalPrice,
+      totalHour: booking.totalHour,
+      startDate: booking.startDate,
+      endDate: booking.endDate,
+      status: BookingStatusEnum.PENDING,
+      customer: loginUser
+    };
+
+    const data = new bookingModel(newBooking);
+    const bookingResult = await data.save(newBooking);
+
+    await Promise.all(
+      courtArray.map(async (item) => {
+        const newSchedule = {
+          type: schedule.type,
+          slots: schedule.slots,
+          startTime: schedule.startTime,
+          endTime: schedule.endTime,
+          date: schedule.date,
+          booking: bookingResult._id,
+          court: item,
+          status: ScheduleStatusEnum.PENDING
+        };
+
+        await scheduleService.create(newSchedule);
+      })
+    );
+
+    const transactionDTO: ITransaction = {
+      amount: transaction.amount,
+      from: loginUser,
+      to: '66582c259a27f983f5bd6700',
+      type: TransactionTypeEnum.BOOKING,
+      payment: transaction.payment,
+      paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT
+    };
+    await transactionService.createTransaction(transactionDTO);
+
+    const { result, relativePath } =
+      await bookingService.updateBookingAfterPayment(true, data._id.toString());
+
+    return { result, relativePath };
+  }
+
   async updateBookingAfterPayment(paymentResult: boolean, bookingId: string) {
     let updateData: Partial<IBooking>;
     let updateSchedule: Partial<ISchedule>;
     const schedules = await scheduleModel.find({ booking: bookingId });
+
     const dirname = path.join(__dirname, '..');
     const relativePath = path.join(dirname, 'image', `${bookingId}.png`);
 

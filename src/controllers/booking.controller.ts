@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import {
   BookingPaymentType,
   BookingStatusEnum,
+  BookingTypeEnum,
   PaymentMethodEnum,
   ScheduleStatusEnum,
   TransactionTypeEnum
@@ -34,6 +35,31 @@ async function createBooking(
       await sendBookingBillEmail(result, user, relativePath);
     }
 
+    return res.status(201).json({ message: 'Created Booking Successfully!' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function createCompetionBooking(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  const { courtArray, booking, schedule, transaction } = req.body;
+  try {
+    const { result, relativePath } =
+      await bookingService.createCompetionBooking(
+        courtArray,
+        booking,
+        schedule,
+        transaction,
+        req.loginUser
+      );
+    if (result._id) {
+      const user = await userService.getById(req.loginUser);
+      await sendBookingBillEmail(result, user, relativePath);
+    }
     return res.status(201).json({ message: 'Created Booking Successfully!' });
   } catch (error) {
     next(error);
@@ -198,5 +224,6 @@ export default {
   updateBookingAfterPayment,
   updateBookingStatus,
   searchBooking,
-  doneBooking
+  doneBooking,
+  createCompetionBooking
 };

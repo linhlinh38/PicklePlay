@@ -13,6 +13,7 @@ bookingRouter.post(
   validate(createBookingSchema),
   bookingController.createBooking
 );
+bookingRouter.post('/competition', bookingController.createCompetionBooking);
 bookingRouter.get('/', bookingController.getAllBooking);
 bookingRouter.get(
   '/GetAllBookingOfCourt/:court',
