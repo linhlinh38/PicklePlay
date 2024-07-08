@@ -185,7 +185,7 @@ class BookingService extends BaseService<IBooking> {
         status: ScheduleStatusEnum.AVAILABLE
       };
       const bookingData: BookingData = {
-        redirectUrl: `/checkin/${bookingId}`
+        redirectUrl: `dashboard/check-in/${bookingId}`
       };
       await generateQrCode(bookingData, relativePath);
     } else {
