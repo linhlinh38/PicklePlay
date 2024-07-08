@@ -80,6 +80,9 @@ async function getScheduleOfCustomer(
       }
       filterSchedules[status].push(schedule);
     });
+    if (schedules.length === 0) {
+      return res.status(200).json({ message: 'No Schedule Found', data: [] });
+    }
     return res
       .status(200)
       .json({ message: 'Get Schedule Successfully', data: filterSchedules });
