@@ -38,7 +38,12 @@ async function getScheduleByBooking(
     const key: Partial<ISchedule> = {
       booking: req.params.booking as string
     };
-    const schedule = await scheduleService.search(key);
+    const schedule = await scheduleModel.find(key).populate({
+      path: 'court',
+      populate: {
+        path: 'branch'
+      }
+    });
     return res
       .status(200)
       .json({ message: 'Get Schedule Successfully', data: schedule });
