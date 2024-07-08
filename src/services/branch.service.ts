@@ -212,12 +212,46 @@ class BranchService extends BaseService<IBranch> {
 
     if (formatSlots.length > 0 && !this.checkSlots(formatSlots))
       throw new BadRequestError('Slots are overlap');
+    if (
+      formatSlots.length > 0 &&
+      !this.areSlotsValidWithAvailableTime(formatSlots, branchDTO.availableTime)
+    )
+      throw new BadRequestError(
+        'Some slots are invalid with branch available time'
+      );
     const savedSlots = await slotModel.insertMany(formatSlots);
 
     savedBranch.courts = savedCourts.map((court) => court._id);
     savedBranch.slots = savedSlots.map((slot) => slot._id);
 
     await savedBranch.save();
+  }
+
+  areSlotsValidWithAvailableTime(slots: ISlot[], availableTime: string) {
+    const startTime = availableTime.split('-')[0];
+    const endTime = availableTime.split('-')[1];
+    for (const slot of slots) {
+      if (
+        this.compareTime(slot.startTime, startTime) < 0 ||
+        this.compareTime(slot.endTime, endTime) > 0
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  compareTime(time1: string, time2: string) {
+    const [hours1, minutes1] = time1.split(':').map(Number);
+    const [hours2, minutes2] = time2.split(':').map(Number);
+
+    const date1 = new Date();
+    date1.setHours(hours1, minutes1, 0, 0);
+
+    const date2 = new Date();
+    date2.setHours(hours2, minutes2, 0, 0);
+
+    return date1.getTime() - date2.getTime();
   }
 
   checkSlots(slots: ISlot[]) {
@@ -233,6 +267,7 @@ class BranchService extends BaseService<IBranch> {
     slots.forEach((slot) => {
       slotMap[slot.weekDay].push(slot);
     });
+
     for (const day of Object.keys(slotMap)) {
       if (!this.doSlotsOverLap(slotMap[day])) return false;
     }
@@ -245,6 +280,14 @@ class BranchService extends BaseService<IBranch> {
           this.convertToDate(slots[i].startTime) <
             this.convertToDate(slots[j].endTime) &&
           this.convertToDate(slots[j].startTime) <
+            this.convertToDate(slots[i].endTime)
+        ) {
+          return false;
+        }
+        if (
+          this.convertToDate(slots[i].startTime) ==
+            this.convertToDate(slots[j].endTime) &&
+          this.convertToDate(slots[j].startTime) ==
             this.convertToDate(slots[i].endTime)
         ) {
           return false;

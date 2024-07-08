@@ -35,6 +35,14 @@ class SlotService extends BaseService<ISlot> {
     );
     const isOverSlap = !branchService.checkSlots([...otherSlots, slot]);
     if (isOverSlap) throw new BadRequestError('Slots are overlap');
+    if (
+      !branchService.areSlotsValidWithAvailableTime(
+        [slotDTO],
+        slot.branch.availableTime
+      )
+    ) {
+      throw new BadRequestError('Slot is invalid with branch available time');
+    }
     slotService.update(id, slotDTO);
   }
 
@@ -42,10 +50,17 @@ class SlotService extends BaseService<ISlot> {
     const branch = await branchModel.findById(slotDTO.branch).populate('slots');
     if (!branch) throw new NotFoundError('Branch not found');
     const slots = branch.slots;
-    console.log(slots);
 
     if (slots.length > 0 && !branchService.checkSlots([...slots, slotDTO]))
       throw new BadRequestError('Slots are overlap');
+    if (
+      !branchService.areSlotsValidWithAvailableTime(
+        [slotDTO],
+        branch.availableTime
+      )
+    ) {
+      throw new BadRequestError('Slot is invalid with branch available time');
+    }
     const slot = await slotModel.create(slotDTO);
     branch.slots = [...branch.slots, slot._id];
     await branch.save();
