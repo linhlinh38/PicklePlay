@@ -10,7 +10,6 @@ import {
   BookingTypeEnum,
   CourtStatusEnum,
   PaymentMethodEnum,
-  RoleEnum,
   ScheduleStatusEnum,
   ScheduleTypeEnum,
   TransactionTypeEnum
@@ -26,6 +25,7 @@ import fs from 'fs';
 import { ITransaction } from '../interfaces/transaction.interface';
 import { transactionService } from './transaction.service';
 import courtModel from '../models/court.model';
+import { ADMIN_ID } from '../utils/constants';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -135,7 +135,7 @@ class BookingService extends BaseService<IBooking> {
     const transactionDTO: ITransaction = {
       amount: transaction.amount,
       from: loginUser,
-      to: '668a5690a6496e033349398f',
+      to: ADMIN_ID,
       type: TransactionTypeEnum.BOOKING,
       payment: transaction.payment,
       paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT
