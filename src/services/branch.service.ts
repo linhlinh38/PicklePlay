@@ -4,7 +4,12 @@ import { managerService } from './manager.service';
 import branchModel from '../models/branch.model';
 import { IBranch } from '../interfaces/branch.interface';
 import { BadRequestError } from '../errors/badRequestError';
-import { BranchStatusEnum, CourtStatusEnum, RoleEnum } from '../utils/enums';
+import {
+  BranchStatusEnum,
+  CourtStatusEnum,
+  RoleEnum,
+  ScheduleStatusEnum
+} from '../utils/enums';
 import { ICourt } from '../interfaces/court.interface';
 import courtModel from '../models/court.model';
 import { courtService } from './court.service';
@@ -122,40 +127,80 @@ class BranchService extends BaseService<IBranch> {
   }
 
   async getPopularBranches() {
-    const result = await scheduleModel.aggregate([
-      {
-        $lookup: {
-          from: 'courts',
-          localField: 'court',
-          foreignField: '_id',
-          as: 'courtDetails'
-        }
-      },
-      {
-        $unwind: '$courtDetails'
-      },
-      {
-        $lookup: {
-          from: 'branches',
-          localField: 'courtDetails.branch',
-          foreignField: '_id',
-          as: 'branchDetails'
-        }
-      },
-      {
-        $unwind: '$branchDetails'
-      },
-      {
-        $group: {
-          _id: '$branchDetails._id',
-          scheduleCount: { $sum: 1 }
-        }
-      },
-      {
-        $sort: { scheduleCount: -1 }
-      }
-    ]);
-    return result;
+    const branches = await branchModel.find({});
+    const branchesObject = await Promise.all(
+      branches.map(async (branch) => {
+        const schedules = await scheduleModel.find({
+          court: { $in: branch.courts },
+          status: {
+            $in: [ScheduleStatusEnum.AVAILABLE, ScheduleStatusEnum.DONE]
+          }
+        });
+        return { ...branch.toObject(), totalSchedule: schedules.length };
+      })
+    );
+
+    const sortedBranches = branchesObject.sort(
+      (a, b) => b.totalSchedule - a.totalSchedule
+    );
+    return sortedBranches;
+
+    // const result = await scheduleModel.aggregate([
+    //   {
+    //     $lookup: {
+    //       from: 'courts',
+    //       localField: 'court',
+    //       foreignField: '_id',
+    //       as: 'courtDetails'
+    //     }
+    //   },
+    //   {
+    //     $unwind: '$courtDetails'
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: 'branches',
+    //       localField: 'courtDetails.branch',
+    //       foreignField: '_id',
+    //       as: 'branchDetails'
+    //     }
+    //   },
+    //   {
+    //     $unwind: '$branchDetails'
+    //   },
+    //   {
+    //     $group: {
+    //       _id: '$branchDetails._id',
+    //       name: { $first: '$branchDetails.name' },
+    //       phone: { $first: '$branchDetails.phone' },
+    //       address: { $first: '$branchDetails.address' },
+    //       images: { $first: '$branchDetails.images' },
+    //       licenses: { $first: '$branchDetails.licenses' },
+    //       description: { $first: '$branchDetails.description' },
+    //       availableTime: { $first: '$branchDetails.availableTime' },
+    //       status: { $first: '$branchDetails.status' },
+    //       scheduleCount: { $sum: 1 }
+    //     }
+    //   },
+    //   {
+    //     $sort: { scheduleCount: -1 }
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       name: 1,
+    //       phone: 1,
+    //       address: 1,
+    //       images: 1,
+    //       licenses: 1,
+    //       description: 1,
+    //       availableTime: 1,
+    //       status: 1,
+    //       scheduleCount: 1
+    //     }
+    //   }
+    // ]);
+    // return result;
   }
 
   async getAllBranchesOfManager(managerId: string) {
