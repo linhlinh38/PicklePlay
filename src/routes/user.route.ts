@@ -12,7 +12,7 @@ userRoute.use(authentication);
 userRoute.get('/', userController.getAllUsers);
 userRoute.get(
   '/get/:role',
-  Author([RoleEnum.ADMIN]),
+  Author([RoleEnum.ADMIN, RoleEnum.OPERATOR]),
   userController.getAllUsersByRole
 );
 userRoute.post(
