@@ -41,7 +41,12 @@ async function getScheduleByBooking(
     };
     const schedule = await scheduleModel
       .find(key)
-      .populate('booking')
+      .populate({
+        path: 'booking',
+        populate: {
+          path: 'customer'
+        }
+      })
       .populate({
         path: 'court',
         populate: {
