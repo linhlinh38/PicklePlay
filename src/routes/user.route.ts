@@ -17,7 +17,7 @@ userRoute.get(
 );
 userRoute.post(
   '/deactive',
-  Author([RoleEnum.ADMIN, RoleEnum.MANAGER]),
+  Author([RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.OPERATOR]),
   userController.deActiveAccount
 );
 userRoute.post(
