@@ -205,6 +205,7 @@ class BookingService extends BaseService<IBooking> {
       totalHour: booking.totalHour,
       startDate: booking.startDate,
       endDate: booking.endDate,
+      court: courtArray[0],
       status: BookingStatusEnum.PENDING,
       customer: loginUser
     };

@@ -9,6 +9,7 @@ import { BadRequestError } from '../errors/badRequestError';
 import { userService } from '../services/user.service';
 import { NotFoundError } from '../errors/notFound';
 import scheduleModel from '../models/schedule.model';
+import path from 'path';
 
 async function getScheduleByCourt(
   req: Request,
@@ -38,12 +39,15 @@ async function getScheduleByBooking(
     const key: Partial<ISchedule> = {
       booking: req.params.booking as string
     };
-    const schedule = await scheduleModel.find(key).populate({
-      path: 'court',
-      populate: {
-        path: 'branch'
-      }
-    });
+    const schedule = await scheduleModel
+      .find(key)
+      .populate('booking')
+      .populate({
+        path: 'court',
+        populate: {
+          path: 'branch'
+        }
+      });
     return res
       .status(200)
       .json({ message: 'Get Schedule Successfully', data: schedule });
