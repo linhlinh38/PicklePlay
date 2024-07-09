@@ -135,7 +135,7 @@ class BookingService extends BaseService<IBooking> {
     const transactionDTO: ITransaction = {
       amount: transaction.amount,
       from: loginUser,
-      to: '66582c259a27f983f5bd6700',
+      to: '668a5690a6496e033349398f',
       type: TransactionTypeEnum.BOOKING,
       payment: transaction.payment,
       paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT
@@ -232,7 +232,7 @@ class BookingService extends BaseService<IBooking> {
     const transactionDTO: ITransaction = {
       amount: transaction.amount,
       from: loginUser,
-      to: '66582c259a27f983f5bd6700',
+      to: '668a5690a6496e033349398f',
       type: TransactionTypeEnum.BOOKING,
       payment: transaction.payment,
       paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT
