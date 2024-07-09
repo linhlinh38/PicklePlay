@@ -5,6 +5,7 @@ import { operatorService } from '../services/operator.service';
 import { IUser } from '../interfaces/user.interface';
 import { userService } from '../services/user.service';
 import { EmailAlreadyExistError } from '../errors/emailAlreadyExistError';
+import { encryptedPassword } from '../utils/jwt';
 
 export default class OperatorController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
@@ -62,6 +63,9 @@ export default class OperatorController {
 
       if (operator.length !== 0) {
         throw new EmailAlreadyExistError('Email already exists!');
+      }
+      if (operatorDTO.password) {
+        operatorDTO.password = await encryptedPassword(req.body.password);
       }
       await operatorService.create(operatorDTO);
       return res.status(201).json({
