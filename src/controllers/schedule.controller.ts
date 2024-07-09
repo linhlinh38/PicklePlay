@@ -18,13 +18,59 @@ async function getScheduleByCourt(
 ) {
   try {
     const key: Partial<ISchedule> = {
-      court: req.params.court as string,
-      status: ScheduleStatusEnum.AVAILABLE
+      court: req.params.court as string
     };
-    const schedule = await scheduleService.search(key);
+    const schedule = await scheduleModel.find(key).populate({
+      path: 'court',
+      populate: {
+        path: 'branch'
+      }
+    });
+    if (schedule.length === 0) {
+      return res.status(200).json({ message: 'No Schedule Found', data: [] });
+    }
     return res
       .status(200)
       .json({ message: 'Get Schedule Successfully', data: schedule });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getAllScheduleCustomer(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const searchBooking: Partial<IBooking> = {
+      customer: req.loginUser
+    };
+    const bookings = await bookingService.search(searchBooking);
+    if (bookings.length === 0) {
+      return res.status(404).json({
+        message: 'No bookings found for this customer',
+        data: []
+      });
+    }
+
+    const bookingIds = bookings.map((booking) => booking._id);
+    const searchSchedule: Partial<ISchedule> = {
+      booking: { $in: bookingIds } as any
+    };
+
+    const schedules = await scheduleModel.find(searchSchedule).populate({
+      path: 'court',
+      populate: {
+        path: 'branch'
+      }
+    });
+    if (schedules.length === 0) {
+      return res.status(200).json({ message: 'No Schedule Found', data: [] });
+    }
+    return res
+      .status(200)
+      .json({ message: 'Get Schedule Successfully', data: schedules });
   } catch (error) {
     next(error);
   }
@@ -216,5 +262,6 @@ export default {
   createSchedule,
   updateSchedule,
   cancelSchedule,
-  calculatePermanentSchedule
+  calculatePermanentSchedule,
+  getAllScheduleCustomer
 };

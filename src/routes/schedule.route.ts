@@ -12,6 +12,7 @@ scheduleRouter.post(
   scheduleController.createSchedule
 );
 scheduleRouter.get('/', scheduleController.getScheduleOfCustomer);
+scheduleRouter.get('/customer', scheduleController.getAllScheduleCustomer);
 scheduleRouter.get(
   '/GetScheduleByCourt/:court',
   scheduleController.getScheduleByCourt
