@@ -17,7 +17,6 @@ import slotModel from '../models/slot.model';
 import { ISlot } from '../interfaces/slot.interface';
 import scheduleModel from '../models/schedule.model';
 import userModel from '../models/user.model';
-import { userService } from './user.service';
 
 class BranchService extends BaseService<IBranch> {
   constructor() {
@@ -146,63 +145,6 @@ class BranchService extends BaseService<IBranch> {
       (a, b) => b.totalSchedule - a.totalSchedule
     );
     return sortedBranches;
-
-    // const result = await scheduleModel.aggregate([
-    //   {
-    //     $lookup: {
-    //       from: 'courts',
-    //       localField: 'court',
-    //       foreignField: '_id',
-    //       as: 'courtDetails'
-    //     }
-    //   },
-    //   {
-    //     $unwind: '$courtDetails'
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: 'branches',
-    //       localField: 'courtDetails.branch',
-    //       foreignField: '_id',
-    //       as: 'branchDetails'
-    //     }
-    //   },
-    //   {
-    //     $unwind: '$branchDetails'
-    //   },
-    //   {
-    //     $group: {
-    //       _id: '$branchDetails._id',
-    //       name: { $first: '$branchDetails.name' },
-    //       phone: { $first: '$branchDetails.phone' },
-    //       address: { $first: '$branchDetails.address' },
-    //       images: { $first: '$branchDetails.images' },
-    //       licenses: { $first: '$branchDetails.licenses' },
-    //       description: { $first: '$branchDetails.description' },
-    //       availableTime: { $first: '$branchDetails.availableTime' },
-    //       status: { $first: '$branchDetails.status' },
-    //       scheduleCount: { $sum: 1 }
-    //     }
-    //   },
-    //   {
-    //     $sort: { scheduleCount: -1 }
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       name: 1,
-    //       phone: 1,
-    //       address: 1,
-    //       images: 1,
-    //       licenses: 1,
-    //       description: 1,
-    //       availableTime: 1,
-    //       status: 1,
-    //       scheduleCount: 1
-    //     }
-    //   }
-    // ]);
-    // return result;
   }
 
   async getAllBranchesOfManager(managerId: string) {
