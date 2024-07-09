@@ -16,9 +16,6 @@ export function errorHandler(
   } else if (err instanceof DatabaseError) {
     Logging.error(err);
     res.status(503).json({ message: err.message });
-  } else if (err instanceof BadRequestError) {
-    Logging.error(err);
-    res.status(400).json({ message: err.message });
   } else {
     Logging.error(err);
     res.status(500).json({ message: err.message });

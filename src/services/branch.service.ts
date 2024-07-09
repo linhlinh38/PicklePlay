@@ -12,6 +12,7 @@ import slotModel from '../models/slot.model';
 import { ISlot } from '../interfaces/slot.interface';
 import scheduleModel from '../models/schedule.model';
 import userModel from '../models/user.model';
+import { userService } from './user.service';
 
 class BranchService extends BaseService<IBranch> {
   constructor() {
@@ -113,6 +114,7 @@ class BranchService extends BaseService<IBranch> {
         )
       ]);
     }
+    return branch;
   }
 
   async getPendingBranches() {

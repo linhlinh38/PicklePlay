@@ -155,13 +155,19 @@ async function cancelBooking(req: Request, res: Response, next: NextFunction) {
     const today = moment();
     const startDate = moment(booking.startDate);
 
-    const cancellationDeadline = startDate.clone().subtract(2, 'days');
-    if (today.isAfter(cancellationDeadline)) {
-      return res.status(400).json({
-        message:
-          'Cannot Cancel Booking: Booking must be cancelled 2 days before start date'
-      });
+    const momentNow = moment();
+    const createAt = moment(booking.createdAt);
+    const duration = momentNow.diff(createAt, 'minutes');
+    if (Math.abs(duration) > 15) {
+      const cancellationDeadline = startDate.clone().subtract(2, 'days');
+      if (today.isAfter(cancellationDeadline)) {
+        return res.status(400).json({
+          message:
+            'Cannot Cancel Booking: Booking must be cancelled 2 days before start date'
+        });
+      }
     }
+
     await bookingService.update(booking._id, {
       status: BookingStatusEnum.CANCELLED
     });

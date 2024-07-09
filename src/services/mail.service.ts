@@ -1,10 +1,15 @@
 import { mailersend } from '../config/envConfig';
 import { IBooking } from '../interfaces/booking.interface';
 import { IUser } from '../interfaces/user.interface';
-import { generateBookingBillContent } from '../utils/email';
+import {
+  generateBookingBillContent,
+  generateBranchRequestContent
+} from '../utils/email';
 import { EmailParams, Recipient, Sender } from 'mailersend';
 import * as qrcode from 'qrcode';
 import * as fs from 'fs';
+import bookingModel from '../models/booking.model';
+import { IBranch } from '../interfaces/branch.interface';
 
 export async function sendBookingBillEmail(
   booking: IBooking,
@@ -16,7 +21,10 @@ export async function sendBookingBillEmail(
       new Recipient(user.email, user.firstName + ' ' + user.lastName)
     ];
     const sender = new Sender('linh@trial-v69oxl5ok8dg785k.mlsender.net');
-    const body = generateBookingBillContent(booking, user);
+    const bookingData = await bookingModel
+      .find({ _id: booking._id })
+      .populate('court');
+    const body = generateBookingBillContent(bookingData[0], user);
     const data = await fs.promises.readFile(imagePath);
     const base64Encoded = Buffer.from(data).toString('base64');
     const emailParams = new EmailParams()
@@ -37,6 +45,28 @@ export async function sendBookingBillEmail(
     return;
   } catch (error) {
     console.error('Error in sendBookingBillEmail:', error);
+  }
+}
+
+export async function sendBranchResultEmail(branch: IBranch, user: IUser) {
+  try {
+    const recipients = [
+      new Recipient(user.email, user.firstName + ' ' + user.lastName)
+    ];
+    const sender = new Sender('linh@trial-v69oxl5ok8dg785k.mlsender.net');
+
+    const body = generateBranchRequestContent(branch, user);
+    const emailParams = new EmailParams()
+      .setFrom(sender)
+      .setTo(recipients)
+      .setSubject('Bookminton: Result Of Request Create Branch')
+      .setHtml(body.html)
+      .setText(body.text);
+
+    await mailersend.email.send(emailParams);
+    return;
+  } catch (error) {
+    console.error('Error in sendBranchResultEmail:', error);
   }
 }
 

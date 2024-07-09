@@ -4,6 +4,8 @@ import { branchService } from '../services/branch.service';
 import { BranchStatusEnum } from '../utils/enums';
 import { AuthRequest } from '../middlewares/authentication';
 import { populate } from 'dotenv';
+import { userService } from '../services/user.service';
+import { sendBranchResultEmail } from '../services/mail.service';
 
 export default class BranchController {
   static async getMyBranchs(
@@ -73,10 +75,16 @@ export default class BranchController {
       next(err);
     }
   }
-  static async handleRequest(req: Request, res: Response, next: NextFunction) {
+  static async handleRequest(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     const { approve, branchId } = req.body;
     try {
-      await branchService.handleRequest(branchId, approve);
+      const result = await branchService.handleRequest(branchId, approve);
+      const user = await userService.getById(result.manager as string);
+      await sendBranchResultEmail(result, user);
       return res.status(200).json({
         message: approve ? 'Approve request success' : 'Deny request success'
       });

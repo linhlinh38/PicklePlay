@@ -13,4 +13,5 @@ export interface IBooking {
   status: string;
   court: string | ICourt;
   customer?: string | IUser;
+  createdAt?: string;
 }
