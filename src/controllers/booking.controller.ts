@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import {
   BookingPaymentType,
   BookingStatusEnum,
-  BookingTypeEnum,
   PaymentMethodEnum,
   ScheduleStatusEnum,
   TransactionTypeEnum

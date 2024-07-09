@@ -15,9 +15,9 @@ import {
 } from '../utils/enums';
 import { BadRequestError } from '../errors/badRequestError';
 import transactionModel from '../models/transaction.model';
-import adminModel from '../models/admin.model';
 import moment from 'moment';
 import userModel from '../models/user.model';
+import { ADMIN_ID } from '../utils/constants';
 
 class PackageCourtService extends BaseService<IPackageCourt> {
   constructor() {
@@ -128,7 +128,7 @@ class PackageCourtService extends BaseService<IPackageCourt> {
     transactionModel.create({
       amount: totalPrice,
       from: buyPackageDTO.managerId,
-      to: await adminModel.findOne({}),
+      to: ADMIN_ID,
       content: `Manager ${manager.firstName} orders package purchase on ${moment(new Date()).format('YYYY-MM-DD')}`,
       type: TransactionTypeEnum.PACKAGE,
       paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT,
