@@ -1,7 +1,6 @@
 import multer from 'multer';
 import { BadRequestError } from '../errors/badRequestError';
 import { regexFile, regexImage } from '../utils/regex';
-import { NextFunction } from 'express';
 
 const storage = multer.memoryStorage();
 
