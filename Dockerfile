@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN npm i
-RUN chmod -R 755 /app/build/src/image
 
 COPY . .
 
