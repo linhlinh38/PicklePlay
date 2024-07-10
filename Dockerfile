@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN npm i
+RUN mkdir -p /app/build/src/image
 
 COPY . .
 
