@@ -12,13 +12,13 @@ router.get('/', BranchController.getAll);
 router.get('/get-by-id/:id', BranchController.getById);
 router.post('/search', BranchController.searchByNameOrAddress);
 
+router.get('/get-popular', BranchController.getPopularBranches);
 router.use(authentication);
 router.get(
   '/get-pending',
   Author([RoleEnum.ADMIN, RoleEnum.OPERATOR]),
   BranchController.getPendingBranches
 );
-router.get('/get-popular', BranchController.getPopularBranches);
 router.post(
   '/',
   Author([RoleEnum.MANAGER]),
@@ -46,7 +46,6 @@ router.post(
   Author([RoleEnum.OPERATOR, RoleEnum.ADMIN]),
   BranchController.handleRequest
 );
-router.post('/search', BranchController.search);
 router.get(
   '/get-my-branchs',
   authentication,
