@@ -142,10 +142,12 @@ class BookingService extends BaseService<IBooking> {
     };
     await transactionService.createTransaction(transactionDTO);
 
-    const { result, relativePath } =
-      await bookingService.updateBookingAfterPayment(true, booking._id);
+    const { result, base64QR } = await bookingService.updateBookingAfterPayment(
+      true,
+      booking._id
+    );
 
-    return { result, relativePath };
+    return { result, base64QR };
   }
 
   async updateTotalHours(bookingId: string, duration: number) {
@@ -240,10 +242,12 @@ class BookingService extends BaseService<IBooking> {
     };
     await transactionService.createTransaction(transactionDTO);
 
-    const { result, relativePath } =
-      await bookingService.updateBookingAfterPayment(true, data._id.toString());
+    const { result, base64QR } = await bookingService.updateBookingAfterPayment(
+      true,
+      data._id.toString()
+    );
 
-    return { result, relativePath };
+    return { result, base64QR };
   }
 
   async updateBookingAfterPayment(paymentResult: boolean, bookingId: string) {
@@ -251,20 +255,21 @@ class BookingService extends BaseService<IBooking> {
     let updateSchedule: Partial<ISchedule>;
     const schedules = await scheduleModel.find({ booking: bookingId });
 
-    const dirname = path.join(__dirname, '..');
-    const relativePath = path.join(dirname, 'image', `${bookingId}.png`);
+    // const dirname = path.join(__dirname, '..');
+    // const relativePath = path.join(dirname, 'image', `${bookingId}.png`);
 
-    async function createImageFolder() {
-      try {
-        fs.mkdirSync(path.dirname(relativePath), { recursive: true });
-      } catch (err) {
-        if (err.code !== 'EEXIST') {
-          console.error('Error creating image folder:', err);
-        }
-      }
-    }
+    // async function createImageFolder() {
+    //   try {
+    //     fs.mkdirSync(path.dirname(relativePath), { recursive: true });
+    //   } catch (err) {
+    //     if (err.code !== 'EEXIST') {
+    //       console.error('Error creating image folder:', err);
+    //     }
+    //   }
+    // }
+    let base64QR;
     if (paymentResult) {
-      await createImageFolder();
+      //await createImageFolder();
       updateData = {
         status: BookingStatusEnum.BOOKED
       };
@@ -274,7 +279,7 @@ class BookingService extends BaseService<IBooking> {
       const bookingData: BookingData = {
         redirectUrl: `dashboard/check-in/${bookingId}`
       };
-      await generateQrCode(bookingData, relativePath);
+      base64QR = await generateQrCode(bookingData);
     } else {
       updateData = {
         status: BookingStatusEnum.CANCELLED
@@ -295,7 +300,7 @@ class BookingService extends BaseService<IBooking> {
         }
       }
 
-      return { result, relativePath };
+      return { result, base64QR };
     } catch (error) {
       throw new ServerError(error);
     }

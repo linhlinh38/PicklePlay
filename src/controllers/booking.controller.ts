@@ -23,7 +23,7 @@ async function createBooking(
 ) {
   const { booking, schedule, transaction } = req.body;
   try {
-    const { result, relativePath } = await bookingService.createBooking(
+    const { result, base64QR } = await bookingService.createBooking(
       booking,
       schedule,
       transaction,
@@ -31,7 +31,7 @@ async function createBooking(
     );
     if (result._id) {
       const user = await userService.getById(req.loginUser);
-      await sendBookingBillEmail(result, user, relativePath);
+      await sendBookingBillEmail(result, user, base64QR);
     }
 
     return res.status(201).json({ message: 'Created Booking Successfully!' });
@@ -47,17 +47,16 @@ async function createCompetionBooking(
 ) {
   const { courtArray, booking, schedule, transaction } = req.body;
   try {
-    const { result, relativePath } =
-      await bookingService.createCompetionBooking(
-        courtArray,
-        booking,
-        schedule,
-        transaction,
-        req.loginUser
-      );
+    const { result, base64QR } = await bookingService.createCompetionBooking(
+      courtArray,
+      booking,
+      schedule,
+      transaction,
+      req.loginUser
+    );
     if (result._id) {
       const user = await userService.getById(req.loginUser);
-      await sendBookingBillEmail(result, user, relativePath);
+      await sendBookingBillEmail(result, user, base64QR);
     }
     return res.status(201).json({ message: 'Created Booking Successfully!' });
   } catch (error) {
@@ -109,11 +108,13 @@ async function getAllBookingOfCourt(req: AuthRequest, res: Response) {
 async function updateBookingAfterPayment(req: AuthRequest, res: Response) {
   const bookingId = req.params.bookingId;
   const paymentResult = req.body.paymentResult;
-  const { result, relativePath } =
-    await bookingService.updateBookingAfterPayment(paymentResult, bookingId);
+  const { result, base64QR } = await bookingService.updateBookingAfterPayment(
+    paymentResult,
+    bookingId
+  );
   if (result._id) {
     const user = await userService.getById(req.loginUser);
-    await sendBookingBillEmail(result, user, relativePath);
+    await sendBookingBillEmail(result, user, base64QR);
   }
   return res
     .status(200)
