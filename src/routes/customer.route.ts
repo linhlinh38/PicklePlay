@@ -18,7 +18,7 @@ customerRoute.use(authentication);
 customerRoute.get('/', customerController.getCustomerInfo);
 customerRoute.get(
   '/:id',
-  Author([RoleEnum.ADMIN]),
+  Author([RoleEnum.ADMIN, RoleEnum.OPERATOR]),
   customerController.getCustomerById
 );
 customerRoute.put(

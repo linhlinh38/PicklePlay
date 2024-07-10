@@ -12,12 +12,12 @@ userRoute.use(authentication);
 userRoute.get('/', userController.getAllUsers);
 userRoute.get(
   '/get/:role',
-  Author([RoleEnum.ADMIN]),
+  Author([RoleEnum.ADMIN, RoleEnum.OPERATOR]),
   userController.getAllUsersByRole
 );
 userRoute.post(
   '/deactive',
-  Author([RoleEnum.ADMIN, RoleEnum.MANAGER]),
+  Author([RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.OPERATOR]),
   userController.deActiveAccount
 );
 userRoute.post(
