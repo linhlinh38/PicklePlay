@@ -8,7 +8,7 @@ const upload = (fileTypes: RegExp) =>
   multer({
     storage: storage,
     limits: {
-      fileSize: 5 * 1024 * 1024 // Limit file size to 5MB
+      fileSize: 10 * 1024 * 1024 // Limit file size to 10MB
     },
     fileFilter: (req, file, cb) => {
       const filetypes = fileTypes;
