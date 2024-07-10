@@ -8,6 +8,7 @@ RUN npm i
 COPY . .
 
 RUN npm run build
+RUN chmod -R 755 /app/build/src/image
 
 FROM node:latest
 
