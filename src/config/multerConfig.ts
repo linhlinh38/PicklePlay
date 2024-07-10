@@ -1,6 +1,7 @@
 import multer from 'multer';
 import { BadRequestError } from '../errors/badRequestError';
 import { regexFile, regexImage } from '../utils/regex';
+import { NextFunction } from 'express';
 
 const storage = multer.memoryStorage();
 
@@ -28,5 +29,15 @@ const upload = (fileTypes: RegExp) =>
     }
   });
 
-export const uploadImage = upload(regexImage);
-export const uploadFile = upload(regexFile);
+export const uploadImage = upload(regexImage).any();
+export const uploadFile = upload(regexFile).any();
+
+export const handleMulterErrors = (err, req, res, next) => {
+  if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+    return next(new BadRequestError('File is too large'));
+  }
+  if (err) {
+    return next(err);
+  }
+  next();
+};
