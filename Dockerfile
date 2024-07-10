@@ -8,7 +8,7 @@ RUN npm i
 COPY . .
 
 RUN npm run build
-RUN chmod -R 755 app/build/
+RUN chmod -R 755 /app/build
 
 FROM node:latest
 
