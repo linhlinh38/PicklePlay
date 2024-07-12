@@ -8,7 +8,7 @@ const upload = (fileTypes: RegExp) =>
   multer({
     storage: storage,
     limits: {
-      fileSize: 5 * 1024 * 1024 // Limit file size to 5MB
+      fileSize: 10 * 1024 * 1024 // Limit file size to 10MB
     },
     fileFilter: (req, file, cb) => {
       const filetypes = fileTypes;
@@ -28,5 +28,15 @@ const upload = (fileTypes: RegExp) =>
     }
   });
 
-export const uploadImage = upload(regexImage);
-export const uploadFile = upload(regexFile);
+export const uploadImage = upload(regexImage).any();
+export const uploadFile = upload(regexFile).any();
+
+export const handleMulterErrors = (err, req, res, next) => {
+  if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+    return next(new BadRequestError('File is too large'));
+  }
+  if (err) {
+    return next(err);
+  }
+  next();
+};
