@@ -5,6 +5,7 @@ const router = express.Router();
 router.get('/', StaffController.getAll);
 router.get('/my-branch', StaffController.getMyBranch);
 router.get('/:id', StaffController.getById);
+router.get('/get-by-branch/:branch', StaffController.getByBranch);
 router.post('/', StaffController.create);
 router.put('/:id', StaffController.update);
 router.delete('/:id', StaffController.delete);

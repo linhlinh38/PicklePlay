@@ -15,6 +15,7 @@ import { userService } from '../services/user.service';
 import { sendBookingBillEmail } from '../services/mail.service';
 import { ITransaction } from '../interfaces/transaction.interface';
 import { transactionService } from '../services/transaction.service';
+import { ADMIN_ID } from '../utils/constants';
 
 async function createBooking(
   req: AuthRequest,
@@ -179,7 +180,7 @@ async function cancelBooking(req: Request, res: Response, next: NextFunction) {
     if (booking.paymentType === BookingPaymentType.FULL) {
       const transactionDTO: ITransaction = {
         amount: booking.totalPrice / 2,
-        from: '66582c259a27f983f5bd6700',
+        from: ADMIN_ID,
         to: booking.customer as string,
         type: TransactionTypeEnum.REFUND,
         payment: req.body.paymentId,
