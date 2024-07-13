@@ -94,31 +94,36 @@ class SlotService extends BaseService<ISlot> {
   }
 
   async getSlotsOfCourtByDate(date: Date, courtId: string) {
-    const curDate = new Date();
-    curDate.setHours(0);
-    curDate.setMinutes(0);
-    curDate.setSeconds(0);
-    if (date < curDate)
-      throw new BadRequestError('Date can not be in the past');
+    // const curDate = new Date();
+    // curDate.setHours(0);
+    // curDate.setMinutes(0);
+    // curDate.setSeconds(0);
+    // if (date < curDate)
+    //   throw new BadRequestError('Date can not be in the past');
     const court = await courtService.getById(courtId);
     if (!court) throw new NotFoundError('Court not found');
     const slots = await slotModel.find({
       weekDay: this.getWeekDayFromDate(date),
       branch: court.branch
     });
-    const slotIds = slots.map((slot) => slot._id);
     const schedules = await scheduleModel.find({
-      slots: { $in: slotIds },
+      court: courtId,
       date: date
     });
-    return slots.map((slot) => {
-      const schedule = schedules.find((schedule) =>
-        schedule.slots.includes(slot._id)
-      );
-      console.log(schedule);
-      slot = { ...slot.toObject(), schedule };
-      return slot;
+    return slots.filter((slot) => {
+      let isAvailable = true;
+      schedules.forEach((schedule) => {
+        if (schedule.slots.includes(slot._id)) isAvailable = false;
+      });
+      return isAvailable;
     });
+    // return slots.map((slot) => {
+    //   const schedule = schedules.find((schedule) =>
+    //     schedule.slots.includes(slot._id)
+    //   );
+    //   slot = { ...slot.toObject(), schedule };
+    //   return slot;
+    // });
   }
 
   async getSlotsOfBranch(branchId: string) {

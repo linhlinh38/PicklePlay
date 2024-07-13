@@ -180,6 +180,31 @@ class BranchService extends BaseService<IBranch> {
 
     const savedBranch = await branchModel.create(branchDTO);
 
+    //save slots
+    const formatSlots: ISlot[] = slots.map((slot) => {
+      return { ...slot, branch: savedBranch._id };
+    });
+
+    formatSlots.forEach((slot) => {
+      if (this.compareTime(slot.startTime, slot.endTime) > 0)
+        throw new BadRequestError('Start time must be before End time');
+    });
+    if (formatSlots.length > 0 && !this.checkSlots(formatSlots)) {
+      await branchModel.findByIdAndDelete(savedBranch._id);
+      throw new BadRequestError('Slots are overlap');
+    }
+
+    if (
+      formatSlots.length > 0 &&
+      !this.areSlotsValidWithAvailableTime(formatSlots, branchDTO.availableTime)
+    ) {
+      await branchModel.findByIdAndDelete(savedBranch._id);
+      throw new BadRequestError(
+        'Some slots are invalid with branch available time'
+      );
+    }
+
+    const savedSlots = await slotModel.insertMany(formatSlots);
     // save courts
     const formatCourts: ICourt[] = courts.map((court) => {
       return {
@@ -193,25 +218,6 @@ class BranchService extends BaseService<IBranch> {
       };
     });
     const savedCourts = await courtModel.insertMany(formatCourts);
-    //save slots
-    const formatSlots: ISlot[] = slots.map((slot) => {
-      return { ...slot, branch: savedBranch._id };
-    });
-
-    formatSlots.forEach((slot) => {
-      if (this.compareTime(slot.startTime, slot.endTime) > 0)
-        throw new BadRequestError('Start time must be before End time');
-    });
-    if (formatSlots.length > 0 && !this.checkSlots(formatSlots))
-      throw new BadRequestError('Slots are overlap');
-    if (
-      formatSlots.length > 0 &&
-      !this.areSlotsValidWithAvailableTime(formatSlots, branchDTO.availableTime)
-    )
-      throw new BadRequestError(
-        'Some slots are invalid with branch available time'
-      );
-    const savedSlots = await slotModel.insertMany(formatSlots);
 
     savedBranch.courts = savedCourts.map((court) => court._id);
     savedBranch.slots = savedSlots.map((slot) => slot._id);
@@ -259,7 +265,6 @@ class BranchService extends BaseService<IBranch> {
     slots.forEach((slot) => {
       slotMap[slot.weekDay].push(slot);
     });
-    console.log(slotMap);
 
     for (const day of Object.keys(slotMap)) {
       if (!this.doSlotsOverLap(slotMap[day])) return false;
