@@ -20,12 +20,7 @@ async function getScheduleByCourt(
     const key: Partial<ISchedule> = {
       court: req.params.court as string
     };
-    const schedule = await scheduleModel.find(key).populate({
-      path: 'court',
-      populate: {
-        path: 'branch'
-      }
-    });
+    const schedule = await scheduleService.getScheduleByCourt(key);
     if (schedule.length === 0) {
       return res.status(200).json({ message: 'No Schedule Found', data: [] });
     }

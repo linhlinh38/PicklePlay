@@ -155,12 +155,10 @@ async function getAllCourtsOfManager(
   next: NextFunction
 ) {
   try {
-    return res
-      .status(200)
-      .json({
-        message: 'Get all courts of manager success',
-        data: await courtService.getAllCourtsOfManager(req.params.id)
-      });
+    return res.status(200).json({
+      message: 'Get all courts of manager success',
+      data: await courtService.getAllCourtsOfManager(req.params.id)
+    });
   } catch (error) {
     next(error);
   }
