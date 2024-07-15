@@ -96,6 +96,15 @@ async function getBookingOfCustomer(req: AuthRequest, res: Response) {
     .json({ message: 'Get booking success', data: booking });
 }
 
+async function getAllBookingDetailOfCustomer(req: AuthRequest, res: Response) {
+  const booking = await bookingService.getAllBookingDetailOfCustomer(
+    req.loginUser
+  );
+  return res
+    .status(200)
+    .json({ message: 'Get booking success', data: booking });
+}
+
 async function getAllBookingOfCourt(req: AuthRequest, res: Response) {
   const key: Partial<IBooking> = {
     court: req.params.court
@@ -232,5 +241,6 @@ export default {
   updateBookingStatus,
   searchBooking,
   doneBooking,
-  createCompetionBooking
+  createCompetionBooking,
+  getAllBookingDetailOfCustomer
 };

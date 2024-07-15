@@ -26,6 +26,7 @@ import { ITransaction } from '../interfaces/transaction.interface';
 import { transactionService } from './transaction.service';
 import courtModel from '../models/court.model';
 import { ADMIN_ID } from '../utils/constants';
+import { ICourt } from '../interfaces/court.interface';
 
 class BookingService extends BaseService<IBooking> {
   constructor() {
@@ -314,6 +315,59 @@ class BookingService extends BaseService<IBooking> {
       }
     });
     return booking;
+  }
+
+  async getAllBookingDetailOfCustomer(customerId: string) {
+    const booking = await bookingModel.find({ customer: customerId });
+
+    const mapBooking = Promise.all(
+      await booking.map(async (item) => {
+        const courtSet = new Set<ICourt>();
+        if (booking.type === BookingTypeEnum.FLEXIBLE_SCHEDULE) {
+          const booking = await bookingModel
+            .find({ customer: customerId })
+            .populate({
+              path: 'court',
+              populate: {
+                path: 'branch'
+              }
+            });
+          courtSet.add(booking.court as ICourt);
+        } else {
+          const schedule = await scheduleModel
+            .find({ booking: item._id })
+            .populate({
+              path: 'court',
+              populate: {
+                path: 'branch'
+              }
+            });
+          if (schedule.length > 0) {
+            Promise.all(
+              await schedule.map((s: ISchedule) => {
+                courtSet.add(s.court as ICourt);
+              })
+            );
+          }
+        }
+
+        return {
+          _id: item._id,
+          type: item.type,
+          paymentType: item.paymentType,
+          paymentMethod: item.paymentMethod,
+          totalPrice: item.totalPrice,
+          totalHour: item.totalHour,
+          startDate: item.startDate,
+          endDate: item.endDate,
+          status: item.status,
+          customer: item.customer,
+          court: Array.from(courtSet)
+        };
+      })
+    );
+
+    return mapBooking;
   }
 
   async getBookingByStatus(customerId: string, status: string) {

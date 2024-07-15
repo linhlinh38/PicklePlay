@@ -33,6 +33,11 @@ bookingRouter.get(
   Author([RoleEnum.CUSTOMER]),
   bookingController.getBookingOfCustomer
 );
+bookingRouter.get(
+  '/BookingReceipt',
+  Author([RoleEnum.CUSTOMER]),
+  bookingController.getAllBookingDetailOfCustomer
+);
 bookingRouter.get('/:id', bookingController.getBookingById);
 bookingRouter.post('/cancel/:id', bookingController.cancelBooking);
 bookingRouter.put('/done/:id', bookingController.doneBooking);
