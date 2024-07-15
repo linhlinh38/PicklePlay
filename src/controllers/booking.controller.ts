@@ -209,6 +209,14 @@ async function doneBooking(req: Request, res: Response, next: NextFunction) {
     const booking = await bookingService.getById(req.params.id);
     if (!booking || booking.status !== BookingStatusEnum.BOOKED)
       return res.status(400).json({ message: 'Booking cannot change to done' });
+    const today = moment();
+    const bookingEndDate = moment(booking.endDate);
+
+    if (!bookingEndDate.isSameOrBefore(today)) {
+      return res.status(400).json({
+        message: 'Booking end date is in the future. Cannot mark as done.'
+      });
+    }
     const schedules = await scheduleService.search({ booking: booking._id });
 
     await bookingService.update(booking._id, {
