@@ -362,7 +362,8 @@ class BookingService extends BaseService<IBooking> {
           endDate: item.endDate,
           status: item.status,
           customer: item.customer,
-          court: Array.from(courtSet)
+          court: Array.from(courtSet),
+          createdAt: item.createdAt
         };
       })
     );
