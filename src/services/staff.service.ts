@@ -9,6 +9,7 @@ import staffModel from '../models/staff.model';
 import { userService } from './user.service';
 import userModel from '../models/user.model';
 import { BadRequestError } from '../errors/badRequestError';
+import { BranchStatusEnum } from '../utils/enums';
 
 class StaffService extends BaseService<IStaff> {
   constructor() {
@@ -30,6 +31,9 @@ class StaffService extends BaseService<IStaff> {
 
     const branch = await branchService.getById(staffDTO.branch);
     if (!branch) throw new NotFoundError('Branch not found');
+
+    if (branch.status != BranchStatusEnum.ACTIVE)
+      throw new BadRequestError('Can only add staff to active branch');
 
     staffDTO.password = await encryptedPassword(staffDTO.password);
     const savedStaff = await this.model.create(staffDTO);
