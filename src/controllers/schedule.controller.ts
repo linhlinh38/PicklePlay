@@ -20,12 +20,7 @@ async function getScheduleByCourt(
     const key: Partial<ISchedule> = {
       court: req.params.court as string
     };
-    const schedule = await scheduleModel.find(key).populate({
-      path: 'court',
-      populate: {
-        path: 'branch'
-      }
-    });
+    const schedule = await scheduleService.getScheduleWithPopulateInfo(key);
     if (schedule.length === 0) {
       return res.status(200).json({ message: 'No Schedule Found', data: [] });
     }
@@ -59,12 +54,8 @@ async function getAllScheduleCustomer(
       booking: { $in: bookingIds } as any
     };
 
-    const schedules = await scheduleModel.find(searchSchedule).populate({
-      path: 'court',
-      populate: {
-        path: 'branch'
-      }
-    });
+    const schedules =
+      await scheduleService.getScheduleCourtInfo(searchSchedule);
     if (schedules.length === 0) {
       return res.status(200).json({ message: 'No Schedule Found', data: [] });
     }
@@ -85,20 +76,7 @@ async function getScheduleByBooking(
     const key: Partial<ISchedule> = {
       booking: req.params.booking as string
     };
-    const schedule = await scheduleModel
-      .find(key)
-      .populate({
-        path: 'booking',
-        populate: {
-          path: 'customer'
-        }
-      })
-      .populate({
-        path: 'court',
-        populate: {
-          path: 'branch'
-        }
-      });
+    const schedule = await scheduleService.getScheduleWithPopulateInfo(key);
     return res
       .status(200)
       .json({ message: 'Get Schedule Successfully', data: schedule });
@@ -129,12 +107,8 @@ async function getScheduleOfCustomer(
       booking: { $in: bookingIds } as any
     };
 
-    const schedules = await scheduleModel.find(searchSchedule).populate({
-      path: 'court',
-      populate: {
-        path: 'branch'
-      }
-    });
+    const schedules =
+      await scheduleService.getScheduleCourtInfo(searchSchedule);
     const filterSchedules: Record<string, ISchedule[]> = {};
     schedules.forEach((schedule) => {
       const status = schedule.status;

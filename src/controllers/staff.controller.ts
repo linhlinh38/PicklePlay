@@ -27,6 +27,18 @@ export default class StaffController {
     }
   }
 
+  static async getByBranch(req: Request, res: Response, next: NextFunction) {
+    const branch: string = req.params.branch;
+    try {
+      return res.status(200).json({
+        message: 'Get staff by id success',
+        data: await staffService.search({ branch: branch })
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getMyBranch(req: Request, res: Response, next: NextFunction) {
     try {
       return res.status(200).json({

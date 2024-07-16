@@ -23,6 +23,36 @@ class ScheduleService extends BaseService<ISchedule> {
     return slotDuration;
   }
 
+  async getScheduleWithPopulateInfo(
+    key: Partial<ISchedule>
+  ): Promise<ISchedule[]> {
+    const schedule = await scheduleModel
+      .find(key)
+      .populate({
+        path: 'booking',
+        populate: {
+          path: 'customer'
+        }
+      })
+      .populate({
+        path: 'court',
+        populate: {
+          path: 'branch'
+        }
+      });
+    return schedule;
+  }
+
+  async getScheduleCourtInfo(key: Partial<ISchedule>): Promise<ISchedule[]> {
+    const schedule = await scheduleModel.find(key).populate({
+      path: 'court',
+      populate: {
+        path: 'branch'
+      }
+    });
+    return schedule;
+  }
+
   async beforeCreate(data: ISchedule): Promise<void> {
     const checkSchedule = await scheduleModel.find({
       court: data.court,

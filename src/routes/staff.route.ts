@@ -14,6 +14,7 @@ router.post(
   Author([RoleEnum.MANAGER, RoleEnum.ADMIN]),
   StaffController.create
 );
+router.get('/get-by-branch/:branch', StaffController.getByBranch);
 router.put('/:id', StaffController.update);
 router.delete('/:id', StaffController.delete);
 export default router;

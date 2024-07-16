@@ -15,6 +15,7 @@ import { userService } from '../services/user.service';
 import { sendBookingBillEmail } from '../services/mail.service';
 import { ITransaction } from '../interfaces/transaction.interface';
 import { transactionService } from '../services/transaction.service';
+import { ADMIN_ID } from '../utils/constants';
 
 async function createBooking(
   req: AuthRequest,
@@ -90,6 +91,15 @@ async function getBookingByStatus(req: AuthRequest, res: Response) {
 
 async function getBookingOfCustomer(req: AuthRequest, res: Response) {
   const booking = await bookingService.getBookingByCustomer(req.loginUser);
+  return res
+    .status(200)
+    .json({ message: 'Get booking success', data: booking });
+}
+
+async function getAllBookingDetailOfCustomer(req: AuthRequest, res: Response) {
+  const booking = await bookingService.getAllBookingDetailOfCustomer(
+    req.loginUser
+  );
   return res
     .status(200)
     .json({ message: 'Get booking success', data: booking });
@@ -179,7 +189,7 @@ async function cancelBooking(req: Request, res: Response, next: NextFunction) {
     if (booking.paymentType === BookingPaymentType.FULL) {
       const transactionDTO: ITransaction = {
         amount: booking.totalPrice / 2,
-        from: '66582c259a27f983f5bd6700',
+        from: ADMIN_ID,
         to: booking.customer as string,
         type: TransactionTypeEnum.REFUND,
         payment: req.body.paymentId,
@@ -199,6 +209,14 @@ async function doneBooking(req: Request, res: Response, next: NextFunction) {
     const booking = await bookingService.getById(req.params.id);
     if (!booking || booking.status !== BookingStatusEnum.BOOKED)
       return res.status(400).json({ message: 'Booking cannot change to done' });
+    const today = moment();
+    const bookingEndDate = moment(booking.endDate);
+
+    if (!bookingEndDate.isSameOrBefore(today)) {
+      return res.status(400).json({
+        message: 'Booking end date is in the future. Cannot mark as done.'
+      });
+    }
     const schedules = await scheduleService.search({ booking: booking._id });
 
     await bookingService.update(booking._id, {
@@ -231,5 +249,6 @@ export default {
   updateBookingStatus,
   searchBooking,
   doneBooking,
-  createCompetionBooking
+  createCompetionBooking,
+  getAllBookingDetailOfCustomer
 };
