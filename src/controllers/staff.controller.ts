@@ -31,8 +31,8 @@ export default class StaffController {
     const branch: string = req.params.branch;
     try {
       return res.status(200).json({
-        message: 'Get staff by id success',
-        data: await staffService.search({ branch: branch })
+        message: 'Get staffs of branch success',
+        data: await staffService.search({ branch })
       });
     } catch (error) {
       next(error);

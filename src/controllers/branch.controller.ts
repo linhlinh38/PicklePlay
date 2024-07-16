@@ -3,7 +3,6 @@ import { IBranch } from '../interfaces/branch.interface';
 import { branchService } from '../services/branch.service';
 import { BranchStatusEnum } from '../utils/enums';
 import { AuthRequest } from '../middlewares/authentication';
-import { populate } from 'dotenv';
 import { userService } from '../services/user.service';
 import { sendBranchResultEmail } from '../services/mail.service';
 
