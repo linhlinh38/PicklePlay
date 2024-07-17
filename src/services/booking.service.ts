@@ -327,15 +327,13 @@ class BookingService extends BaseService<IBooking> {
           item.type === BookingTypeEnum.FLEXIBLE_SCHEDULE ||
           item.status === BookingStatusEnum.CANCELLED
         ) {
-          const booking = await bookingModel
-            .find({ customer: customerId })
-            .populate({
-              path: 'court',
-              populate: {
-                path: 'branch'
-              }
-            });
-          courtSet.add(booking.court as ICourt);
+          const booking = await bookingModel.find({ _id: item._id }).populate({
+            path: 'court',
+            populate: {
+              path: 'branch'
+            }
+          });
+          courtSet.add(booking[0].court as ICourt);
         } else {
           const schedule = await scheduleModel
             .find({ booking: item._id })
