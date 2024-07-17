@@ -323,7 +323,10 @@ class BookingService extends BaseService<IBooking> {
     const mapBooking = Promise.all(
       await booking.map(async (item) => {
         const courtSet = new Set<ICourt>();
-        if (booking.type === BookingTypeEnum.FLEXIBLE_SCHEDULE) {
+        if (
+          booking.type === BookingTypeEnum.FLEXIBLE_SCHEDULE ||
+          booking.status === BookingStatusEnum.CANCELLED
+        ) {
           const booking = await bookingModel
             .find({ customer: customerId })
             .populate({
