@@ -5,7 +5,6 @@ import validate from '../utils/validate';
 import { loginSchema } from '../models/validateSchema/login.validate.schema';
 
 const authRoute = express.Router();
-authRoute.post('/login-google', authController.loginGoogle);
 authRoute.post('/login', validate(loginSchema), authController.login);
 authRoute.use(authentication);
 authRoute.post('/refresh', authController.refreshToken);

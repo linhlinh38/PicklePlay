@@ -1,56 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-import userModel from '../models/user.model';
 import { config } from '../config/envConfig';
-import { generateRefreshToken, verifyToken } from '../utils/jwt';
+import { verifyToken } from '../utils/jwt';
 import { userService } from '../services/user.service';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import { UserStatusEnum } from '../utils/enums';
-import { OAuth2Client } from 'google-auth-library';
-import { BadRequestError } from '../errors/badRequestError';
 import * as authService from '../services/auth.service';
 
 const { SECRET_KEY_FOR_ACCESS_TOKEN, SECRET_KEY_FOR_REFRESH_TOKEN } = config;
-
-async function loginGoogle(req: Request, res: Response, next: NextFunction) {
-  const { credential } = req.body;
-  let payload;
-  try {
-    const client = new OAuth2Client(config.GG_CLIENT_ID);
-    const ticket = await client.verifyIdToken({
-      idToken: credential,
-      audience: config.GG_CLIENT_ID
-    });
-    payload = ticket.getPayload();
-  } catch (err) {
-    console.log(err);
-    next(new BadRequestError('Account not found'));
-  }
-
-  try {
-    const email = payload.email;
-    const user = await userModel.findOne({ email });
-    if (!user) throw new BadRequestError('Account not found');
-    if (user.status == UserStatusEnum.INACTIVE) {
-      throw new BadRequestError('Account is inactive');
-    }
-    const payload1 = { userId: user.id.toString() };
-
-    const token = jwt.sign(payload1, SECRET_KEY_FOR_ACCESS_TOKEN, {
-      expiresIn: '1h'
-    });
-    const refreshToken = generateRefreshToken(user.id.toString());
-
-    res.setHeader('Authorization', `Bearer ${token}`);
-    res.status(200).json({
-      message: 'Login successful',
-      accessToken: token,
-      refreshToken: refreshToken
-    });
-  } catch (err) {
-    next(err);
-  }
-}
 
 async function login(req: Request, res: Response, next: NextFunction) {
   const { email, password } = req.body;
@@ -121,4 +76,4 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { login, getProfile, refreshToken, loginGoogle };
+export default { login, getProfile, refreshToken };
