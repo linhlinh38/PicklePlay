@@ -324,8 +324,8 @@ class BookingService extends BaseService<IBooking> {
       await booking.map(async (item) => {
         const courtSet = new Set<ICourt>();
         if (
-          booking.type === BookingTypeEnum.FLEXIBLE_SCHEDULE ||
-          booking.status === BookingStatusEnum.CANCELLED
+          item.type === BookingTypeEnum.FLEXIBLE_SCHEDULE ||
+          item.status === BookingStatusEnum.CANCELLED
         ) {
           const booking = await bookingModel
             .find({ customer: customerId })
