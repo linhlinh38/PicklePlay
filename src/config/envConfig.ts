@@ -29,6 +29,10 @@ const FIREBASE_AUTH_PROVIDER_X509_CERT_URL =
   process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL;
 const FIREBASE_CLIENT_X509_CERT_URL = process.env.FIREBASE_CLIENT_X509_CERT_URL;
 
+const PAYOS_CLIENT_ID = process.env.PAYOS_CLIENT_ID;
+const PAYOS_API_KEY = process.env.PAYOS_API_KEY;
+const PAYOS_CHECKSUM_KEY = process.env.PAYOS_CHECKSUM_KEY;
+
 export const config = {
   mongo_uri: MONGO_DB_URI,
   port: PORT,
@@ -50,7 +54,10 @@ export const config = {
     API: VNP_API,
     RETURN_URL: VNP_RETURN_URL
   },
-  GG_CLIENT_ID: GG_CLIENT_ID
+  GG_CLIENT_ID: GG_CLIENT_ID,
+  PAYOS_CLIENT_ID,
+  PAYOS_API_KEY,
+  PAYOS_CHECKSUM_KEY
 };
 
 export const mailersend = new MailerSend({

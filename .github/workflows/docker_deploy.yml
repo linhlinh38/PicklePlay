@@ -28,7 +28,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: linlii/bookminton:latest
+          tags: linlii/picklePlay:latest
           dockerfile: ./Dockerfile
 
       - name: Connect to VPS and run commands
@@ -38,6 +38,6 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd bookminton
+            cd picklePlay
             /snap/bin/docker-compose pull
             /snap/bin/docker-compose up -d
