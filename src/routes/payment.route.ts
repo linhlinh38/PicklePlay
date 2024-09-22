@@ -10,6 +10,11 @@ router.post(
   authentication,
   PaymentController.createPaymentUrl
 );
+router.post(
+  '/create-payment-url-for-booking',
+  authentication,
+  PaymentController.createPaymentUrlForBooking
+);
 router.post('/verify-success-url', PaymentController.verifySuccessUrl);
 router.post(
   '/add',

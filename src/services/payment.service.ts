@@ -13,6 +13,7 @@ import { managerService } from './manager.service';
 import { PackageCourtTypeEnum } from '../utils/enums';
 import { payos } from '../utils/payos';
 import { getRandomNumber } from '../utils/util';
+import PayOS from '@payos/node';
 const mongoose = require('mongoose');
 
 export default class PaymentService extends BaseService<IPayment> {
@@ -28,17 +29,16 @@ export default class PaymentService extends BaseService<IPayment> {
     return payments;
   }
 
-  async getPaymentUrl(amount: number, description: string, keyData?: unknown) {
-    const id = new mongoose.Types.ObjectId();
-    console.log(id);
-
+  async getPaymentUrl(
+    amount: number,
+    description: string,
+    keyData?: { apiKey: string; clientId: string; checksumKey: string }
+  ) {
     const orderCode = await getRandomNumber();
-    console.log(orderCode);
-    const cancelUrl = 'asdasd';
-    const returnUrl = 'asdasd';
+    const cancelUrl = 'a';
+    const returnUrl = 'a';
     if (!keyData)
       return {
-        id,
         orderCode,
         url: (
           await payos.createPaymentLink({
@@ -50,7 +50,23 @@ export default class PaymentService extends BaseService<IPayment> {
           })
         ).checkoutUrl
       };
-    return null;
+    const payosForShop = new PayOS(
+      keyData.apiKey,
+      keyData.clientId,
+      keyData.checksumKey
+    );
+    return {
+      orderCode,
+      url: (
+        await payosForShop.createPaymentLink({
+          orderCode,
+          cancelUrl,
+          returnUrl,
+          amount,
+          description
+        })
+      ).checkoutUrl
+    };
   }
 
   async getTotalAmount(buyPackageDTO: Partial<IBuyPackage>) {
