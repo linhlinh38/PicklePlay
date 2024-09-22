@@ -71,11 +71,12 @@ export default class PackagePurchaseController {
     res: Response,
     next: NextFunction
   ) {
-    const { packageId, totalCourt } = req.body;
+    const { packageId, totalCourt, orderCode } = req.body;
     const buyPackageDTO: Partial<IBuyPackage> = {
       packageId,
       totalCourt,
-      managerId: req.loginUser
+      managerId: req.loginUser,
+      orderCode
     };
 
     try {

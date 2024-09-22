@@ -114,7 +114,8 @@ class PackageCourtService extends BaseService<IPackageCourt> {
       endDate: endDateOfPackagePurchase,
       manager: buyPackageDTO.managerId,
       packageCourt: buyPackageDTO.packageId,
-      status: PackagePurchaseStatusEnum.ACTIVE
+      status: PackagePurchaseStatusEnum.ACTIVE,
+      orderCode: buyPackageDTO.orderCode
     };
     const savedPurchase = await packagePurchaseModel.create(
       createdPackagePurchase

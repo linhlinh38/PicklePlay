@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { config } from '../config/envConfig';
 import querystring from 'qs';
 import crypto from 'crypto';
@@ -6,6 +5,16 @@ import { BaseService } from './base.service';
 import { IPayment } from '../interfaces/payment.interface';
 import paymentModel from '../models/payment.model';
 import { BadRequestError } from '../errors/badRequestError';
+import { IBuyPackage } from '../interfaces/buyPackage.interface';
+import { IPackageCourt } from '../interfaces/packageCourt.interface';
+import { packageCourtService } from './packageCourt.service';
+import { NotFoundError } from '../errors/notFound';
+import { managerService } from './manager.service';
+import { PackageCourtTypeEnum } from '../utils/enums';
+import { payos } from '../utils/payos';
+import { getRandomNumber } from '../utils/util';
+import PayOS from '@payos/node';
+const mongoose = require('mongoose');
 
 export default class PaymentService extends BaseService<IPayment> {
   async deletePayment(id: string) {
@@ -20,6 +29,74 @@ export default class PaymentService extends BaseService<IPayment> {
     return payments;
   }
 
+  async getPaymentUrl(
+    amount: number,
+    description: string,
+    keyData?: { apiKey: string; clientId: string; checksumKey: string }
+  ) {
+    const orderCode = await getRandomNumber();
+    const cancelUrl = 'a';
+    const returnUrl = 'a';
+    if (!keyData)
+      return {
+        orderCode,
+        url: (
+          await payos.createPaymentLink({
+            orderCode,
+            cancelUrl,
+            returnUrl,
+            amount,
+            description
+          })
+        ).checkoutUrl
+      };
+    const payosForShop = new PayOS(
+      keyData.apiKey,
+      keyData.clientId,
+      keyData.checksumKey
+    );
+    return {
+      orderCode,
+      url: (
+        await payosForShop.createPaymentLink({
+          orderCode,
+          cancelUrl,
+          returnUrl,
+          amount,
+          description
+        })
+      ).checkoutUrl
+    };
+  }
+
+  async getTotalAmount(buyPackageDTO: Partial<IBuyPackage>) {
+    const packageCourt: IPackageCourt = await packageCourtService.getById(
+      buyPackageDTO.packageId
+    );
+    if (!packageCourt) throw new NotFoundError('Package not found');
+    const manager = await managerService.getById(buyPackageDTO.managerId);
+    if (!manager) throw new NotFoundError('Manager not found');
+
+    if (packageCourt.type == PackageCourtTypeEnum.CUSTOM) {
+      if (packageCourt.maxCourt > 20)
+        throw new BadRequestError(
+          'Custom package can only be bought for maximum 20 courts'
+        );
+    }
+
+    const currentDate = new Date();
+    if (manager.expiredDate && manager.expiredDate > currentDate) {
+      throw new BadRequestError(
+        'You cannot purchase a new court package as your current package is still active'
+      );
+    }
+
+    const totalPrice =
+      packageCourt.totalPrice ||
+      packageCourt.priceEachCourt * buyPackageDTO.totalCourt;
+    return totalPrice;
+  }
+
   async addPayment(paymentDTO: IPayment) {
     const paymentExist = await paymentModel.findOne({
       accountNumber: paymentDTO.accountNumber,
@@ -32,41 +109,9 @@ export default class PaymentService extends BaseService<IPayment> {
     await paymentModel.create(paymentDTO);
   }
 
-  createPaymentUrl(amount: number, returnUrl: string, bookingId?: string) {
-    const currentDate = new Date();
-    const createDate = moment(currentDate).format('YYYYMMDDHHmmss');
-
-    const tmnCode = config.VNP.TMN_CODE;
-    const secretKey = config.VNP.HASH_SECRET;
-    let vnpUrl = config.VNP.URL;
-    const bankCode = 'VNBANK';
-    const locale = 'vn';
-    const currCode = 'VND';
-
-    let vnp_Params = {};
-    vnp_Params['vnp_Version'] = '2.1.0';
-    vnp_Params['vnp_Command'] = 'pay';
-    vnp_Params['vnp_TmnCode'] = tmnCode;
-    vnp_Params['vnp_Locale'] = locale;
-    vnp_Params['vnp_CurrCode'] = currCode;
-    vnp_Params['vnp_TxnRef'] = bookingId;
-    vnp_Params['vnp_OrderInfo'] = bookingId;
-    vnp_Params['vnp_OrderType'] = 'other';
-    vnp_Params['vnp_Amount'] = amount * 100;
-    vnp_Params['vnp_ReturnUrl'] = returnUrl;
-    vnp_Params['vnp_IpAddr'] = '123';
-    vnp_Params['vnp_CreateDate'] = createDate;
-    vnp_Params['vnp_BankCode'] = bankCode;
-
-    vnp_Params = this.sortObject(vnp_Params);
-
-    const signData = querystring.stringify(vnp_Params, { encode: false });
-    const hmac = crypto.createHmac('sha512', secretKey);
-    const signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
-    vnp_Params['vnp_SecureHash'] = signed;
-    vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-
-    return vnpUrl;
+  async createPaymentUrl(buyPackageDTO: Partial<IBuyPackage>) {
+    const amount = await this.getTotalAmount(buyPackageDTO);
+    return await this.getPaymentUrl(amount, buyPackageDTO.description);
   }
 
   verifySuccessUrl(url: string) {

@@ -4,4 +4,6 @@ export interface IBuyPackage {
   duration: number;
   totalCourt: number;
   paymentId?: string;
+  description?: string;
+  orderCode?: string;
 }
