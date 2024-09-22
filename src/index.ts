@@ -54,7 +54,7 @@ const StartServer = () => {
   );
 
   //Routes
-  app.use('/pikle-play', router);
+  app.use('/pickle-play', router);
 
   app.use(errorHandler);
 
