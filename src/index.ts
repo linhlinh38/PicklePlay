@@ -54,7 +54,7 @@ const StartServer = () => {
   );
 
   //Routes
-  app.use('/bookminton', router);
+  app.use('/pikle-play', router);
 
   app.use(errorHandler);
 
