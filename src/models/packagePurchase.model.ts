@@ -31,7 +31,10 @@ const packagePurchaseSchema = mongoose.Schema(
       enum: Object.values(PackagePurchaseStatusEnum),
       required: true
     },
-
+    orderCode: {
+      type: Number,
+      required: true
+    },
     manager: { type: mongoose.Schema.Types.ObjectId, ref: 'Manager' },
     packageCourt: { type: mongoose.Schema.Types.ObjectId, ref: 'PackageCourt' }
   },
