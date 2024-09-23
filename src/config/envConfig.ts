@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { MailerSend } from 'mailersend';
+import Logging from '../utils/Logging';
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ const FIREBASE_PRIVATE_KEY_ID = process.env.FIREBASE_PRIVATE_KEY_ID;
 const FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY.split(
   String.raw`\n`
 ).join('\n');
-
+Logging.info(FIREBASE_PRIVATE_KEY);
 const FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL;
 const FIREBASE_CLIENT_ID = process.env.FIREBASE_CLIENT_ID;
 const FIREBASE_AUTH_URI = process.env.FIREBASE_AUTH_URI;
