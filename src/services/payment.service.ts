@@ -35,8 +35,8 @@ export default class PaymentService extends BaseService<IPayment> {
     keyData?: { apiKey: string; clientId: string; checksumKey: string }
   ) {
     const orderCode = await getRandomNumber();
-    const cancelUrl = 'a';
-    const returnUrl = 'a';
+    const cancelUrl = 'http://localhost:3000';
+    const returnUrl = 'http://localhost:3000';
     if (!keyData)
       return {
         orderCode,
