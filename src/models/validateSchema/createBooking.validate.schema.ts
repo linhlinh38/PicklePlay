@@ -32,8 +32,7 @@ export const createScheduleSchema = z.object({
 });
 
 export const createTransactionSchema = z.object({
-  amount: z.number(),
-  payment: z.string()
+  amount: z.number()
 });
 
 export const createBookingSchema = z.object({
