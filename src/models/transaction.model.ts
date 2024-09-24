@@ -26,10 +26,6 @@ const transactionSchema = mongoose.Schema(
       type: String,
       require: true,
       enum: Object.values(PaymentMethodEnum)
-    },
-    payment: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Payment'
     }
   },
   {
