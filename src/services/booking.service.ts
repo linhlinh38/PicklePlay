@@ -138,7 +138,6 @@ class BookingService extends BaseService<IBooking> {
       from: loginUser,
       to: ADMIN_ID,
       type: TransactionTypeEnum.BOOKING,
-      payment: transaction.payment,
       paymentMethod: PaymentMethodEnum.LINKED_ACCOUNT
     };
     await transactionService.createTransaction(transactionDTO);
