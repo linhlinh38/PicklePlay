@@ -61,25 +61,26 @@ export default class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    const { amount, description, courtId } = req.body;
-    Logging.info(req.body);
-    const court = await courtModel.findById(courtId).populate('branch');
-    const ownerId = court.branch.manager;
-    const payment = await paymentModel.findOne({
-      owner: ownerId
-    });
-    const card = await cardModel.findOne({
-      accountNumber: payment.accountNumber,
-      accountName: payment.accountName,
-      accountBank: payment.accountBank
-    });
-    if (!card) throw new BadRequestError('Card is invalid');
-    const keyData = {
-      apiKey: card.apiKey,
-      clientId: card.clientId,
-      checksumKey: card.checksumKey
-    };
     try {
+      const { amount, description, courtId } = req.body;
+      Logging.info(req.body);
+      const court = await courtModel.findById(courtId).populate('branch');
+      const ownerId = court.branch.manager;
+      const payment = await paymentModel.findOne({
+        owner: ownerId
+      });
+      const card = await cardModel.findOne({
+        accountNumber: payment.accountNumber,
+        accountName: payment.accountName,
+        accountBank: payment.accountBank
+      });
+      Logging.info(payment);
+      if (!card) throw new BadRequestError('Card is invalid');
+      const keyData = {
+        apiKey: card.apiKey,
+        clientId: card.clientId,
+        checksumKey: card.checksumKey
+      };
       return res.status(200).json({
         message: 'Return url success',
         data: await paymentService.getPaymentUrl(amount, description, keyData)
