@@ -51,8 +51,8 @@ export default class PaymentService extends BaseService<IPayment> {
         ).checkoutUrl
       };
     const payosForShop = new PayOS(
-      keyData.apiKey,
       keyData.clientId,
+      keyData.apiKey,
       keyData.checksumKey
     );
     return {
