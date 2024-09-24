@@ -6,6 +6,8 @@ import { IBuyPackage } from '../interfaces/buyPackage.interface';
 import paymentModel from '../models/payment.model';
 import cardModel from '../models/card.model';
 import { BadRequestError } from '../errors/badRequestError';
+import branchModel from '../models/branch.model';
+import courtModel from '../models/court.model';
 export default class PaymentController {
   static async deletePayment(req: Request, res: Response, next: NextFunction) {
     try {
@@ -59,10 +61,11 @@ export default class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    const { amount, description } = req.body;
-    const userId = req.loginUser;
+    const { amount, description, courseId } = req.body;
+    const court = await courtModel.findById(courseId).populate('branch');
+    const ownerId = court.branch.manager;
     const payment = await paymentModel.findOne({
-      owner: userId
+      owner: ownerId
     });
     const card = await cardModel.findOne({
       accountNumber: payment.accountNumber,
