@@ -60,8 +60,8 @@ export default class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    const { amount, description, courseId } = req.body;
-    const court = await courtModel.findById(courseId).populate('branch');
+    const { amount, description, courseId: courtId } = req.body;
+    const court = await courtModel.findById(courtId).populate('branch');
     const ownerId = court.branch.manager;
     const payment = await paymentModel.findOne({
       owner: ownerId
