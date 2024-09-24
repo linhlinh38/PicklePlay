@@ -7,6 +7,7 @@ import paymentModel from '../models/payment.model';
 import cardModel from '../models/card.model';
 import { BadRequestError } from '../errors/badRequestError';
 import courtModel from '../models/court.model';
+import Logging from '../utils/Logging';
 export default class PaymentController {
   static async deletePayment(req: Request, res: Response, next: NextFunction) {
     try {
@@ -60,8 +61,9 @@ export default class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    const { amount, description, courseId } = req.body;
-    const court = await courtModel.findById(courseId).populate('branch');
+    const { amount, description, courtId } = req.body;
+    Logging.info(req.body);
+    const court = await courtModel.findById(courtId).populate('branch');
     const ownerId = court.branch.manager;
     const payment = await paymentModel.findOne({
       owner: ownerId
