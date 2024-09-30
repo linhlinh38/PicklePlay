@@ -14,7 +14,6 @@ import { PackageCourtTypeEnum } from '../utils/enums';
 import { payos } from '../utils/payos';
 import { getRandomNumber } from '../utils/util';
 import PayOS from '@payos/node';
-const mongoose = require('mongoose');
 
 export default class PaymentService extends BaseService<IPayment> {
   async deletePayment(id: string) {
@@ -35,8 +34,8 @@ export default class PaymentService extends BaseService<IPayment> {
     keyData?: { apiKey: string; clientId: string; checksumKey: string }
   ) {
     const orderCode = await getRandomNumber();
-    const cancelUrl = 'http://localhost:3000';
-    const returnUrl = 'http://localhost:3000';
+    const cancelUrl = config.PAYOS_CANCEL_URL;
+    const returnUrl = config.PAYOS_RETURN_URL;
     if (!keyData)
       return {
         orderCode,

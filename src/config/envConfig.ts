@@ -21,9 +21,6 @@ const FIREBASE_PRIVATE_KEY_ID = process.env.FIREBASE_PRIVATE_KEY_ID;
 const FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY.split(
   String.raw`\n`
 ).join('\n');
-Logging.info(FIREBASE_PROJECT_ID);
-Logging.info(FIREBASE_PRIVATE_KEY_ID);
-Logging.info(FIREBASE_PRIVATE_KEY);
 
 const FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL;
 const FIREBASE_CLIENT_ID = process.env.FIREBASE_CLIENT_ID;
@@ -32,13 +29,11 @@ const FIREBASE_TOKEN_URI = process.env.FIREBASE_TOKEN_URI;
 const FIREBASE_AUTH_PROVIDER_X509_CERT_URL =
   process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL;
 const FIREBASE_CLIENT_X509_CERT_URL = process.env.FIREBASE_CLIENT_X509_CERT_URL;
-Logging.info(FIREBASE_CLIENT_EMAIL);
-Logging.info(FIREBASE_CLIENT_ID);
-Logging.info(FIREBASE_AUTH_URI);
-Logging.info(FIREBASE_TOKEN_URI);
 const PAYOS_CLIENT_ID = process.env.PAYOS_CLIENT_ID;
 const PAYOS_API_KEY = process.env.PAYOS_API_KEY;
 const PAYOS_CHECKSUM_KEY = process.env.PAYOS_CHECKSUM_KEY;
+const PAYOS_RETURN_URL = process.env.PAYOS_RETURN_URL;
+const PAYOS_CANCEL_URL = process.env.PAYOS_CANCEL_URL;
 
 export const config = {
   mongo_uri: MONGO_DB_URI,
@@ -64,7 +59,9 @@ export const config = {
   GG_CLIENT_ID: GG_CLIENT_ID,
   PAYOS_CLIENT_ID,
   PAYOS_API_KEY,
-  PAYOS_CHECKSUM_KEY
+  PAYOS_CHECKSUM_KEY,
+  PAYOS_RETURN_URL,
+  PAYOS_CANCEL_URL
 };
 
 export const mailersend = new MailerSend({
