@@ -39,12 +39,15 @@ export default class PaymentController {
     res: Response,
     next: NextFunction
   ) {
-    const { packageId, totalCourt, description } = req.body;
+    const { packageId, totalCourt, description, returnUrl, cancelUrl } =
+      req.body;
     const buyPackageDTO: Partial<IBuyPackage> = {
       packageId,
       totalCourt,
       managerId: req.loginUser,
-      description
+      description,
+      returnUrl,
+      cancelUrl
     };
     try {
       return res.status(200).json({
@@ -62,8 +65,7 @@ export default class PaymentController {
     next: NextFunction
   ) {
     try {
-      const { amount, description, courtId } = req.body;
-      Logging.info(req.body);
+      const { amount, description, courtId, returnUrl, cancelUrl } = req.body;
       const court = await courtModel.findById(courtId).populate('branch');
       const ownerId = court.branch.manager;
       const payment = await paymentModel.findOne({
@@ -83,7 +85,13 @@ export default class PaymentController {
       };
       return res.status(200).json({
         message: 'Return url success',
-        data: await paymentService.getPaymentUrl(amount, description, keyData)
+        data: await paymentService.getPaymentUrl(
+          amount,
+          description,
+          returnUrl,
+          cancelUrl,
+          keyData
+        )
       });
     } catch (err) {
       next(err);
