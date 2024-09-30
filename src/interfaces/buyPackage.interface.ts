@@ -6,4 +6,6 @@ export interface IBuyPackage {
   paymentId?: string;
   description?: string;
   orderCode?: string;
+  returnUrl?: string;
+  cancelUrl?: string;
 }

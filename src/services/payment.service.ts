@@ -31,11 +31,13 @@ export default class PaymentService extends BaseService<IPayment> {
   async getPaymentUrl(
     amount: number,
     description: string,
+    returnUrl: string,
+    cancelUrl: string,
     keyData?: { apiKey: string; clientId: string; checksumKey: string }
   ) {
     const orderCode = await getRandomNumber();
-    const cancelUrl = config.PAYOS_CANCEL_URL;
-    const returnUrl = config.PAYOS_RETURN_URL;
+    // const cancelUrl = config.PAYOS_CANCEL_URL;
+    // const returnUrl = config.PAYOS_RETURN_URL;
     if (!keyData)
       return {
         orderCode,
@@ -110,7 +112,12 @@ export default class PaymentService extends BaseService<IPayment> {
 
   async createPaymentUrl(buyPackageDTO: Partial<IBuyPackage>) {
     const amount = await this.getTotalAmount(buyPackageDTO);
-    return await this.getPaymentUrl(amount, buyPackageDTO.description);
+    return await this.getPaymentUrl(
+      amount,
+      buyPackageDTO.description,
+      buyPackageDTO.returnUrl,
+      buyPackageDTO.cancelUrl
+    );
   }
 
   verifySuccessUrl(url: string) {
