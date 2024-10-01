@@ -44,8 +44,8 @@ export default class PaymentService extends BaseService<IPayment> {
         url: (
           await payos.createPaymentLink({
             orderCode,
-            cancelUrl,
-            returnUrl,
+            cancelUrl: cancelUrl ? cancelUrl : config.PAYOS_CANCEL_URL,
+            returnUrl: returnUrl ? returnUrl : config.PAYOS_RETURN_URL,
             amount,
             description
           })
