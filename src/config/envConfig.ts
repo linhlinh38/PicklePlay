@@ -9,6 +9,9 @@ const PORT = process.env.PORT;
 const SECRET_KEY_FOR_ACCESS_TOKEN = process.env.SECRET_KEY_FOR_ACCESS_TOKEN;
 const SECRET_KEY_FOR_REFRESH_TOKEN = process.env.SECRET_KEY_FOR_REFRESH_TOKEN;
 const MAILERSEND_API_KEY = process.env.MAILERSEND_API_KEY;
+const EMAIL_USERNAME = process.env.EMAIL_USERNAME;
+const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
+const FROM_EMAIL = process.env.FROM_EMAIL;
 const VNP_TMN_CODE = process.env.VNP_TMN_CODE;
 const VNP_HASH_SECRET = process.env.VNP_HASH_SECRET;
 const VNP_URL = process.env.VNP_URL;
@@ -61,7 +64,10 @@ export const config = {
   PAYOS_API_KEY,
   PAYOS_CHECKSUM_KEY,
   PAYOS_RETURN_URL,
-  PAYOS_CANCEL_URL
+  PAYOS_CANCEL_URL,
+  EMAIL_USERNAME,
+  EMAIL_PASSWORD,
+  FROM_EMAIL
 };
 
 export const mailersend = new MailerSend({
