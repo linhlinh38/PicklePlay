@@ -69,7 +69,8 @@ export const config = {
   EMAIL_PASSWORD,
   FROM_EMAIL
 };
-
+Logging.info('RETURN URL : ' + PAYOS_RETURN_URL);
+Logging.info('CANCEL URL : ' + PAYOS_CANCEL_URL);
 export const mailersend = new MailerSend({
   apiKey: MAILERSEND_API_KEY
 });
