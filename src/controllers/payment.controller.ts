@@ -8,6 +8,7 @@ import cardModel from '../models/card.model';
 import { BadRequestError } from '../errors/badRequestError';
 import courtModel from '../models/court.model';
 import Logging from '../utils/Logging';
+import { config } from '../config/envConfig';
 export default class PaymentController {
   static async deletePayment(req: Request, res: Response, next: NextFunction) {
     try {
@@ -46,8 +47,8 @@ export default class PaymentController {
       totalCourt,
       managerId: req.loginUser,
       description,
-      returnUrl,
-      cancelUrl
+      cancelUrl: cancelUrl ? cancelUrl : config.PAYOS_CANCEL_URL,
+      returnUrl: returnUrl ? returnUrl : config.PAYOS_RETURN_URL
     };
     try {
       return res.status(200).json({
@@ -88,8 +89,8 @@ export default class PaymentController {
         data: await paymentService.getPaymentUrl(
           amount,
           description,
-          returnUrl,
-          cancelUrl,
+          returnUrl ? returnUrl : config.PAYOS_RETURN_URL,
+          cancelUrl ? cancelUrl : config.PAYOS_CANCEL_URL,
           keyData
         )
       });
